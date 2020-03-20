@@ -32,3 +32,7 @@ Label{
 #timeline{
   flex-grow: 2;
 }
+
+#timeline_widget{
+  flex-direction: column-reverse;
+}

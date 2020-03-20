@@ -4,17 +4,29 @@ const Note = require('./notes.js');
 const {
   QLabel,
   QTreeWidgetItem,
-  QTreeWidget
+  QTreeWidget,
+  QScrollArea,
+  QWidget,
+  FlexLayout
 } = require('@nodegui/nodegui');
 
 class Timeline{
   constructor(){
-    const tree = new QTreeWidget();
-    tree.setColumnCount(4);
-    tree.setHeaderLabels(['種類', 'アイコン', 'ID', 'のーと']);
+    const tree = new QScrollArea();
+    //tree.setColumnCount(4);
+    //tree.setHeaderLabels(['種類', 'アイコン', 'ID', 'のーと']);
     tree.setObjectName('timeline');
+    const widget = new QWidget();
+    const widget_layout = new FlexLayout();
+    widget.setObjectName('timeline_widget');
+    widget.setLayout(widget_layout);
+
+    tree.setWidgetResizable(true);
+    tree.setWidget(widget);
 
     this.tree = tree;
+    this.widget = widget;
+    this.layout = widget_layout;
     this.tl = new Map();
     this.tl.set('notifications', []);
     this.tl.set('home', []);
@@ -29,16 +41,18 @@ class Timeline{
   }
 
   add_item(note, tl){
-    note.item = new QTreeWidgetItem();
+    //    note.item = new QTreeWidgetItem();
+    note.item = new QLabel();
     tl.push(note);
 
-    note.item.setText(0, '');
-    note.item.setText(1, '');
-    note.item.setText(2, note.user.acct);
-    note.item.setText(3, note.text);
+//    note.item.setText(0, '');
+//    note.item.setText(1, '');
+//    note.item.setText(2, note.user.acct);
+//    note.item.setText(3, note.text);
 
+    note.item.setText(note.text);
 //    for(var n of tl){
-      this.tree.addTopLevelItem(note.item);
+      this.layout.addWidget(note.item);
 //    }
   }
 
