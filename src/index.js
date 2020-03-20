@@ -24,7 +24,7 @@ const client = new Client();
 
 const win = new QMainWindow();
 win.setWindowTitle('TenCha');
-win.resize(340, 300);
+win.resize(460, 700);
 
 const rootView = new QWidget();
 const rootViewLayout = new FlexLayout();
