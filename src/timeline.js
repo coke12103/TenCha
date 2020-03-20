@@ -41,22 +41,13 @@ class Timeline{
   }
 
   add_item(note, tl){
-    //    note.item = new QTreeWidgetItem();
-    note.item = new QLabel();
+    note.item = this.create_timeline_note(note);
     tl.push(note);
 
-//    note.item.setText(0, '');
-//    note.item.setText(1, '');
-//    note.item.setText(2, note.user.acct);
-//    note.item.setText(3, note.text);
-
-    note.item.setText(note.text);
-//    for(var n of tl){
-      this.layout.addWidget(note.item);
-//    }
+    this.layout.addWidget(note.item.widget);
   }
 
-  onMess(data){
+  async onMess(data){
     data = JSON.parse(data);
     if(data.type != 'channel'){
       console.log(data);
@@ -71,7 +62,7 @@ class Timeline{
     }
 
     var user_map = this.tl.get('user_map');
-    var note = new Note(body.body, user_map);
+    var note = await new Note(body.body, user_map);
     console.log(body);
 
     if(note.renote){
@@ -97,6 +88,93 @@ class Timeline{
   start_streaming(statusLabel, client){
     client.connect_ws(statusLabel, this);
   }
+
+  create_timeline_note(note){
+    const widget = new QWidget();
+    const widget_layout = new FlexLayout();
+    widget.setLayout(widget_layout);
+
+    const flag_label = new QLabel();
+    const icon_label = new QLabel();
+    const name_label = new QLabel();
+    const text_label = new QLabel();
+
+    widget.setInlineStyle(`
+      height: 16px;
+      justify-content: flex-start;
+      flex-direction: row;
+    `);
+    flag_label.setInlineStyle(`
+      flex-grow: 1;
+      width: 32px;
+      margin-right: 2px;
+    `);
+    icon_label.setInlineStyle(`
+      flex-grow: 1;
+      width: 16px;
+    `);
+    name_label.setInlineStyle(`
+      flex-grow: 1;
+      margin-right: 5px;
+      width: 120px;
+    `);
+    text_label.setInlineStyle(`flex-grow: 3;`);
+
+    flag_label.setFixedSize(32, 16);
+    icon_label.setFixedSize(16, 16);
+    name_label.setFixedSize(120, 16);
+
+    widget_layout.addWidget(flag_label);
+    widget_layout.addWidget(icon_label);
+    widget_layout.addWidget(name_label);
+    widget_layout.addWidget(text_label);
+
+    flag_label.setText(this.parse_flag(note));
+    name_label.setText(note.user.acct);
+    text_label.setText(note.text.replace(/(\r\n|\n|\r)/gm," "));
+
+    if(note.user.avater){
+      var s = icon_label.size();
+      var w = s.width();
+      var h = s.height();
+      var icon = note.user.avater.scaled(w, h);
+      icon_label.setPixmap(icon);
+    }else{
+      icon_label.setText("  ");
+    }
+
+    var result = {
+      widget: widget,
+      widget_layout: widget_layout,
+      flag_label: flag_label,
+      icon_label: icon_label,
+      name_label: name_label,
+      text_label: text_label
+    }
+
+    return result;
+  }
+
+  parse_flag(note){
+    var result = '';
+
+    switch(note.visibility){
+      case 'public':
+        break;
+      case 'home':
+        result = result + '⌂';
+        break;
+      case 'followers':
+        result = result + '🔒';
+        break;
+      case 'specified':
+        result = result + '✉';
+        break;
+    }
+
+    return result;
+  }
 }
+
 
 module.exports = Timeline;
