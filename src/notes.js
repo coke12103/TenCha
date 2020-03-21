@@ -12,7 +12,6 @@ class Note{
       this.replyId = json.replyId;
       this.renoteId = json.renoteId;
       // this.reply = if あとで
-      this.renote = json.renote // 判定用ダミー
       this.viaMobile = json.viaMobile;
       this.isHidden = json.isHidden;
       this.visibility = json.visibility;
@@ -28,6 +27,12 @@ class Note{
       this.poll = json.poll;
       this.geo = json.geo;
 
+      if(json.renote){
+        this.renote = await new Note(json.renote, user_map);
+      }else{
+        this.renote = null;
+      }
+
       var _user = user_map[json.user.id];
       if(_user){
         this.user = _user;
@@ -35,6 +40,8 @@ class Note{
         this.user = await new User(json.user);
         user_map[json.user.id] = this.user;
       }
+
+
 
       return this;
     })();
