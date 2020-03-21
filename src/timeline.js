@@ -65,10 +65,10 @@ class Timeline{
     var note = await new Note(body.body, user_map);
     console.log(body);
 
-    if(note.renote){
-      console.log(note);
-      return;
-    }
+//    if(note.renote){
+//      console.log(note);
+//      return;
+//    }
 
     switch(data.body.id){
       case 'notification':
@@ -102,6 +102,7 @@ class Timeline{
     widget.setInlineStyle(`
       height: 16px;
       justify-content: flex-start;
+      margin-top: 1px;
       flex-direction: row;
     `);
     flag_label.setInlineStyle(`
@@ -131,7 +132,14 @@ class Timeline{
 
     flag_label.setText(this.parse_flag(note));
     name_label.setText(note.user.acct);
-    text_label.setText(note.text.replace(/(\r\n|\n|\r)/gm," "));
+    if(note.renote){
+      var text = "";
+      if(note.text) text = note.text + ' ';
+      text_label.setText(text + 'RN @' + note.renote.user.acct + ' ' + note.renote.text.replace(/(\r\n|\n|\r)/gm," "));
+    }else{
+      text_label.setText(note.text.replace(/(\r\n|\n|\r)/gm," "));
+    }
+
 
     if(note.user.avater){
       var s = icon_label.size();
@@ -157,6 +165,14 @@ class Timeline{
 
   parse_flag(note){
     var result = '';
+
+    if(note.renote){
+      result = result + '♻';
+    }else if(note.files[0]){
+      result = result + '🖼';
+    }else{
+      result = result + '　';
+    }
 
     switch(note.visibility){
       case 'public':
