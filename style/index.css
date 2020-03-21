@@ -38,5 +38,6 @@ Label{
   flex-direction: column-reverse;
   align-items: flex-start;
   justify-content: flex-end;
+  background-color: #fff;
 }
 
