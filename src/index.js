@@ -45,6 +45,7 @@ const postTextInput = new QPlainTextEdit();
 postTextInput.setObjectName('postTextInput');
 postTextInput.setReadOnly(false);
 postTextInput.setWordWrapMode(3);
+postTextInput.setPlaceholderText('言いたいことは？');
 postAreaLayout.addWidget(postTextInput);
 
 const postButton = new QPushButton();
