@@ -9,8 +9,6 @@ const {
   QWidget,
   QLineEdit,
   QApplication,
-  QTreeWidgetItem,
-  QTreeWidget,
   QKeyEvent,
   KeyboardModifier,
   Key,
