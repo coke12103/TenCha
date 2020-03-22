@@ -3,30 +3,20 @@ const Note = require('./notes.js');
 
 const {
   QLabel,
-  QTreeWidgetItem,
-  QTreeWidget,
-  QScrollArea,
+  QListWidget,
+  QListWidgetItem,
+  QSize,
   QWidget,
-  FlexLayout
+  FlexLayout,
+  QFont
 } = require('@nodegui/nodegui');
 
 class Timeline{
   constructor(){
-    const tree = new QScrollArea();
-    //tree.setColumnCount(4);
-    //tree.setHeaderLabels(['種類', 'アイコン', 'ID', 'のーと']);
+    const tree = new QListWidget();
     tree.setObjectName('timeline');
-    const widget = new QWidget();
-    const widget_layout = new FlexLayout();
-    widget.setObjectName('timeline_widget');
-    widget.setLayout(widget_layout);
-
-    tree.setWidgetResizable(true);
-    tree.setWidget(widget);
 
     this.tree = tree;
-    this.widget = widget;
-    this.layout = widget_layout;
     this.tl = new Map();
     this.tl.set('notifications', []);
     this.tl.set('home', []);
@@ -44,7 +34,8 @@ class Timeline{
     note.item = this.create_timeline_note(note);
     tl.push(note);
 
-    this.layout.addWidget(note.item.widget);
+    this.tree.insertItem(0,note.item.list_item);
+    this.tree.setItemWidget(note.item.list_item, note.item.widget);
   }
 
   async onMess(data){
@@ -90,6 +81,7 @@ class Timeline{
   }
 
   create_timeline_note(note){
+    const list_item = new QListWidgetItem();
     const widget = new QWidget();
     const widget_layout = new FlexLayout();
     widget.setLayout(widget_layout);
@@ -99,10 +91,11 @@ class Timeline{
     const name_label = new QLabel();
     const text_label = new QLabel();
 
+    const item_height = 14;
+
     widget.setInlineStyle(`
-      height: 16px;
+      height: ${item_height}px;
       justify-content: flex-start;
-      margin-top: 1px;
       flex-direction: row;
     `);
     flag_label.setInlineStyle(`
@@ -112,7 +105,8 @@ class Timeline{
     `);
     icon_label.setInlineStyle(`
       flex-grow: 1;
-      width: 16px;
+      width: ${item_height - 1}px;
+      background-color: ${note.avatarColor};
     `);
     name_label.setInlineStyle(`
       flex-grow: 1;
@@ -121,9 +115,15 @@ class Timeline{
     `);
     text_label.setInlineStyle(`flex-grow: 3;`);
 
-    flag_label.setFixedSize(32, 16);
-    icon_label.setFixedSize(16, 16);
-    name_label.setFixedSize(120, 16);
+    list_item.setSizeHint(new QSize(1200, 15));
+    flag_label.setFixedSize(32, item_height);
+    icon_label.setFixedSize(item_height -1, item_height -1);
+    name_label.setFixedSize(120, item_height);
+
+    var f = new QFont('sans', 9);
+    text_label.setFont(f);
+    name_label.setFont(f);
+    flag_label.setText(f);
 
     widget_layout.addWidget(flag_label);
     widget_layout.addWidget(icon_label);
@@ -140,7 +140,6 @@ class Timeline{
       text_label.setText(note.text.replace(/(\r\n|\n|\r)/gm," "));
     }
 
-
     if(note.user.avater){
       var s = icon_label.size();
       var w = s.width();
@@ -152,6 +151,7 @@ class Timeline{
     }
 
     var result = {
+      list_item: list_item,
       widget: widget,
       widget_layout: widget_layout,
       flag_label: flag_label,
