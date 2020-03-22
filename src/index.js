@@ -13,7 +13,8 @@ const {
   QTreeWidget,
   QKeyEvent,
   KeyboardModifier,
-  Key
+  Key,
+  QFont
 } = require('@nodegui/nodegui');
 
 const file = require('./file.js');
@@ -21,6 +22,7 @@ const style = require('./style.js');
 const _timeline = require('./timeline.js');
 const Client = require('./client.js');
 const client = new Client();
+const default_font = new QFont('sans', 9);
 
 const win = new QMainWindow();
 win.setWindowTitle('TenCha');
@@ -38,6 +40,7 @@ postArea.setLayout(postAreaLayout);
 
 const statusLabel = new QLabel();
 statusLabel.setWordWrap(true);
+statusLabel.setFont(default_font);
 statusLabel.setText('ログインチェック中...');
 statusLabel.setObjectName('statusLabel');
 
@@ -45,7 +48,9 @@ const postTextInput = new QPlainTextEdit();
 postTextInput.setObjectName('postTextInput');
 postTextInput.setReadOnly(false);
 postTextInput.setWordWrapMode(3);
+postTextInput.setFont(default_font);
 postTextInput.setPlaceholderText('言いたいことは？');
+
 postAreaLayout.addWidget(postTextInput);
 
 const postButton = new QPushButton();
