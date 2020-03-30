@@ -15,8 +15,10 @@ class Timeline{
   constructor(){
     const tree = new QListWidget();
     tree.setObjectName('timeline');
+    tree.setFlexNodeSizeControlled(false);
 
     this.tree = tree;
+    this.post_view;
     this.tl = new Map();
     this.tl.set('notifications', []);
     this.tl.set('home', []);
@@ -48,13 +50,13 @@ class Timeline{
     var body = data.body;
 
     if(body.type != 'note'){
-      console.log(data);
+//      console.log(data);
       return;
     }
 
     var user_map = this.tl.get('user_map');
     var note = await new Note(body.body, user_map);
-    console.log(body);
+//    console.log(body);
 
 //    if(note.renote){
 //      console.log(note);
@@ -66,6 +68,7 @@ class Timeline{
         break;
       case 'home':
         this.add_item(note, this.tl.get('home'));
+        this.post_view.set_note(note);
         break;
       case 'local':
         break;
@@ -85,11 +88,14 @@ class Timeline{
     const widget = new QWidget();
     const widget_layout = new FlexLayout();
     widget.setLayout(widget_layout);
+    widget.setFlexNodeSizeControlled(false);
 
     const flag_label = new QLabel();
     const icon_label = new QLabel();
     const name_label = new QLabel();
     const text_label = new QLabel();
+    name_label.setFlexNodeSizeControlled(false);
+    text_label.setFlexNodeSizeControlled(false);
 
     const item_height = 14;
 
@@ -106,13 +112,13 @@ class Timeline{
     icon_label.setInlineStyle(`
       flex-grow: 1;
       width: ${item_height - 1}px;
-      background-color: ${note.avatarColor};
     `);
     name_label.setInlineStyle(`
       flex-grow: 1;
       margin-right: 5px;
       width: 120px;
     `);
+
     text_label.setInlineStyle(`flex-grow: 3;`);
 
     list_item.setSizeHint(new QSize(1200, 15));
@@ -132,13 +138,43 @@ class Timeline{
 
     flag_label.setText(this.parse_flag(note));
     name_label.setText(note.user.acct);
+
+    var note_color = '#000';
+
     if(note.renote){
       var text = "";
-      if(note.text) text = note.text + ' ';
-      text_label.setText(text + 'RN @' + note.renote.user.acct + ' ' + note.renote.text.replace(/(\r\n|\n|\r)/gm," "));
+      var r_text = "RN @" + note.renote.user.acct + ' ';
+      if(note.cw){
+        text = note.cw + ' ';
+        note_color = '#555753';
+      }else if(note.text){
+        text = note.text + ' ';
+      }
+
+      if(note.renote.cw){
+        r_text = r_text + note.renote.cw;
+        note_color = '#555753';
+      }else{
+        if(!note.renote.text) note.renote.text = '';
+        r_text = r_text + note.renote.text;
+      }
+
+      text = text + r_text;
+      text_label.setText(text.replace(/(\r\n|\n|\r)/gm," "));
     }else{
-      text_label.setText(note.text.replace(/(\r\n|\n|\r)/gm," "));
+      if(note.cw){
+        text_label.setText(note.cw.replace(/(\r\n|\n|\r)/gm," "));
+        note_color = '#555753';
+      }else{
+        if(!note.text) note.text = '';
+        text_label.setText(note.text.replace(/(\r\n|\n|\r)/gm," "));
+      }
     }
+
+    text_label.setInlineStyle(`
+      flex-grow: 3;
+      color: ${note_color}
+    `);
 
     if(note.user.avater){
       var s = icon_label.size();
@@ -189,6 +225,10 @@ class Timeline{
     }
 
     return result;
+  }
+
+  set_post_view(view){
+    this.post_view = view;
   }
 }
 
