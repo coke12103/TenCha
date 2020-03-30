@@ -4,7 +4,7 @@ class Note{
   constructor(json, user_map){
     return (async () => {
       this.id = json.id;
-      this.createdAt = json.createdAt;
+      this.createdAt = Date.parse(json.createdAt);
       this.app = json.app;
       this.text = json.text;
       this.cw = json.cw;
