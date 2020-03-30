@@ -1,5 +1,6 @@
 const request = require("request-promise");
 const { QPixmap } = require('@nodegui/nodegui');
+const no_image_image = require('../assets/no_image.png');
 
 class User{
   constructor(json){
@@ -15,6 +16,7 @@ class User{
         this.acct = this.username;
       }
       this.avatarUrl = json.avatarUrl;
+      // これ使うタイミングあるの？
       this.avatarColor = json.avatarColor;
       this.isCat = json.isCat;
       this.isAdmin = json.isAdmin;
@@ -71,20 +73,31 @@ class User{
           method: 'GET',
           resolveWithFullResponse: true
         };
+
+        var pix = new QPixmap();
+
         request(opt).then((res) => {
-          var pix = new QPixmap();
           var ext = res.headers['content-type'].match(/\/([a-z]+)$/)[1].toUpperCase();
 
           try{
             pix.loadFromData(res.body, ext);
             console.log('set done');
           }catch(err){
-            console.log(err);
-            reject(1);
+            try{
+              pix.load(no_image_image.default);
+            }catch(err){
+              throw err;
+            }
           }
           resolve(pix);
       }).catch((err) => {
-          console.log(err);
+          try{
+            pix.load(no_image_image.default);
+            resolve(pix);
+          }catch(err){
+            console.log(err);
+            reject(1);
+          }
           reject(1);
       })
     })
