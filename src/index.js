@@ -18,6 +18,7 @@ const {
 const file = require('./file.js');
 const style = require('./style.js');
 const _timeline = require('./timeline.js');
+const _post_view_area = require('./postview.js');
 const Client = require('./client.js');
 const client = new Client();
 const default_font = new QFont('sans', 9);
@@ -56,8 +57,6 @@ postButton.setText('Post!');
 postButton.setObjectName('postButton');
 postAreaLayout.addWidget(postButton);
 
-rootViewLayout.addWidget(postArea);
-
 postButton.addEventListener('clicked', () =>{
   var body = postTextInput.toPlainText();
 
@@ -89,11 +88,13 @@ postTextInput.addEventListener('KeyPress', (key) => {
     postButton.click();
 });
 
-var timeline = new _timeline()
+var timeline = new _timeline();
+var postViewArea = new _post_view_area();
+timeline.set_post_view(postViewArea);
+
+rootViewLayout.addWidget(postViewArea.get_widget());
 rootViewLayout.addWidget(timeline.get_widget());
-
-// timeline.add_item({ c0: "This", c1: "is", c2: 'a', c3:'test' });
-
+rootViewLayout.addWidget(postArea);
 rootViewLayout.addWidget(statusLabel);
 
 style.add_style(rootView, './style/index.css');
