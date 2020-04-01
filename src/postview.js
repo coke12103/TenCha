@@ -167,7 +167,7 @@ class PostView{
     this.area.resize(_w +10, _h +10);
   }
   wrap_text(text){
-    var base_str_size = 6.4;
+    var base_str_size = 6.5;
     var sp_text = text.split('\n');
 
     var _a_s = this.area.size();
