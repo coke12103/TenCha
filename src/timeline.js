@@ -8,7 +8,8 @@ const {
   QSize,
   QWidget,
   FlexLayout,
-  QFont
+  QFont,
+  SelectionMode
 } = require('@nodegui/nodegui');
 
 class Timeline{
@@ -16,6 +17,8 @@ class Timeline{
     const tree = new QListWidget();
     tree.setObjectName('timeline');
     tree.setFlexNodeSizeControlled(false);
+//    nodegui v0.18.2 にはsetSelectionModeか何かがない
+//    tree.setSelectionMode(SelectionMode.SingleSelection);
 
     this.tree = tree;
     this.post_view;
@@ -68,7 +71,8 @@ class Timeline{
         break;
       case 'home':
         this.add_item(note, this.tl.get('home'));
-        this.post_view.set_note(note);
+//        this.post_view.set_note(note);
+        this.fix_items(this.tl.get('home'));
         break;
       case 'local':
         break;
@@ -77,6 +81,44 @@ class Timeline{
       case 'global':
         break;
     }
+  }
+
+  fix_items(tl){
+    var limit = 200;
+    if(tl.length < limit) return;
+
+    while(tl.length > limit){
+      for(var i = 0; i < 10; i++){
+        if(tl[i].item.list_item.isSelected()) return;
+      }
+      this.remove_item(tl[0].item);
+      tl.shift();
+    }
+  }
+
+  remove_item(item){
+    this.tree.takeItem(this.tree.row(item.list_item));
+
+    item.widget_layout.removeWidget(item.text_label);
+    item.widget_layout.removeWidget(item.name_label);
+    item.widget_layout.removeWidget(item.icon_label);
+    item.widget_layout.removeWidget(item.flag_label);
+    item.text_label.close();
+    item.name_label.close();
+    item.icon_label.close();
+    item.flag_label.close();
+
+    item.widget.close();
+
+    item.list_item = undefined;
+    item.widget = undefined;
+    item.widget_layout = undefined;
+    item.flag_label = undefined;
+    item.icon_label = undefined;
+    item.name_label = undefined;
+    item.text_label = undefined;
+
+    return;
   }
 
   start_streaming(statusLabel, client){
@@ -229,6 +271,17 @@ class Timeline{
 
   set_post_view(view){
     this.post_view = view;
+    this.tree.addEventListener('itemSelectionChanged', () => {
+        var tl = this.tl.get('home');
+        var items = this.tree.selectedItems();
+        try{
+          var index = this.tree.row(items[0]);
+        }catch{
+        }
+
+        index+=1
+        this.post_view.set_note(tl[tl.length - index]);
+    })
   }
 }
 
