@@ -15,7 +15,7 @@
     "dateformat": "^3.0.3",
     "jp-wrap": "^0.2.2",
     "request-promise": "^4.2.5",
-    "websocket": "^1.0.31"
+    "ws": "^7.2.3"
   },
   "devDependencies": {
     "@nodegui/packer": "^1.4.0",
