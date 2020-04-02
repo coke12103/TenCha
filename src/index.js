@@ -18,6 +18,7 @@ const {
 const file = require('./file.js');
 const style = require('./style.js');
 const _timeline = require('./timeline.js');
+const _checkboxs = require('./checkboxs.js');
 const _post_view_area = require('./postview.js');
 const Client = require('./client.js');
 const client = new Client();
@@ -51,6 +52,11 @@ postTextInput.setFont(default_font);
 postTextInput.setPlaceholderText('言いたいことは？');
 
 postAreaLayout.addWidget(postTextInput);
+
+const timelineControlsArea = new QWidget();
+const timelineControlsAreaLayout = new FlexLayout();
+timelineControlsArea.setObjectName('timelineControlsArea');
+timelineControlsArea.setLayout(timelineControlsAreaLayout);
 
 const postButton = new QPushButton();
 postButton.setText('Post!');
@@ -90,10 +96,17 @@ postTextInput.addEventListener('KeyPress', (key) => {
 
 var timeline = new _timeline();
 var postViewArea = new _post_view_area();
+var checkboxs = new _checkboxs();
+var timeline_auto_select = checkboxs.get('timeline_auto_select');
+
+timeline.set_auto_select_check(timeline_auto_select);
 timeline.set_post_view(postViewArea);
+
+timelineControlsAreaLayout.addWidget(timeline_auto_select);
 
 rootViewLayout.addWidget(postViewArea.get_widget());
 rootViewLayout.addWidget(timeline.get_widget());
+rootViewLayout.addWidget(timelineControlsArea);
 rootViewLayout.addWidget(postArea);
 rootViewLayout.addWidget(statusLabel);
 

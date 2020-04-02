@@ -71,8 +71,12 @@ class Timeline{
         break;
       case 'home':
         this.add_item(note, this.tl.get('home'));
-//        this.post_view.set_note(note);
         this.fix_items(this.tl.get('home'));
+
+        if(this.auto_select_check.isChecked()){
+          var tl = this.tl.get('home');
+          tl[tl.length -1].item.list_item.setSelected(true);
+        }
         break;
       case 'local':
         break;
@@ -269,6 +273,10 @@ class Timeline{
     return result;
   }
 
+  set_auto_select_check(check){
+    this.auto_select_check = check;
+  }
+
   set_post_view(view){
     this.post_view = view;
     this.tree.addEventListener('itemSelectionChanged', () => {
@@ -283,6 +291,8 @@ class Timeline{
         this.post_view.set_note(tl[tl.length - index]);
     })
   }
+
+
 }
 
 
