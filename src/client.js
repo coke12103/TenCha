@@ -1,7 +1,6 @@
 const login = require('./login.js');
 const request = require("request-promise");
-const WebSocketClient = require("websocket").client;
-const wss_client = new WebSocketClient();
+const WebSocketClient = require("ws");
 
 class Client{
   constructor(){
@@ -59,31 +58,20 @@ class Client{
       return;
     }
 
-    wss_client.on('connectFailed', (err) => {
-        console.log('connect failed: ' + err.toString());
-    });
+    var url = 'wss://' + this.host + '/streaming?i=' + this.api_token;
 
-    wss_client.on('connect', (connection) => {
+    if(this.ws_connected) return;
+
+    console.log('start connect');
+    const connection = new WebSocketClient(url);
+
+    connection.on('open', () => {
       console.log('connected');
+
       statusLabel.setText('サーバーに接続しました');
 
       this.ws = connection;
-
-      connection.on('error', (err) => {
-          console.log('error!: ' + err.toString());
-          statusLabel.setText('WebSocketエラー');
-      });
-
-      connection.on('close', () => {
-          statusLabel.setText('サーバーから切断されました。3秒後に再接続を試みます。');
-          setTimeout(() => {
-            this._connect(statusLabel, count + 1);
-          }, 3000);
-      });
-
-      connection.on('message', (mes) => {
-          timeline.onMess(mes.utf8Data);
-      });
+      this.ws_connected = true;
 
       setTimeout(() => {
         this._create_channel_connect(connection, "notification", "main");
@@ -92,9 +80,26 @@ class Client{
         this._create_channel_connect(connection, "social", "hybridTimeline");
         this._create_channel_connect(connection, "global", "globalTimeline");
       }, 300);
-    })
+    });
 
-    wss_client.connect('wss://' + this.host + '/streaming?i=' + this.api_token);
+    connection.on('error', (err) => {
+      console.log('error!: ' + err);
+      statusLabel.setText('WebSocketエラー');
+    });
+
+    connection.on('close', () => {
+        console.log('closed!');
+        statusLabel.setText('サーバーから切断されました。3秒後に再接続を試みます。');
+        setTimeout(() => {
+            this.ws_connected = false;
+            this.ws = null;
+            this._connect(statusLabel, count + 1, timeline);
+        }, 3000);
+    });
+
+    connection.on('message', (data) => {
+        timeline.onMess(data);
+    });
   }
 
   _create_channel_connect(con, id, channel){
@@ -106,7 +111,7 @@ class Client{
       }
     }
 
-    con.sendUTF(JSON.stringify(data));
+    con.send(JSON.stringify(data));
   }
 }
 
