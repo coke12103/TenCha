@@ -1,6 +1,6 @@
 const login = require('./login.js');
 const request = require("request-promise");
-const WebSocketClient = require("ws");
+const WebSocket = require("ws");
 
 class Client{
   constructor(){
@@ -63,7 +63,7 @@ class Client{
     if(this.ws_connected) return;
 
     console.log('start connect');
-    const connection = new WebSocketClient(url);
+    const connection = new WebSocket(url);
 
     connection.on('open', () => {
       console.log('connected');
@@ -72,6 +72,7 @@ class Client{
 
       this.ws = connection;
       this.ws_connected = true;
+      this._ws_heartbeat();
 
       setTimeout(() => {
         this._create_channel_connect(connection, "notification", "main");
@@ -82,14 +83,18 @@ class Client{
       }, 300);
     });
 
+    connection.on('ping', this._ws_heartbeat);
+    connection.on('pong', this._ws_heartbeat);
+
     connection.on('error', (err) => {
       console.log('error!: ' + err);
       statusLabel.setText('WebSocketエラー');
     });
 
-    connection.on('close', () => {
-        console.log('closed!');
+    connection.on('close', (cl) => {
+        console.log('closed!', cl);
         statusLabel.setText('サーバーから切断されました。3秒後に再接続を試みます。');
+        clearTimeout(this.pingTimeout)
         setTimeout(() => {
             this.ws_connected = false;
             this.ws = null;
@@ -98,6 +103,7 @@ class Client{
     });
 
     connection.on('message', (data) => {
+        this._ws_heartbeat();
         timeline.onMess(data);
     });
   }
@@ -112,6 +118,15 @@ class Client{
     }
 
     con.send(JSON.stringify(data));
+  }
+
+  _ws_heartbeat(){
+    if(!this.ws_connected) return;
+    if(this.pingTimeout) clearTimeout(this.pingTimeout);
+    console.log('heartbeat!');
+    this.pingTimeout = setTimeout(() => {
+        this.ws.terminate();
+    }, 30000 + 1000);
   }
 }
 
