@@ -177,7 +177,7 @@ class PostView{
     var right_size = _a_s.width() - (_l_s.width() + _p_s);
     var max_str_len = parseInt(right_size / base_str_size);
 
-    var wrap = new jp_wrap(max_str_len, { breakAll: true, fullWidthSpace: false, half: true });
+    var wrap = new jp_wrap(max_str_len, { breakAll: true, fullWidthSpace: false });
 
     var result = '';
 
