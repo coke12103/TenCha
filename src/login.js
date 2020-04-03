@@ -84,22 +84,36 @@ login.new = function(){
     winLayout.addWidget(rootView);
     win.show();
 
+    var isWork = false;
+
     postButton.addEventListener('clicked', async () => {
+      if(isWork) return;
+      isWork = true;
       var host = hostInput.text();
       var via = viaInput.text();
 
       if(!host){
         statusLabel.setText('ホストを入力してね');
+        isWork = false;
         return;
       }
       if(!via) via = 'TenCha';
 
+      statusLabel.setText('アプリ作成中...');
       var app = await this.app_create(host, via, statusLabel);
-      if(!app) return;
+      if(!app){
+        isWork = false;
+        return;
+      }
 
+      statusLabel.setText('セッション作成中...');
       var session = await this.session_create(host, app.secret, statusLabel);
-      if(!session) return;
+      if(!session){
+        isWork = false;
+        return;
+      }
 
+      statusLabel.setText('');
       loginLabel.setText('アプリケーションの作成に成功しました!\nURLにアクセスしてアクセス許可をして「やっていく」ボタンを押してください!');
       loginAreaLayout.removeWidget(hostInput);
       loginAreaLayout.removeWidget(viaInput);
@@ -121,9 +135,18 @@ login.new = function(){
 
       rootViewLayout.addWidget(_postButton);
 
+      isWork = false;
+
       _postButton.addEventListener('clicked', async () => {
+          console.log(isWork)
+          if(isWork) return;
+          isWork = true;
+          statusLabel.setText('ユーザーキー取得中...');
           var userkey = await this.get_userkey(host, app.secret, session.token, statusLabel);
-          if(!userkey) return;
+          if(!userkey){
+            return;
+            isWork = false;
+          }
 
           var data = {
             host: host,
@@ -132,6 +155,7 @@ login.new = function(){
           };
 
           try{
+            statusLabel.setText('書き込み中...');
             await file.json_write('./config.json', data);
           }catch(err){
             console.log(err);
@@ -157,9 +181,10 @@ login.app_create = function(host, via, statusLabel){
 
     try{
       app = await call_api(host, 'app/create', data);
+      console.log(app);
     }catch(err){
+      console.log(err);
       statusLabel.setText('アプリケーションの作成に失敗しました!: ' + err.error.message);
-      console.log(err.error);
       app = false;
     }
 
@@ -176,9 +201,10 @@ login.session_create = function(host, secret, statusLabel){
 
     try{
       res = await call_api(host, 'auth/session/generate', data);
+      console.log(res);
     }catch(err){
+      console.log(err);
       statusLabel.setText('セッションの生成に失敗しました!: ' + err.error.message);
-      console.log(err.error);
       res = false;
     }
 
@@ -196,9 +222,11 @@ login.get_userkey = function(host, secret, session_token, statusLabel){
 
     try{
       res = await call_api(host, 'auth/session/userkey', data);
+      console.log(res);
     }catch(err){
+      console.log(err);
       statusLabel.setText('トークンの取得に失敗しました!: ' + err.error.message);
-      console.log(err.error);
+
       res = false;
     }
 
