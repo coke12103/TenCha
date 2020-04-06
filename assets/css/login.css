@@ -1,0 +1,16 @@
+#rootView{
+  padding: 5px;
+}
+
+#loginArea{
+  height: 190px;
+}
+
+#postButton, #_postButton{
+  width: 120px;
+}
+
+Label{
+  max-width: 100%;
+}
+
