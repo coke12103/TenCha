@@ -14,12 +14,13 @@
     "@nodegui/nodegui": "^0.18.2",
     "dateformat": "^3.0.3",
     "jp-wrap": "^0.2.2",
+    "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "ws": "^7.2.3"
   },
   "devDependencies": {
     "@nodegui/packer": "^1.4.0",
-    "@types/node": "^13.9.8",
+    "@types/node": "^13.11.0",
     "clean-webpack-plugin": "^3.0.0",
     "file-loader": "^6.0.0",
     "native-addon-loader": "^2.0.1",
