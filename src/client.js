@@ -1,4 +1,4 @@
-const login = require('./login.js');
+const Login = require('./login/index.js');
 const request = require("request-promise");
 const WebSocket = require("ws");
 
@@ -7,25 +7,13 @@ class Client{
     this.ws;
   }
   async login(){
-    if(await !login.check()){
-      console.log('create new app');
-      await login.new().then(async () => {
-        await login.check();
-        this.host = login.host;
-        this.token = login.token;
-        this.secret = login.secret;
-        this.api_token = login.api_token;
-      }).catch((err) => {
-        console.log(err);
-        process.exit(1);
-      })
-    }else{
-      console.log('login!');
-      this.host = login.host;
-      this.token = login.token;
-      this.secret = login.secret;
-      this.api_token = login.api_token;
-    }
+    var login = new Login();
+    await login.start();
+
+    this.host = login.host;
+    this.token = login.token;
+    this.secret = login.secret;
+    this.api_token = login.api_token;
   }
   async call(path, data){
     return new Promise((resolve, reject) => {
@@ -52,12 +40,6 @@ class Client{
   }
 
   _connect(statusLabel, count, timeline){
-    if(count > 30){
-      statusLabel.setText('合計再接続回数が30回を越えたため諦めました。');
-      this.ws = null;
-      return;
-    }
-
     var url = 'wss://' + this.host + '/streaming?i=' + this.api_token;
 
     if(this.ws_connected) return;
