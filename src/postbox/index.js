@@ -11,6 +11,8 @@ const {
   QCheckBox
 } = require('@nodegui/nodegui');
 
+const Assets = require('../assets.js');
+
 class PostBox{
   constructor(){
     const font = new QFont('sans', 9);
@@ -30,7 +32,6 @@ class PostBox{
     postTextInput.setReadOnly(false);
     postTextInput.setWordWrapMode(3);
     postTextInput.setFont(font);
-    postTextInput.setPlaceholderText('言いたいことは？');
 
     const postButton = new QPushButton();
     postButton.setText('Post!');
@@ -58,6 +59,8 @@ class PostBox{
     AreaLayout.addWidget(postTextInput);
     AreaLayout.addWidget(SubArea);
 
+    this.assets = new Assets("Postbox");
+
     this.font = font;
     this.area = Area;
     this.layout = AreaLayout;
@@ -65,6 +68,8 @@ class PostBox{
     this.post_button = postButton;
     this.visibility_select = visibilitySelect;
     this.is_local_check = isLocalCheck;
+
+    this.update_placeholder();
   }
 
   get_data(){
@@ -101,6 +106,7 @@ class PostBox{
   add_event_listener(callback){
     this.post_button.addEventListener('clicked', () => {
         callback();
+        this.update_placeholder();
     });
     this.post_text_input.addEventListener('KeyPress', (key) => {
         var _key = new QKeyEvent(key);
@@ -117,6 +123,12 @@ class PostBox{
     this.post_text_input.setPlainText('');
     this.post_text_input.update();
   };
+
+  update_placeholder(){
+    var _placeholder = this.assets.placeholder;
+    var placeholder = _placeholder[Math.floor(Math.random() * _placeholder.length)];
+    this.post_text_input.setPlaceholderText(placeholder);
+  }
 }
 
 module.exports = PostBox;

@@ -6,10 +6,13 @@ class Asset{
         break;
       case "MainWindow":
         this.css = require('!!raw-loader!../assets/css/index.css').default;
-        break
-        case "LoginWindow":
+        break;
+      case "LoginWindow":
         this.css = require('!!raw-loader!../assets/css/login.css').default;
-        break
+        break;
+      case "Postbox":
+        this.placeholder = require('../assets/placeholder.json').placeholder;
+        break;
     }
 
     return;
