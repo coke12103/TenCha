@@ -78,6 +78,8 @@ rootViewLayout.addWidget(statusLabel);
 rootView.setStyleSheet(assets.css);
 
 win.setCentralWidget(rootView);
+
+// 始めにウインドウを出しておくと何故かプロセスが死なない
 win.show();
 
 client.login().then(() => {
