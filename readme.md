@@ -28,7 +28,7 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
 3. `npx nodegui-packer --pack ./dist`
 
 ## 初期化
-ログインすると生成される`config.json`を削除してください
+ログインすると生成される`config.json`とタブを維持する`tabs.json`を削除してください
 
 ## 連絡先
 - Twitter: [coke12103](https://twitter.com/@coke12103)
