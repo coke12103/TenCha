@@ -10,7 +10,7 @@ const {
 
 const file = require('./file.js');
 const Assets = require('./assets.js');
-const _timeline = require('./timeline.js');
+const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
 const _post_view_area = require('./postview.js');
 const _post_box = require('./postbox/index.js');
@@ -82,7 +82,8 @@ win.setCentralWidget(rootView);
 // 始めにウインドウを出しておくと何故かプロセスが死なない
 win.show();
 
-client.login().then(() => {
+client.login().then(async () => {
+    await timeline.init();
     timeline.start_streaming(statusLabel, client);
     statusLabel.setText('ログイン成功!');
 });
