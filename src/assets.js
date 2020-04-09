@@ -13,6 +13,9 @@ class Asset{
       case "Postbox":
         this.placeholder = require('../assets/placeholder.json').placeholder;
         break;
+      case "TimelineWidget":
+        this.css = require('!!raw-loader!../assets/css/timeline.css').default;
+        break;
     }
 
     return;
