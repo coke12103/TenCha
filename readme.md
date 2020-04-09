@@ -13,7 +13,7 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
 これらはソースコードを動かす場合のみに必要でバイナリ版では不要です。
 ### Node.js
 `v12.13.0`で開発しているのでそれ以降推奨。
-### npm
+### Npm
 ### CMake
 3.1以上
 ### Make, GCC v7
@@ -31,5 +31,5 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
 ログインすると生成される`config.json`を削除してください
 
 ## 連絡先
-- Twitter: coke12103
+- Twitter: [coke12103](https://twitter.com/@coke12103)
 - Misskey: [c0_ke@misskey.dev](https://misskey.dev/@c0_ke)
