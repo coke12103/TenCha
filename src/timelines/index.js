@@ -68,16 +68,13 @@ class Timelines{
 
     var body = data.body;
 
-    if(body.type != 'note'){
+    if(!(body.type == 'note') && !(body.type == 'notification')){
       console.log(data);
       return;
     }
 
     switch(body.id){
       case 'notification':
-        console.log(body);
-        break;
-        // 後で入れる処理書く
       case 'home':
       case 'local':
       case 'social':
@@ -91,7 +88,11 @@ class Timelines{
   add_tl_mess(id, body){
     for(var tab of this.tabs){
       if(tab.source == id){
-        tab.timeline.add_note(body, this.users);
+        if(tab.source == 'notification'){
+          tab.timeline.add_notification(body, this.users);
+        }else{
+          tab.timeline.add_note(body, this.users);
+        }
       }
     }
   }
@@ -108,7 +109,6 @@ class Timelines{
         tab.timeline.set_auto_select(tab.is_auto_select);
         this.check.setChecked(tab.is_auto_select);
 
-        // notification は後で考える
         tab.timeline.set_post_view(this.post_view);
         tab.timeline.update_post_view();
       }else{

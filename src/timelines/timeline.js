@@ -2,6 +2,8 @@ const request = require("request-promise");
 
 const Note = require('../notes.js');
 const NoteItem = require('./note_item.js');
+const Notification = require('../notification.js');
+const NotificationItem = require('./notification_item.js');
 const Assets = require("../assets.js");
 
 const {
@@ -34,17 +36,31 @@ class Timeline{
     return this.tree;
   }
 
-  add_item(note){
-    note.item = new NoteItem(note);
-    this.tl.push(note);
+  add_item(item){
+    this.tl.push(item);
 
-    this.tree.insertItem(0,note.item.list_item);
-    this.tree.setItemWidget(note.item.list_item, note.item.widget);
+    this.tree.insertItem(0,item.item.list_item);
+    this.tree.setItemWidget(item.item.list_item, item.item.widget);
   }
 
   async add_note(body, user_map){
     var note = await new Note(body.body, user_map);
+    note.item = new NoteItem(note);
     this.add_item(note);
+    this.fix_items();
+
+    if(this.auto_select){
+      this.tl[this.tl.length -1].item.list_item.setSelected(true);
+    }
+  }
+
+  async add_notification(body, user_map){
+    if(!body.body) return;
+    if(body.body.type == 'readAllUnreadMentions') return;
+    if(body.body.type == 'readAllUnreadSpecifiedNotes') return;
+    var notification = await new Notification(body.body, user_map);
+    notification.item = new NotificationItem(notification);
+    this.add_item(notification);
     this.fix_items();
 
     if(this.auto_select){
@@ -91,7 +107,14 @@ class Timeline{
     }
 
     index+=1
-    this.post_view.set_note(this.tl[this.tl.length - index]);
+
+    var item = this.tl[this.tl.length - index];
+
+    if(item.el_type == 'Note'){
+      this.post_view.set_note(item);
+    }else if(item.el_type == 'Notification'){
+      this.post_view.set_notification(item);
+    }
   }
 }
 

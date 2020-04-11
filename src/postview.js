@@ -166,6 +166,108 @@ class PostView{
     this.area.resize(_w -10, _h -10);
     this.area.resize(_w +10, _h +10);
   }
+
+  set_notification(notification){
+    if(notification.user.avater){
+      var s = this.icon_label.size();
+      var w = s.width();
+      var h = s.height();
+      var icon = notification.user.avater.scaled(w, h);
+      this.icon_label.setPixmap(icon);
+    }
+
+    var flag = '';
+    if(notification.user.isLocked) flag = flag + '鍵';
+    if(notification.user.isBot) flag = flag + '機';
+    if(notification.user.isCat) flag = flag + '猫';
+
+    if(!flag) flag = '人';
+
+    this.user_flag_label.setText(flag);
+
+    if(notification.user.name){
+      this.user_name_label.setText(notification.user.name + '/' + notification.user.acct);
+    }else{
+      this.user_name_label.setText(notification.user.acct);
+    }
+
+    this.date_label.setText(dateformat(notification.createdAt, 'yyyy/mm/dd HH:MM:ss'));
+
+    var text = '';
+    if(notification.note && notification.note.renote){
+      var r_text = "RN @" + notification.note.renote.user.acct + ' ';
+      if(notification.note.cw){
+        text = notification.note.cw + '\n------------CW------------\n';
+        text = text + notification.note.text;
+      }else if(notification.note.text){
+        text = notification.note.text + ' ';
+      }
+
+      if(notification.note.renote.cw){
+        r_text = r_text + notification.note.renote.cw;
+        r_text = r_text + '\n------------CW------------\n';
+        r_text = r_text + notification.note.renote.text;
+      }else{
+        r_text = r_text + notification.note.renote.text;
+      }
+
+      text = text + r_text;
+    }else if(notification.note){
+      if(notification.note.cw){
+        text = notification.note.cw + '\n------------CW------------\n';
+        text = text + notification.note.text;
+      }else{
+        text = notification.note.text;
+      }
+    }
+
+    var desc_text;
+
+    switch(notification.type){
+      case 'follow':
+        desc_text = `フォローされています!`;
+        break;
+      case 'mention':
+      case 'reply':
+        desc_text = `言及:\n${text}`;
+        break;
+      case 'renote':
+        var text = '';
+        if(notification.note.renote.cw){
+          text = text + notification.note.renote.cw;
+          text = text + '\n------------CW------------\n';
+          text = text + notification.note.renote.text;
+        }else{
+          text = text + notification.note.renote.text;
+        }
+        desc_text = `Renoteされました!:\n${text}`;
+        break;
+      case 'quote':
+        desc_text = `引用Renoteされました!:\n${text}`;
+        break;
+      case 'reaction':
+        desc_text = `${notification.reaction}でリアクションされました!:\n${text}`;
+        break;
+      case 'pollVote':
+        desc_text = `投票しました!:\n${text}`;
+        break;
+      case 'receiveFollowRequest':
+        desc_text = `フォローリクエストされています!`;
+        break;
+      case 'followRequestAccepted':
+        desc_text = `フォローリクエストが許可されました!`;
+        break;
+    }
+
+    this.body_label.setText(this.wrap_text(desc_text));
+
+    var _s = this.area.size();
+    var _w = _s.width();
+    var _h = _s.height();
+    this.area.resize(_w -10, _h -10);
+    this.area.resize(_w +10, _h +10);
+  }
+
   wrap_text(text){
     var base_str_size = 6.5;
     var sp_text = text.split('\n');

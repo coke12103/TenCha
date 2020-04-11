@@ -3,6 +3,7 @@ const User = require('./users.js');
 class Note{
   constructor(json, user_map){
     return (async () => {
+      this.el_type = 'Note';
       this.id = json.id;
       this.createdAt = Date.parse(json.createdAt);
       this.app = json.app;
@@ -40,8 +41,6 @@ class Note{
         this.user = await new User(json.user);
         user_map[json.user.id] = this.user;
       }
-
-
 
       return this;
     })();
