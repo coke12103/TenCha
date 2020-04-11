@@ -24,7 +24,7 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
 
 ## ビルド方法
 1. `npm i`
-2. `npm build`
+2. `npm run build`
 3. `npx nodegui-packer --init TenCha`
 4. `npx nodegui-packer --pack ./dist`
 
