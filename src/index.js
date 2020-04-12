@@ -10,6 +10,7 @@ const {
 
 const file = require('./file.js');
 const Assets = require('./assets.js');
+const RandomEmoji = require('./tools/random_emoji/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
@@ -45,6 +46,7 @@ var postViewArea = new _post_view_area();
 var checkboxs = new _checkboxs();
 var timeline_auto_select = checkboxs.get('timeline_auto_select');
 var postbox = new _post_box();
+var random_emoji = new RandomEmoji(postbox);
 var assets = new Assets('MainWindow');
 
 postbox.add_event_listener(async () => {
@@ -68,6 +70,8 @@ postbox.add_event_listener(async () => {
 
 timeline.set_auto_select_check(timeline_auto_select);
 timeline.set_post_view(postViewArea);
+
+menu_bar.post_menu.set_random_emoji(random_emoji);
 
 timelineControlsAreaLayout.addWidget(timeline_auto_select);
 

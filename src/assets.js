@@ -16,6 +16,9 @@ class Asset{
       case "TimelineWidget":
         this.css = require('!!raw-loader!../assets/css/timeline.css').default;
         break;
+      case "RandomEmoji":
+        this.emojis = require('../assets/emojis.json').emojis;
+        break;
     }
 
     return;

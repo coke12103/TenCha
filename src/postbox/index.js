@@ -68,6 +68,7 @@ class PostBox{
     this.post_button = postButton;
     this.visibility_select = visibilitySelect;
     this.is_local_check = isLocalCheck;
+    this.filters = [];
 
     this.update_placeholder();
   }
@@ -105,6 +106,9 @@ class PostBox{
   };
   add_event_listener(callback){
     this.post_button.addEventListener('clicked', () => {
+        for(var filter of this.filters){
+          filter(this.post_text_input);
+        }
         callback();
         this.update_placeholder();
     });
@@ -128,6 +132,14 @@ class PostBox{
     var _placeholder = this.assets.placeholder;
     var placeholder = _placeholder[Math.floor(Math.random() * _placeholder.length)];
     this.post_text_input.setPlaceholderText(placeholder);
+  }
+
+  add_post_filter(callback){
+    this.filters.push(callback);
+  }
+
+  filter(callback){
+    callback(this.post_text_input);
   }
 }
 
