@@ -10,6 +10,7 @@ const {
 
 const file = require('./file.js');
 const Assets = require('./assets.js');
+const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
 const _post_view_area = require('./postview.js');
@@ -38,6 +39,7 @@ const timelineControlsAreaLayout = new FlexLayout();
 timelineControlsArea.setObjectName('timelineControlsArea');
 timelineControlsArea.setLayout(timelineControlsAreaLayout);
 
+var menu_bar = new MenuBar();
 var timeline = new _timeline();
 var postViewArea = new _post_view_area();
 var checkboxs = new _checkboxs();
@@ -77,6 +79,7 @@ rootViewLayout.addWidget(statusLabel);
 
 rootView.setStyleSheet(assets.css);
 
+win.setMenuBar(menu_bar.get_widget());
 win.setCentralWidget(rootView);
 
 // 始めにウインドウを出しておくと何故かプロセスが死なない
