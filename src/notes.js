@@ -37,6 +37,7 @@ class Note{
       var _user = user_map[json.user.id];
       if(_user){
         this.user = _user;
+        await this.user.update(json.user);
       }else{
         this.user = await new User(json.user);
         user_map[json.user.id] = this.user;

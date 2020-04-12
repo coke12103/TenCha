@@ -65,6 +65,19 @@ class User{
     })();
   }
 
+  async update(json){
+    if(this.name && (this.name != json.name)) this.name = json.name;
+    if(this.avatarUrl && (this.avatarUrl != json.avatarUrl)){
+      this.avatarUrl = json.avatarUrl;
+      await this.load_avater().then((avater) => {
+          this.avater = avater;
+      }).catch((err) => {
+          console.log('add avater failed')
+          console.log(err);
+      })
+    }
+  }
+
   load_avater(){
     return new Promise((resolve, reject) => {
         var opt = {

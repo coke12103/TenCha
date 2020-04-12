@@ -21,6 +21,7 @@ class Notification{
 
         if(_user){
           this.user = _user;
+          await this.user.update(notify.user);
         }else{
           this.user = await new User(notify.user);
           user_map[notify.user.id] = this.user;
