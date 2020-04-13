@@ -99,22 +99,24 @@ class Timeline{
   update_post_view(){
     if(this.post_view == null) return;
 
-    var items = this.tree.selectedItems();
     try{
-      var index = this.tree.row(items[0]);
+      var item = this.get_selected_item();
     }catch{
       return;
     }
-
-    index+=1
-
-    var item = this.tl[this.tl.length - index];
 
     if(item.el_type == 'Note'){
       this.post_view.set_note(item);
     }else if(item.el_type == 'Notification'){
       this.post_view.set_notification(item);
     }
+  }
+
+  get_selected_item(){
+    var items = this.tree.selectedItems();
+    var index = this.tree.row(items[0]);
+    index+=1
+    return this.tl[this.tl.length - index];
   }
 }
 

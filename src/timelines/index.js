@@ -17,6 +17,7 @@ class Timelines{
     this.tab_widget = tabWidget;
     this.tabs = [];
     this.users = {};
+    this.filters = [];
   }
 
   get_widget(){
@@ -140,6 +141,23 @@ class Timelines{
         });
         mes.exec();
     })
+  }
+
+  add_timeline_filter(callback){
+    this.filters.push(callback);
+  }
+
+  filter(callback){
+    var selected_tab = this.tabs[this.tab_widget.currentIndex()];
+    var selected_timeline = selected_tab.timeline;
+
+    var selected_item = null;
+    try{
+      selected_item = selected_timeline.get_selected_item();
+    }catch{
+    }
+
+    callback(selected_item);
   }
 }
 

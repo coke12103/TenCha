@@ -11,6 +11,7 @@ const {
 const file = require('./file.js');
 const Assets = require('./assets.js');
 const RandomEmoji = require('./tools/random_emoji/index.js');
+const PostAction = require('./post_action.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
@@ -47,6 +48,7 @@ var checkboxs = new _checkboxs();
 var timeline_auto_select = checkboxs.get('timeline_auto_select');
 var postbox = new _post_box();
 var random_emoji = new RandomEmoji(postbox);
+var post_action = new PostAction();
 var assets = new Assets('MainWindow');
 
 postbox.add_event_listener(async () => {
@@ -72,6 +74,7 @@ timeline.set_auto_select_check(timeline_auto_select);
 timeline.set_post_view(postViewArea);
 
 menu_bar.post_menu.set_random_emoji(random_emoji);
+menu_bar.timeline_menu.set_post_action(post_action);
 
 timelineControlsAreaLayout.addWidget(timeline_auto_select);
 
@@ -92,6 +95,7 @@ win.show();
 client.login().then(async () => {
     await timeline.init();
     timeline.start_streaming(statusLabel, client);
+    post_action.init(client, timeline);
     statusLabel.setText('ログイン成功!');
 });
 
