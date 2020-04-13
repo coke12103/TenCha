@@ -128,6 +128,7 @@ class Timelines{
           if(tab.id == selected){
             tab.is_auto_select = check.isChecked();
           }
+          tab.timeline.set_auto_select(tab.is_auto_select);
         }
     })
   }
