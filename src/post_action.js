@@ -9,6 +9,7 @@ class PostAction{
 
   renote(){
     this.timelines.filter((item) => {
+        if(!item) return;
         if(item.el_type == 'Notification') return;
 
         var data = {
