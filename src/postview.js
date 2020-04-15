@@ -68,6 +68,8 @@ class PostView{
     dateLabel.setFixedSize(126, 12);
     dateLabel.setAlignment(AlignmentFlag.AlignTop);
     dateLabel.setFlexNodeSizeControlled(false);
+    dateLabel.setTextInteractionFlags(TextInteractionFlag.LinksAccessibleByMouse);
+    dateLabel.setOpenExternalLinks(true);
     postViewRightTopLayout.addWidget(dateLabel);
 
     const bodyLabel = new QLabel();
@@ -135,7 +137,15 @@ class PostView{
       this.user_name_label.setText(note.user.acct);
     }
 
-    this.date_label.setText(dateformat(note.createdAt, 'yyyy/mm/dd HH:MM:ss'));
+    var _d = dateformat(note.createdAt, 'yyyy/mm/dd HH:MM:ss');
+    var _l;
+    if(note.uri){
+      _l = note.uri;
+    }else{
+      _l = 'https://' + this.host + '/notes/' + note.id;
+    }
+    var _date = '<a href="' + _l + '">' + _d + '</a>';
+    this.date_label.setText(_date);
 
     var text = '';
     if(note.renote){
@@ -304,6 +314,9 @@ class PostView{
     }
 
     return result;
+  }
+  set_host(host){
+    this.host = host;
   }
 }
 

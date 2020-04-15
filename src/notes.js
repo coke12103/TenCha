@@ -28,6 +28,7 @@ class Note{
       this.tags = json.tags;
       this.poll = json.poll;
       this.geo = json.geo;
+      this.uri = json.uri;
 
       if(json.renote){
         this.renote = await new Note(json.renote, user_map, parser);

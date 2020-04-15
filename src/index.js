@@ -96,6 +96,7 @@ win.setCentralWidget(rootView);
 win.show();
 
 client.login().then(async () => {
+    postViewArea.set_host(client.host);
     await emoji_parser.init();
     await timeline.init();
     timeline.start_streaming(statusLabel, client);
