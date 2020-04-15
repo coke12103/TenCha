@@ -26,6 +26,15 @@ _file.load = function(path){
   return file;
 }
 
+_file.mkdir = function(dir){
+  try{
+    fs.mkdirSync(dir);
+    return;
+  }catch(err){
+    throw err;
+  }
+}
+
 _file.json_write = function(path, data){
   return new Promise(async (resolve, reject) => {
     try{
@@ -41,6 +50,23 @@ _file.json_write = function(path, data){
 
     resolve(true);
   });
+}
+
+_file.bin_write = function(path, data){
+  return new Promise(async (resolve, reject) => {
+      try{
+        fs.writeFile(path, data, (err) => {
+          if(err){
+            console.log(err);
+            throw err;
+          }
+        });
+      }catch(err){
+        reject(err);
+      }
+
+      resolve(true);
+  })
 }
 
 module.exports = _file;
