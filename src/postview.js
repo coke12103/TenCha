@@ -5,7 +5,8 @@ const {
   QFont,
   QFontWeight,
   QScrollArea,
-  AlignmentFlag
+  AlignmentFlag,
+  TextInteractionFlag
 } = require('@nodegui/nodegui');
 const dateformat = require('dateformat');
 const jp_wrap = require('jp-wrap');
@@ -75,6 +76,8 @@ class PostView{
     bodyLabel.setFont(font);
     bodyLabel.setWordWrap(true);
     bodyLabel.setAlignment(AlignmentFlag.AlignTop);
+    bodyLabel.setTextInteractionFlags(TextInteractionFlag.LinksAccessibleByMouse | TextInteractionFlag.TextSelectableByMouse);
+    bodyLabel.setOpenExternalLinks(true);
     postViewRightLayout.addWidget(bodyLabel);
 
     const reactionsArea = new QWidget();
