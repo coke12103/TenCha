@@ -44,7 +44,7 @@ class Timeline{
   }
 
   async add_note(body, user_map){
-    var note = await new Note(body.body, user_map);
+    var note = await new Note(body.body, user_map, this.emoji_parser);
     note.item = new NoteItem(note);
     this.add_item(note);
     this.fix_items();
@@ -58,7 +58,7 @@ class Timeline{
     if(!body.body) return;
     if(body.body.type == 'readAllUnreadMentions') return;
     if(body.body.type == 'readAllUnreadSpecifiedNotes') return;
-    var notification = await new Notification(body.body, user_map);
+    var notification = await new Notification(body.body, user_map, this.emoji_parser);
     notification.item = new NotificationItem(notification);
     this.add_item(notification);
     this.fix_items();
@@ -96,6 +96,10 @@ class Timeline{
     this.post_view = view;
   }
 
+  set_emoji_parser(parser){
+    this.emoji_parser = parser;
+  }
+
   update_post_view(){
     if(this.post_view == null) return;
 
@@ -104,6 +108,8 @@ class Timeline{
     }catch{
       return;
     }
+
+    if(!item) return;
 
     if(item.el_type == 'Note'){
       this.post_view.set_note(item);

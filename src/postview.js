@@ -10,6 +10,8 @@ const {
 const dateformat = require('dateformat');
 const jp_wrap = require('jp-wrap');
 
+const PostParser = require('./tools/post_parser/index.js');
+
 class PostView{
   constructor(){
     const font = new QFont('sans', 9);
@@ -71,7 +73,7 @@ class PostView{
     bodyLabel.setFlexNodeSizeControlled(false);
     bodyLabel.setObjectName('postViewBodyLabel');
     bodyLabel.setFont(font);
-    bodyLabel.setWordWrap(false);
+    bodyLabel.setWordWrap(true);
     bodyLabel.setAlignment(AlignmentFlag.AlignTop);
     postViewRightLayout.addWidget(bodyLabel);
 
@@ -83,6 +85,8 @@ class PostView{
 
     postViewAreaLayout.addWidget(postViewLeft);
     postViewAreaLayout.addWidget(postViewRight);
+
+    this.post_parser = new PostParser();
 
     this.area = postViewArea;
     this.area_layout = postViewAreaLayout;
@@ -123,7 +127,7 @@ class PostView{
     this.user_flag_label.setText(flag);
 
     if(note.user.name){
-      this.user_name_label.setText(note.user.name + '/' + note.user.acct);
+      this.user_name_label.setText(this.post_parser.parse(note.user.name + '/' + note.user.acct));
     }else{
       this.user_name_label.setText(note.user.acct);
     }
@@ -158,6 +162,9 @@ class PostView{
       }
     }
 
+    //this.body_label.setText(this.wrap_text(text));
+    text = this.post_parser.parse(text);
+    //    this.body_label.setText(text);
     this.body_label.setText(this.wrap_text(text));
 
     var _s = this.area.size();
@@ -186,7 +193,7 @@ class PostView{
     this.user_flag_label.setText(flag);
 
     if(notification.user.name){
-      this.user_name_label.setText(notification.user.name + '/' + notification.user.acct);
+      this.user_name_label.setText(this.post_parser.parse(notification.user.name + '/' + notification.user.acct));
     }else{
       this.user_name_label.setText(notification.user.acct);
     }
@@ -259,6 +266,8 @@ class PostView{
         break;
     }
 
+    desc_text = this.post_parser.parse(desc_text);
+    //this.body_label.setText(desc_text);
     this.body_label.setText(this.wrap_text(desc_text));
 
     var _s = this.area.size();
@@ -279,7 +288,7 @@ class PostView{
     var right_size = _a_s.width() - (_l_s.width() + _p_s);
     var max_str_len = parseInt(right_size / base_str_size);
 
-    var wrap = new jp_wrap(max_str_len, { breakAll: true, fullWidthSpace: false });
+    var wrap = new jp_wrap(max_str_len, { breakAll: true, fullWidthSpace: false, regExs: [{pattern: /<(".*?"|'.*?'|[^'"])*?>/, width: 2}, {pattern: /(&lt;)|(&gt;)/, width: 1}] });
 
     var result = '';
 

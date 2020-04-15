@@ -1,9 +1,10 @@
 const request = require("request-promise");
 const { QPixmap } = require('@nodegui/nodegui');
 const no_image_image = require('../assets/no_image.png');
+const post_parser = require('./tools/post_parser/index.js');
 
 class User{
-  constructor(json){
+  constructor(json, parser){
     return (async () => {
       this.id = json.id;
       this.username = json.username;
@@ -51,7 +52,9 @@ class User{
       //this.hasUnreadMentions = json.hasUnreadMentions;
       this.avatarId = json.avatarId;
       this.bannerId = json.bannerId;
-      //this.emojis = json.emojis;
+      this.emojis = json.emojis;
+
+      if(this.name) this.name = post_parser.escape_html(this.name);
 
       await this.load_avater().then((avater) => {
           this.avater = avater;
@@ -61,11 +64,13 @@ class User{
           this.avater = null;
       })
 
+      await parser.parse_user(this);
+
       return this;
     })();
   }
 
-  async update(json){
+  async update(json, parser){
     if(this.name && (this.name != json.name)) this.name = json.name;
     if(this.avatarUrl && (this.avatarUrl != json.avatarUrl)){
       this.avatarUrl = json.avatarUrl;
@@ -76,6 +81,8 @@ class User{
           console.log(err);
       })
     }
+    if(this.name) this.name = post_parser.escape_html(this.name);
+    await parser.parse_user(this);
   }
 
   load_avater(){

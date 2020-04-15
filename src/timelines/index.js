@@ -53,6 +53,7 @@ class Timelines{
     this.tabs.push(data);
 
     this.tab_widget.addTab(data.timeline.get_widget(), new QIcon(), data.name);
+    data.timeline.set_emoji_parser(this.emoji_parser);
   }
 
   start_streaming(statusLabel, client){
@@ -131,6 +132,10 @@ class Timelines{
           tab.timeline.set_auto_select(tab.is_auto_select);
         }
     })
+  }
+
+  set_emoji_parser(parser){
+    this.emoji_parser = parser;
   }
 
   _show_mes_dialog(mes_str){

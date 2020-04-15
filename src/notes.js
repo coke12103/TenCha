@@ -1,7 +1,8 @@
 const User = require('./users.js');
+const post_parser = require('./tools/post_parser/index.js');
 
 class Note{
-  constructor(json, user_map){
+  constructor(json, user_map, parser){
     return (async () => {
       this.el_type = 'Note';
       this.id = json.id;
@@ -29,19 +30,24 @@ class Note{
       this.geo = json.geo;
 
       if(json.renote){
-        this.renote = await new Note(json.renote, user_map);
+        this.renote = await new Note(json.renote, user_map, parser);
       }else{
         this.renote = null;
       }
 
+      if(this.text) this.text = post_parser.escape_html(this.text);
+      if(this.cw) this.cw = post_parser.escape_html(this.cw);
+
       var _user = user_map[json.user.id];
       if(_user){
         this.user = _user;
-        await this.user.update(json.user);
+        await this.user.update(json.user, parser);
       }else{
-        this.user = await new User(json.user);
+        this.user = await new User(json.user, parser);
         user_map[json.user.id] = this.user;
       }
+
+      await parser.parse_note(this);
 
       return this;
     })();
