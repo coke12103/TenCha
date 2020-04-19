@@ -6,6 +6,8 @@ const {
 
 const TabLoader = require('./tab_loader.js');
 const Timeline = require('./timeline.js');
+const Note = require('../notes.js');
+const Notification = require('../notification.js');
 
 class Timelines{
   constructor(){
@@ -17,6 +19,8 @@ class Timelines{
     this.tab_widget = tabWidget;
     this.tabs = [];
     this.users = {};
+    this.notes = {};
+    this.sources = {};
     this.filters = [];
   }
 
@@ -47,13 +51,14 @@ class Timelines{
       name: tab.name,
       source: tab.source,
       timeline: new Timeline(),
-      is_auto_select: false
+      is_auto_select: false,
+      post_view: false
     }
 
     this.tabs.push(data);
 
+    data.timeline.tree.addEventListener('itemSelectionChanged', this._update_post_view.bind(this));
     this.tab_widget.addTab(data.timeline.get_widget(), new QIcon(), data.name);
-    data.timeline.set_emoji_parser(this.emoji_parser);
   }
 
   start_streaming(statusLabel, client){
@@ -87,16 +92,54 @@ class Timelines{
 
   }
 
-  add_tl_mess(id, body){
+  async add_tl_mess(id, body){
     for(var tab of this.tabs){
       if(tab.source == id){
         if(tab.source == 'notification'){
-          tab.timeline.add_notification(body, this.users);
+          var item = await this.create_notification(body, this.users);
+          tab.timeline.add_notification(item);
         }else{
-          tab.timeline.add_note(body, this.users);
+          var item = await this.create_note(body, this.users);
+          tab.timeline.add_note(item);
         }
+
+        if(tab.is_auto_select){
+          tab.timeline.tl[tab.timeline.tl.length -1].item.list_item.setSelected(true);
+        }
+        tab.timeline.fix_items();
       }
     }
+  }
+
+  async create_note(body, user_map){
+    var _note = this.notes[body.body.id];
+    var note;
+    if(_note){
+      note = _note;
+      // TODO: update note
+    }else{
+      var note = await new Note(body.body, user_map, this.emoji_parser);
+      this.notes[body.body.id] = note;
+    }
+
+    return note;
+  }
+
+  async create_notification(body, user_map){
+    if(!body.body) return;
+    if(body.body.type == 'readAllUnreadMentions') return;
+    if(body.body.type == 'readAllUnreadSpecifiedNotes') return;
+    var _notification = this.notes[body.body.id];
+    var notification;
+    if(_notification){
+      notification = _notification;
+      // TODO: update
+    }else{
+      notification = await new Notification(body.body, user_map, this.emoji_parser);
+      this.notes[body.body.id] = notification;
+    }
+
+    return notification;
   }
 
   set_post_view(view){
@@ -108,14 +151,40 @@ class Timelines{
     var selected = this.tabs[this.tab_widget.currentIndex()].id
     for(var tab of this.tabs){
       if(tab.id == selected){
-        tab.timeline.set_auto_select(tab.is_auto_select);
         this.check.setChecked(tab.is_auto_select);
 
-        tab.timeline.set_post_view(this.post_view);
-        tab.timeline.update_post_view();
+        tab.post_view = true;
+        this.update_post_view(tab);
       }else{
-        tab.timeline.set_post_view(null);
+        tab.post_view = false;
       }
+    }
+  }
+
+  _update_post_view(){
+    for(var tab of this.tabs){
+      this.update_post_view(tab);
+    }
+  }
+
+  update_post_view(tab){
+    if(!tab.post_view) return;
+
+    try{
+      var item = tab.timeline.get_selected_item();
+    }catch{
+      return;
+    }
+
+    if(!item) return;
+
+    var id = item.id;
+    var _item = this.notes[id];
+
+    if(_item.el_type == 'Note'){
+      this.post_view.set_note(_item);
+    }else if(_item.el_type == 'Notification'){
+      this.post_view.set_notification(_item);
     }
   }
 
@@ -129,7 +198,6 @@ class Timelines{
           if(tab.id == selected){
             tab.is_auto_select = check.isChecked();
           }
-          tab.timeline.set_auto_select(tab.is_auto_select);
         }
     })
   }
