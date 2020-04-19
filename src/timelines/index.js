@@ -89,7 +89,6 @@ class Timelines{
         this.add_tl_mess(body.id, body);
         break;
     }
-
   }
 
   async add_tl_mess(id, body){
@@ -97,10 +96,10 @@ class Timelines{
       if(tab.source == id){
         if(tab.source == 'notification'){
           var item = await this.create_notification(body, this.users);
-          tab.timeline.add_notification(item);
+          if(!tab.timeline.check_exist_item(item.id)) tab.timeline.add_notification(item);
         }else{
           var item = await this.create_note(body, this.users);
-          tab.timeline.add_note(item);
+          if(!tab.timeline.check_exist_item(item.id)) tab.timeline.add_note(item);
         }
 
         if(tab.is_auto_select){
@@ -109,6 +108,8 @@ class Timelines{
         tab.timeline.fix_items();
       }
     }
+
+    console.log(Object.keys(this.notes).length);
   }
 
   async create_note(body, user_map){
