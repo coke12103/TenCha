@@ -50,6 +50,15 @@ class Timeline{
     this.add_item(item, notification.id);
   }
 
+  check_exist_item(id){
+    var exist = this.tl.some((el, index, array) => {
+        return (el.id == id);
+    });
+
+    if(exist) console.log('Exist');
+    return exist;
+  }
+
   fix_items(){
     var limit = 200;
     if(this.tl.length < limit) return;
