@@ -132,7 +132,7 @@ class PostView{
     this.user_flag_label.setText(flag);
 
     if(note.user.name){
-      this.user_name_label.setText(this.post_parser.parse(note.user.name + '/' + note.user.acct));
+      this.user_name_label.setText(note.user.name + '/' + note.user.acct);
     }else{
       this.user_name_label.setText(note.user.acct);
     }
@@ -176,8 +176,8 @@ class PostView{
     }
 
     //this.body_label.setText(this.wrap_text(text));
-    text = this.post_parser.parse(text);
     //    this.body_label.setText(text);
+    text = this.post_parser.parse(text);
     this.body_label.setText(this.wrap_text(text));
 
     var _s = this.area.size();
@@ -187,7 +187,7 @@ class PostView{
     this.area.resize(_w +10, _h +10);
   }
 
-  set_notification(notification){
+  async set_notification(notification){
     if(notification.user.avater){
       var s = this.icon_label.size();
       var w = s.width();
@@ -206,7 +206,7 @@ class PostView{
     this.user_flag_label.setText(flag);
 
     if(notification.user.name){
-      this.user_name_label.setText(this.post_parser.parse(notification.user.name + '/' + notification.user.acct));
+      this.user_name_label.setText(notification.user.name + '/' + notification.user.acct);
     }else{
       this.user_name_label.setText(notification.user.acct);
     }
@@ -292,7 +292,7 @@ class PostView{
 
   wrap_text(text){
     var base_str_size = 6.5;
-    var sp_text = text.split('\n');
+    var sp_text = text.split('<br>');
 
     var _a_s = this.area.size();
     var _l_s = this.left.size();
@@ -307,10 +307,12 @@ class PostView{
 
     for(var t of sp_text){
       if(!t){
-        result = result + '\n';
+        result += '<br>';
         continue;
       }
-      result = result + wrap(t) + '\n';
+      var _text = wrap(t);
+      _text = text.replace(new RegExp('\n', 'g'), '<br>');
+      result += wrap(t) + '<br>';
     }
 
     return result;
