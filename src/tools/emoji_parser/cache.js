@@ -10,6 +10,7 @@ class EmojiCache{
 
       this.tmplist = JSON.parse(file.load('./tmp/tmplist.json'));
       this.worked = [];
+      console.log(this.tmplist.tmp.length + ' Emojis loaded!');
       return this;
     })();
   }
@@ -47,6 +48,7 @@ class EmojiCache{
 
     if(!_emoji){
       try{
+        console.log('add Emoji cache');
         var _emoji = await this._cache_emoji(_match, _type, _url);
       }catch(err){
         throw err;
