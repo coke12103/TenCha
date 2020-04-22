@@ -103,13 +103,19 @@ class Timelines{
         }
 
         if(tab.is_auto_select){
-          tab.timeline.tl[tab.timeline.tl.length -1].item.list_item.setSelected(true);
+          tab.timeline.select_top_item();
         }
         tab.timeline.fix_items();
       }
     }
 
     console.log(Object.keys(this.notes).length);
+  }
+
+  async fix_notes(){
+    var tabs = this.tabs;
+    var limit = 5000;
+    // coming soon
   }
 
   async create_note(body, user_map){

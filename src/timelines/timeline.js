@@ -85,6 +85,10 @@ class Timeline{
     index+=1
     return this.tl[this.tl.length - index];
   }
+
+  select_top_item(){
+    this.tree.setCurrentRow(0);
+  }
 }
 
 
