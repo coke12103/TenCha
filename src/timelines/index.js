@@ -110,12 +110,31 @@ class Timelines{
     }
 
     console.log(Object.keys(this.notes).length);
+    this.fix_notes();
   }
 
   async fix_notes(){
-    var tabs = this.tabs;
+    var notes = this.notes;
     var limit = 5000;
-    // coming soon
+    if(Object.keys(this.notes).length < limit) return;
+
+    var i = 0;
+    for(var c = 0; c < limit; c++){
+      var is_exist = false;
+      for(var tab of this.tabs){
+        if(tab.timeline.check_exist_item(notes[Object.keys(notes)[i]].id)){
+          is_exist = true;
+          break;
+        }
+      }
+      if(is_exist){
+        i++;
+        continue;
+      }
+
+      console.log('removeing: ' + notes[Object.keys(notes)[i]]);
+      delete this.notes[Object.keys(this.notes)[i]];
+    }
   }
 
   async create_note(body, user_map){
