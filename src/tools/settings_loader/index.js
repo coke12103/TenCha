@@ -1,4 +1,5 @@
 const file = require('../../file.js');
+const message_box = require('../../message_box.js');
 
 class SettingsLoader{
   constructor(){
@@ -12,8 +13,10 @@ class SettingsLoader{
     try{
       var f = file.load('./settings.json');
       f = JSON.parse(f);
-    }catch{
-      throw 'LoadErr';
+    }catch(err){
+      console.log(err);
+      await this._show_mes_dialog('設定パースエラー');
+      process.exit(1);
     }
 
     this.use_emojis = f.use_emojis;
@@ -25,6 +28,17 @@ class SettingsLoader{
     };
 
     await file.json_write('./settings.json', default_settings);
+  }
+
+  _show_mes_dialog(mes_str){
+    return new Promise((resolve, reject) => {
+        var mes = new message_box(mes_str, 'わかった');
+        mes.onPush(() =>{
+            mes.close();
+            resolve(0);
+        });
+        mes.exec();
+    })
   }
 }
 
