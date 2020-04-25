@@ -3,6 +3,7 @@ const request = require("request-promise");
 const NoteItem = require('./note_item.js');
 const NotificationItem = require('./notification_item.js');
 const Assets = require("../assets.js");
+const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 const {
   QLabel,
@@ -27,27 +28,47 @@ class Timeline{
     this.tree = tree;
     this.post_view;
     this.tl = [];
+    this.item_queue = [];
+    this.is_now_add = false;
   }
 
   get_widget(){
     return this.tree;
   }
 
-  add_item(item, id){
-    this.tl.push({item: item, id: id});
+  add_item(item, id, sort_base){
+    var data = { item: item, id: id, sort_base: sort_base };
+    this.item_queue.push(data);
 
-    this.tree.insertItem(0,item.list_item);
-    this.tree.setItemWidget(item.list_item, item.widget);
+    this._add_item();
+  }
+
+  async _add_item(){
+    if(this.is_now_add) return;
+    if(this.item_queue.length == 0) return;
+    this.is_now_add = true;
+
+    var data = this.item_queue.shift();
+
+    var pos = this.search_insert_pos(data.sort_base);
+    this.tl.splice(pos -1, 0, data);
+
+    this.tree.insertItem((this.tl.length - pos), data.item.list_item);
+    this.tree.setItemWidget(data.item.list_item, data.item.widget);
+
+    await sleep(10);
+    this.is_now_add = false;
+    this._add_item();
   }
 
   add_note(note){
     var item = new NoteItem(note);
-    this.add_item(item, note.id);
+    this.add_item(item, note.id, note.createdAt);
   }
 
   add_notification(notification){
     var item = new NotificationItem(notification);
-    this.add_item(item, notification.id);
+    this.add_item(item, notification.id, notification.createdAt);
   }
 
   check_exist_item(id){
@@ -88,6 +109,18 @@ class Timeline{
 
   select_top_item(){
     this.tree.setCurrentRow(0);
+  }
+
+  search_insert_pos(base){
+    var tl = this.tl;
+    var i = 1;
+
+    for(var note of tl){
+      if(note.sort_base > base) break;
+      i++;
+    }
+
+    return i;
   }
 }
 
