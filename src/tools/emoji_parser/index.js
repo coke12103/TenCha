@@ -6,15 +6,19 @@ class EmojiParser{
   constructor(){
   }
 
-  async init(){
-    const cache = await new Cache();
+  async init(is_enable){
+    if(is_enable){
+      const cache = await new Cache();
+      this.cache = cache;
+    }
 
-    this.cache = cache;
+    this.is_enable = is_enable;
 
     return this;
   }
 
   async parse(text, mk_emojis){
+    if(!this.is_enable) return;
     var emojis = parse(text);
 
     var emoji_regs = [];
@@ -41,6 +45,8 @@ class EmojiParser{
   }
 
   async parse_note(note){
+    if(!this.is_enable) return;
+
     var e_user = this.parse_user(note.user);
     var e_text = this.parse(note.text, note.emojis);
     if(note.cw){
@@ -63,6 +69,8 @@ class EmojiParser{
   }
 
   async parse_user(user){
+    if(!this.is_enable) return;
+
     if(user.name) user.name = await this.parse(user.name, user.emojis);
   }
 

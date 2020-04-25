@@ -13,6 +13,7 @@ const Assets = require('./assets.js');
 const RandomEmoji = require('./tools/random_emoji/index.js');
 const EmojiParser = require('./tools/emoji_parser/index.js');
 const PostAction = require('./post_action.js');
+const SettingsLoader = require('./tools/settings_loader/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
@@ -50,6 +51,7 @@ var timeline_auto_select = checkboxs.get('timeline_auto_select');
 var postbox = new _post_box();
 var random_emoji = new RandomEmoji(postbox);
 var emoji_parser = new EmojiParser();
+var settings_loader = new SettingsLoader();
 var post_action = new PostAction();
 var assets = new Assets('MainWindow');
 
@@ -97,7 +99,8 @@ win.show();
 
 client.login().then(async () => {
     postViewArea.set_host(client.host);
-    await emoji_parser.init();
+    await settings_loader.init();
+    await emoji_parser.init(settings_loader.use_emojis);
     await timeline.init();
     timeline.start_streaming(statusLabel, client);
     post_action.init(client, timeline);
