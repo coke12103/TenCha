@@ -62,8 +62,30 @@ class Timelines{
   }
 
   start_streaming(statusLabel, client){
+    this.start_load_tl(client);
     client.connect_ws(statusLabel, this);
     this.change_tab();
+  }
+
+  async start_load_tl(client){
+    var data = {
+      limit: 40
+    };
+
+    var calls = [
+      { source: 'global',       call: 'notes/global-timeline' },
+      { source: 'social',       call: 'notes/hybrid-timeline' },
+      { source: 'local',        call: 'notes/local-timeline'  },
+      { source: 'home',         call: 'notes/timeline'        },
+      { source: 'notification', call: 'i/notifications'       }
+    ];
+
+    for(var c of calls){
+      var posts = await client.call(c.call, data);
+      for(var note of posts){
+        this.add_tl_mess(c.source, note);
+      }
+    }
   }
 
   onMess(data){
@@ -86,7 +108,7 @@ class Timelines{
       case 'local':
       case 'social':
       case 'global':
-        this.add_tl_mess(body.id, body);
+        this.add_tl_mess(body.id, body.body);
         break;
     }
   }
@@ -138,31 +160,31 @@ class Timelines{
   }
 
   async create_note(body, user_map){
-    var _note = this.notes[body.body.id];
+    var _note = this.notes[body.id];
     var note;
     if(_note){
       note = _note;
       // TODO: update note
     }else{
-      var note = await new Note(body.body, user_map, this.emoji_parser);
-      this.notes[body.body.id] = note;
+      var note = await new Note(body, user_map, this.emoji_parser);
+      this.notes[body.id] = note;
     }
 
     return note;
   }
 
   async create_notification(body, user_map){
-    if(!body.body) return;
-    if(body.body.type == 'readAllUnreadMentions') return;
-    if(body.body.type == 'readAllUnreadSpecifiedNotes') return;
-    var _notification = this.notes[body.body.id];
+    if(!body) return;
+    if(body.type == 'readAllUnreadMentions') return;
+    if(body.type == 'readAllUnreadSpecifiedNotes') return;
+    var _notification = this.notes[body.id];
     var notification;
     if(_notification){
       notification = _notification;
       // TODO: update
     }else{
-      notification = await new Notification(body.body, user_map, this.emoji_parser);
-      this.notes[body.body.id] = notification;
+      notification = await new Notification(body, user_map, this.emoji_parser);
+      this.notes[body.id] = notification;
     }
 
     return notification;
