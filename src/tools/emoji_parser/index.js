@@ -69,7 +69,7 @@ class EmojiParser{
   async _get_emojis_regexp(emoji, type){
     try{
       var e = await this.cache.get(emoji);
-      var img = '<img src="' + e.filename + '" width="14" height="14">';
+      var img = '<img src="' + e.filename + '" width="14" height="14" style="max-width:14px;max-height:14px;">';
       var regexp;
       if(type == 'Twemoji'){
         regexp = new RegExp(this.escape_regexp(e.match_str), 'g');
