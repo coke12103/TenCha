@@ -43,6 +43,8 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
 ## 設定
 - `use_emojis`
   - 不安定な絵文字の実装を使うか
+- `use_desktop_notification`
+  - デスクトップ通知を利用するか
 
 ## 連絡先
 - Twitter: [coke12103](https://twitter.com/@coke12103)
