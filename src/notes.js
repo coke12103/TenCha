@@ -10,6 +10,8 @@ class Note{
       this.app = json.app;
       this.text = json.text;
       this.cw = json.cw;
+      this.no_emoji_text = json.text;
+      this.no_emoji_cw = json.cw;
       this.userId = json.userId;
       this.replyId = json.replyId;
       this.renoteId = json.renoteId;

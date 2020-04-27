@@ -9,6 +9,7 @@ class User{
       this.id = json.id;
       this.username = json.username;
       this.name = json.name;
+      this.no_emoji_name = json.name;
       this.description = json.description;
       this.host = json.host;
       if(this.host){
