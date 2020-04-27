@@ -10,6 +10,7 @@ const {
 } = require('@nodegui/nodegui');
 const dateformat = require('dateformat');
 const jp_wrap = require('jp-wrap');
+const string_width = require('string-width');
 
 const PostParser = require('./tools/post_parser/index.js');
 
@@ -76,7 +77,7 @@ class PostView{
     bodyLabel.setFlexNodeSizeControlled(false);
     bodyLabel.setObjectName('postViewBodyLabel');
     bodyLabel.setFont(font);
-    bodyLabel.setWordWrap(true);
+    bodyLabel.setWordWrap(false);
     bodyLabel.setAlignment(AlignmentFlag.AlignTop);
     bodyLabel.setTextInteractionFlags(TextInteractionFlag.LinksAccessibleByMouse | TextInteractionFlag.TextSelectableByMouse);
     bodyLabel.setOpenExternalLinks(true);
@@ -291,8 +292,7 @@ class PostView{
   }
 
   wrap_text(text){
-    var base_str_size = 6.5;
-    var sp_text = text.split('<br>');
+    var base_str_size = 6.6;
 
     var _a_s = this.area.size();
     var _l_s = this.left.size();
@@ -301,22 +301,73 @@ class PostView{
     var right_size = _a_s.width() - (_l_s.width() + _p_s);
     var max_str_len = parseInt(right_size / base_str_size);
 
-    var wrap = new jp_wrap(max_str_len, { breakAll: true, fullWidthSpace: false, regExs: [{pattern: /<(".*?"|'.*?'|[^'"])*?>/, width: 2}, {pattern: /(&lt;)|(&gt;)/, width: 1}] });
+    var sp_reg = /<\/?[a-zA-Z]+[^>]*>/igm;
+    var img_reg = /<img ?[^>]*>/gim;
+
+    var last = 0;
+    var sp_text = [];
+
+    var arr;
+    while((arr = sp_reg.exec(text)) != null){
+      var start = arr.index;
+      var end = arr[0].length;
+
+      if(start != 0){
+        sp_text.push(text.slice(last, start));
+      }
+      sp_text.push(text.substr(start, end));
+
+      last = start + end;
+    }
+    if(text.length > last){
+      sp_text.push(text.substr(last, text.length - last));
+    }
+
+    var setting = {
+      fullWidthSpace: false,
+      breakAll: true,
+      regexs: [
+        { pattern: /(&lt;)|(&gt;)/i, width: 1 },
+        { pattern: /%/, width: 2 },
+        { pattern: /[a-z]/, width: 1.2 },
+        { pattern: /[A-Z]/, width: 1.2 },
+        { pattern: /[0-9]/, width: 1.2 }
+      ]
+    }
+
+    var wrap = new jp_wrap(max_str_len, setting);
 
     var result = '';
 
+    var p = 0;
     for(var t of sp_text){
+      if(sp_reg.test(t)){
+        if(/<br>$/gi.test(t)) p = 0;
+        if(img_reg.test(t)) p += 2;
+        result += t;
+        continue;
+      }
       if(!t){
-        result += '<br>';
         continue;
       }
       var _text = wrap(t);
-      _text = text.replace(new RegExp('\n', 'g'), '<br>');
-      result += wrap(t) + '<br>';
+      var _t_l = _text.split('\n');
+      if((p + string_width(_t_l[0])) > max_str_len) _text = '\n' + _text;
+      _text = _text.replace(new RegExp('\n', 'gi'), '<br>');
+      result += _text;
+      if(_t_l.length == 1){
+        p += string_width(_t_l[0]);
+      }else{
+        p = string_width(_t_l[_t_l.length -1]);
+      }
+      if(/<br>$/gi.test(_text)) p = 0;
     }
+
+    console.log(result)
 
     return result;
   }
+
   set_host(host){
     this.host = host;
   }
