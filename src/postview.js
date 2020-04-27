@@ -13,6 +13,7 @@ const jp_wrap = require('jp-wrap');
 const string_width = require('string-width');
 
 const PostParser = require('./tools/post_parser/index.js');
+const NotificationParser = require('./tools/notification_parser/index.js');
 
 class PostView{
   constructor(){
@@ -214,71 +215,7 @@ class PostView{
 
     this.date_label.setText(dateformat(notification.createdAt, 'yyyy/mm/dd HH:MM:ss'));
 
-    var text = '';
-    if(notification.note && notification.note.renote){
-      var r_text = "RN @" + notification.note.renote.user.acct + ' ';
-      if(notification.note.cw){
-        text = notification.note.cw + '\n------------CW------------\n';
-        text = text + notification.note.text;
-      }else if(notification.note.text){
-        text = notification.note.text + ' ';
-      }
-
-      if(notification.note.renote.cw){
-        r_text = r_text + notification.note.renote.cw;
-        r_text = r_text + '\n------------CW------------\n';
-        r_text = r_text + notification.note.renote.text;
-      }else{
-        r_text = r_text + notification.note.renote.text;
-      }
-
-      text = text + r_text;
-    }else if(notification.note){
-      if(notification.note.cw){
-        text = notification.note.cw + '\n------------CW------------\n';
-        text = text + notification.note.text;
-      }else{
-        text = notification.note.text;
-      }
-    }
-
-    var desc_text;
-
-    switch(notification.type){
-      case 'follow':
-        desc_text = `フォローされています!`;
-        break;
-      case 'mention':
-      case 'reply':
-        desc_text = `言及:\n${text}`;
-        break;
-      case 'renote':
-        var text = '';
-        if(notification.note.renote.cw){
-          text = text + notification.note.renote.cw;
-          text = text + '\n------------CW------------\n';
-          text = text + notification.note.renote.text;
-        }else{
-          text = text + notification.note.renote.text;
-        }
-        desc_text = `Renoteされました!:\n${text}`;
-        break;
-      case 'quote':
-        desc_text = `引用Renoteされました!:\n${text}`;
-        break;
-      case 'reaction':
-        desc_text = `${notification.reaction}でリアクションされました!:\n${text}`;
-        break;
-      case 'pollVote':
-        desc_text = `投票しました!:\n${text}`;
-        break;
-      case 'receiveFollowRequest':
-        desc_text = `フォローリクエストされています!`;
-        break;
-      case 'followRequestAccepted':
-        desc_text = `フォローリクエストが許可されました!`;
-        break;
-    }
+    var desc_text = NotificationParser.gen_desc_text(notification, 'postview');
 
     desc_text = this.post_parser.parse(desc_text);
     //this.body_label.setText(desc_text);

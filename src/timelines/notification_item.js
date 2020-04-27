@@ -7,64 +7,7 @@ const {
   QFont,
 } = require('@nodegui/nodegui');
 
-function parse_type(notification){
-  var result = {
-    type_text: '',
-    desc_text: ''
-  };
-
-  var text = '';
-
-  if(notification.note && notification.note.cw){
-    text = notification.note.cw.replace(/(\r\n|\n|\r)/gm," ");
-  }else if(notification.note && notification.note.text){
-    text = notification.note.text.replace(/(\r\n|\n|\r)/gm," ");
-  }
-
-  switch(notification.type){
-    case 'follow':
-      result.type_text = '＋'
-      result.desc_text = `フォローされています!`;
-      break;
-    case 'mention':
-    case 'reply':
-      result.type_text = '言';
-      result.desc_text = `言及: ${text}`;
-      break;
-    case 'renote':
-      var text = '';
-      if(notification.note.renote.cw){
-        text = notification.note.renote.cw;
-      }else{
-        text = notification.note.renote.text;
-      }
-      result.type_text = '♻';
-      result.desc_text = `Renoteされました!: ${text}`;
-      break;
-    case 'quote':
-      result.type_text = '引';
-      result.desc_text = `引用Renoteされました!: ${text}`;
-      break;
-    case 'reaction':
-      result.type_text = '！';
-      result.desc_text = `${notification.reaction}でリアクションされました!: ${text}`;
-      break;
-    case 'pollVote':
-      result.type_text = '投';
-      result.desc_text = `投票しました!: ${text}`;
-      break;
-    case 'receiveFollowRequest':
-      result.type_text = '求';
-      result.desc_text = `フォローリクエストされています!`;
-      break;
-    case 'followRequestAccepted':
-      result.type_text = '可';
-      result.desc_text = `フォローリクエストが許可されました!`;
-      break;
-  }
-
-  return result;
-}
+const NotificationParser = require('../tools/notification_parser/index.js');
 
 class NotificationItem{
   constructor(notification){
@@ -113,7 +56,7 @@ class NotificationItem{
     widget_layout.addWidget(name_label);
     widget_layout.addWidget(desc_label);
 
-    var type = parse_type(notification);
+    var type = NotificationParser.gen_desc_text(notification, 'notification_item');
 
     type_label.setText(type.type_text);
     name_label.setText(notification.user.acct);
