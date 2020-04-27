@@ -14,6 +14,7 @@ const RandomEmoji = require('./tools/random_emoji/index.js');
 const EmojiParser = require('./tools/emoji_parser/index.js');
 const PostAction = require('./post_action.js');
 const SettingsLoader = require('./tools/settings_loader/index.js');
+const DesktopNotification = require('./tools/desktop_notification/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
@@ -52,6 +53,7 @@ var postbox = new _post_box();
 var random_emoji = new RandomEmoji(postbox);
 var emoji_parser = new EmojiParser();
 var settings_loader = new SettingsLoader();
+var desktop_notification = new DesktopNotification();
 var post_action = new PostAction();
 var assets = new Assets('MainWindow');
 
@@ -77,6 +79,7 @@ postbox.add_event_listener(async () => {
 timeline.set_auto_select_check(timeline_auto_select);
 timeline.set_post_view(postViewArea);
 timeline.set_emoji_parser(emoji_parser);
+timeline.set_desktop_notification(desktop_notification);
 
 menu_bar.post_menu.set_random_emoji(random_emoji);
 menu_bar.timeline_menu.set_post_action(post_action);
@@ -100,6 +103,7 @@ win.show();
 client.login().then(async () => {
     postViewArea.set_host(client.host);
     await settings_loader.init();
+    desktop_notification.set_is_enable(settings_loader.use_desktop_notification);
     await emoji_parser.init(settings_loader.use_emojis);
     await timeline.init();
     timeline.start_streaming(statusLabel, client);

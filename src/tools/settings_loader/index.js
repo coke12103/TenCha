@@ -19,12 +19,14 @@ class SettingsLoader{
       process.exit(1);
     }
 
-    this.use_emojis = f.use_emojis;
+    this.use_emojis = f.use_emojis ? f.use_emojis : false;
+    this.use_desktop_notification = f.use_desktop_notification ? f.use_desktop_notification : false;
   }
 
   async create_default_settings(){
     var default_settings = {
-      use_emojis: false
+      use_emojis: false,
+      use_desktop_notification: true
     };
 
     await file.json_write('./settings.json', default_settings);

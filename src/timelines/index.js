@@ -8,6 +8,7 @@ const TabLoader = require('./tab_loader.js');
 const Timeline = require('./timeline.js');
 const Note = require('../notes.js');
 const Notification = require('../notification.js');
+const NotificationParser = require('../tools/notification_parser/index.js');
 
 class Timelines{
   constructor(){
@@ -104,6 +105,15 @@ class Timelines{
 
     switch(body.id){
       case 'notification':
+        this.add_tl_mess(body.id, body.body).then(() => {
+          var _body = body.body;
+          var _notification = this.notes[_body.id];
+          if(!_notification) return;
+
+          var d_notification_text = NotificationParser.gen_desc_text(_notification, 'desktop_notification');
+          this.desktop_notification.show(d_notification_text.title, d_notification_text.message);
+        });
+        break;
       case 'home':
       case 'local':
       case 'social':
@@ -252,6 +262,10 @@ class Timelines{
 
   set_emoji_parser(parser){
     this.emoji_parser = parser;
+  }
+
+  set_desktop_notification(desktop_notification){
+    this.desktop_notification = desktop_notification;
   }
 
   _show_mes_dialog(mes_str){
