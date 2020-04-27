@@ -363,8 +363,6 @@ class PostView{
       if(/<br>$/gi.test(_text)) p = 0;
     }
 
-    console.log(result)
-
     return result;
   }
 
