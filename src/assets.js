@@ -19,6 +19,9 @@ class Asset{
       case "RandomEmoji":
         this.emojis = require('../assets/emojis.json').emojis;
         break;
+      case "SettingsLoader":
+        this.settings_template = require('../assets/settings.json').settings;
+        break;
     }
 
     return;

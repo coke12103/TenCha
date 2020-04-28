@@ -1,0 +1,28 @@
+{
+  "settings": [
+    {
+      "id": "use_emojis",
+      "name": "絵文字を表示",
+      "description": "不安定な絵文字実装を利用して絵文字を表示するか",
+      "default_value": false
+    },
+    {
+      "id": "use_desktop_notification",
+      "name": "デスクトップ通知を使用",
+      "description": "デスクトップ通知を使用するか",
+      "default_value": false
+    },
+    {
+      "id": "post_cache_limit",
+      "name": "投稿キャッシュの上限",
+      "description": "上限に到達すると開放処理を1回分実行し、開放できる範囲で投稿キャッシュを削除します。",
+      "default_value": 5000
+    },
+    {
+      "id": "post_cache_clear_count",
+      "name": "投稿キャッシュ開放処理の1回の処理数",
+      "description": "開放処理1回につき何件処理するか。",
+      "default_value": 100
+    }
+  ]
+}
