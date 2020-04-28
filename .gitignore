@@ -1,8 +1,8 @@
-node_modules
-dist
-config.json
-deploy
-tabs.json
+node_modules/
+dist/
+deploy/
 tmp/
-settings.json
-config.json1
+/config.json
+/tabs.json
+/settings.json
+/config.json1
