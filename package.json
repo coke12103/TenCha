@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@nodegui/nodegui": "^0.18.2",
+    "copy-webpack-plugin": "^5.1.1",
     "dateformat": "^3.0.3",
     "jp-wrap": "^0.2.2",
     "node-notifier": "^7.0.0",

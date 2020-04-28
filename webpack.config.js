@@ -1,5 +1,6 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: process.NODE_ENV || "development",
@@ -39,5 +40,10 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx"]
   },
-  plugins: [new CleanWebpackPlugin()]
+  plugins: [
+    new CleanWebpackPlugin(),
+    new CopyPlugin([
+      { from: './node_modules/node-notifier/vendor/snoreToast/snoretoast-x86.exe', to: './snoreToast/snoretoast-x86.exe' },
+      { from: './node_modules/node-notifier/vendor/snoreToast/snoretoast-x64.exe', to: './snoreToast/snoretoast-x64.exe' },
+    ])]
 };
