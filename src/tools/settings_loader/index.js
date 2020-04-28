@@ -1,8 +1,10 @@
 const file = require('../../file.js');
+const Assets = require('../../assets.js');
 const message_box = require('../../message_box.js');
 
 class SettingsLoader{
   constructor(){
+    this.assets = new Assets('SettingsLoader');
   }
 
   async init(){
@@ -13,21 +15,25 @@ class SettingsLoader{
     try{
       var f = file.load('./settings.json');
       f = JSON.parse(f);
+      this.load_settings(f);
     }catch(err){
       console.log(err);
       await this._show_mes_dialog('設定パースエラー');
       process.exit(1);
     }
+  }
 
-    this.use_emojis = f.use_emojis ? f.use_emojis : false;
-    this.use_desktop_notification = f.use_desktop_notification ? f.use_desktop_notification : false;
+  load_settings(file){
+    for(var setting of this.assets.settings_template){
+      this[setting.id] = file[setting.id] ? file[setting.id] : setting.default_value;
+    }
   }
 
   async create_default_settings(){
-    var default_settings = {
-      use_emojis: false,
-      use_desktop_notification: true
-    };
+    var default_settings = {};
+    for(var setting of this.assets.settings_template){
+      default_settings[setting.id] = setting.default_value;
+    }
 
     await file.json_write('./settings.json', default_settings);
   }
