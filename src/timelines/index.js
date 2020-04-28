@@ -290,7 +290,9 @@ class Timelines{
     var selected_item = null;
     try{
       selected_item = selected_timeline.get_selected_item();
+      selected_item = this.notes[selected_item.id];
     }catch{
+      return;
     }
 
     callback(selected_item);
