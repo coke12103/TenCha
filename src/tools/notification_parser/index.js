@@ -131,10 +131,17 @@ class NotificationParser{
       text = notification.note.text.replace(/(\r\n|\n|\r)/gm," ");
     }
 
+    var description;
+    if(notification.user && notification.user.description){
+      description = notification.user.description.replace(/(\r\n|\n|\r)/gm," ");
+    }else{
+      description = '(BIOがありません)';
+    }
+
     switch(notification.type){
       case 'follow':
         title = `${notification.user.acct}にフォローされています!`;
-        message = `${notification.user.description}`;
+        message = `${description}`;
         break;
       case 'mention':
       case 'reply':
@@ -165,11 +172,11 @@ class NotificationParser{
         break;
       case 'receiveFollowRequest':
         title = `${notification.user.acct}にフォローリクエストされました!`;
-        message = `${notification.user.description}`;
+        message = `${description}`;
         break;
       case 'followRequestAccepted':
         title = `${notification.user.acct}へのフォローリクエストが許可されました!`;
-        message = `${notification.user.description}`;
+        message = `${description}`;
         break;
     }
 

@@ -25,7 +25,7 @@ class SettingsLoader{
 
   load_settings(file){
     for(var setting of this.assets.settings_template){
-      this[setting.id] = file[setting.id] ? file[setting.id] : setting.default_value;
+      this[setting.id] = setting.id in file ? file[setting.id] : setting.default_value;
     }
   }
 
