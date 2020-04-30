@@ -221,21 +221,23 @@ class PostView{
     //this.body_label.setText(desc_text);
     this.body_label.setText(this.wrap_text(desc_text));
 
-    var _s = this.area.size();
-    var _w = _s.width();
-    var _h = _s.height();
-    this.area.resize(_w -10, _h -10);
-    this.area.resize(_w +10, _h +10);
+    var _a_s = this.main_win.size();
+    var _l_s = this.left.size();
+    var _p_s = 5;
+
+    var right_size = (_a_s.width() -10) - (_l_s.width() + _p_s);
+
+    this.area.resize(right_size, 0);
   }
 
   wrap_text(text){
     var base_str_size = 6.6;
 
-    var _a_s = this.area.size();
+    var _a_s = this.main_win.size();
     var _l_s = this.left.size();
     var _p_s = 5;
 
-    var right_size = _a_s.width() - (_l_s.width() + _p_s);
+    var right_size = (_a_s.width() -10) - (_l_s.width() + _p_s);
     var max_str_len = parseInt(right_size / base_str_size);
 
     var sp_reg = /<\/?[a-zA-Z]+[^>]*>/igm;
@@ -305,6 +307,10 @@ class PostView{
 
   set_host(host){
     this.host = host;
+  }
+
+  set_main_win(win){
+    this.main_win = win;
   }
 }
 

@@ -100,6 +100,9 @@ win.setCentralWidget(rootView);
 // 始めにウインドウを出しておくと何故かプロセスが死なない
 win.show();
 
+// ウィジェットサイズだとバグってることあるのでウインドウサイズをもぎ取るためにウインドウを渡す
+postViewArea.set_main_win(win);
+
 client.login().then(async () => {
     postViewArea.set_host(client.host);
     await settings_loader.init();
