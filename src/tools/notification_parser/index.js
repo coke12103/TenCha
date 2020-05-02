@@ -125,10 +125,10 @@ class NotificationParser{
     var title, message;
 
     var text;
-    if(notification.note && notification.note.cw){
-      text = notification.note.cw.replace(/(\r\n|\n|\r)/gm," ");
-    }else if(notification.note && notification.note.text){
-      text = notification.note.text.replace(/(\r\n|\n|\r)/gm," ");
+    if(notification.note && notification.note.no_emoji_cw){
+      text = notification.note.no_emoji_cw.replace(/(\r\n|\n|\r)/gm," ");
+    }else if(notification.note && notification.note.no_emoji_text){
+      text = notification.note.no_emoji_text.replace(/(\r\n|\n|\r)/gm," ");
     }
 
     var description;
