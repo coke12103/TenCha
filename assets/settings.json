@@ -23,6 +23,12 @@
       "name": "投稿キャッシュ開放処理の1回の処理数",
       "description": "開放処理1回につき何件処理するか。",
       "default_value": 100
+    },
+    {
+      "id": "font",
+      "name": "フォント",
+      "description": "フォント名を指定します。サイズは固定です。",
+      "default_value": "sans"
     }
   ]
 }
