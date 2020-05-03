@@ -1,4 +1,4 @@
-const { QCheckBox } = require("@nodegui/nodegui");
+const { QCheckBox, QFont } = require("@nodegui/nodegui");
 
 class Checkboxs{
   constructor(){
@@ -11,6 +11,12 @@ class Checkboxs{
 
   get(name){
     return this[name];
+  }
+
+  set_font(_font){
+    const font = new QFont(_font, 9);
+
+    this.timeline_auto_select.setFont(font);
   }
 }
 

@@ -1,5 +1,6 @@
 const {
-  QMenuBar
+  QMenuBar,
+  QFont
 } = require('@nodegui/nodegui');
 
 const FileMenu = require('./file_menu.js');
@@ -25,6 +26,11 @@ class MenuBar{
 
   get_widget(){
     return this.bar;
+  }
+
+  set_font(_font){
+    const font = new QFont(_font, 9);
+    this.bar.setFont(font);
   }
 }
 

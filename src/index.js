@@ -22,7 +22,6 @@ const _post_view_area = require('./postview.js');
 const _post_box = require('./postbox/index.js');
 const Client = require('./client.js');
 const client = new Client();
-const default_font = new QFont('sans', 9);
 
 const win = new QMainWindow();
 win.setWindowTitle('TenCha');
@@ -35,7 +34,6 @@ rootView.setLayout(rootViewLayout);
 
 const statusLabel = new QLabel();
 statusLabel.setWordWrap(true);
-statusLabel.setFont(default_font);
 statusLabel.setText('ログインチェック中...');
 statusLabel.setObjectName('statusLabel');
 
@@ -56,6 +54,7 @@ var settings_loader = new SettingsLoader();
 var desktop_notification = new DesktopNotification();
 var post_action = new PostAction();
 var assets = new Assets('MainWindow');
+var default_font;
 
 postbox.add_event_listener(async () => {
     var data = postbox.get_data();
@@ -76,43 +75,62 @@ postbox.add_event_listener(async () => {
     }
 })
 
-timeline.set_auto_select_check(timeline_auto_select);
-timeline.set_post_view(postViewArea);
-timeline.set_emoji_parser(emoji_parser);
-timeline.set_desktop_notification(desktop_notification);
+async function init_cha(){
+  // 設定読み込みはFont指定もあるので先に
+  var _setting_init = settings_loader.init();
 
-menu_bar.post_menu.set_random_emoji(random_emoji);
-menu_bar.timeline_menu.set_post_action(post_action);
+  timeline.set_auto_select_check(timeline_auto_select);
+  timeline.set_post_view(postViewArea);
+  timeline.set_emoji_parser(emoji_parser);
+  timeline.set_desktop_notification(desktop_notification);
 
-timelineControlsAreaLayout.addWidget(timeline_auto_select);
+  menu_bar.post_menu.set_random_emoji(random_emoji);
+  menu_bar.timeline_menu.set_post_action(post_action);
 
-rootViewLayout.addWidget(postViewArea.get_widget());
-rootViewLayout.addWidget(timeline.get_widget());
-rootViewLayout.addWidget(timelineControlsArea);
-rootViewLayout.addWidget(postbox.area);
-rootViewLayout.addWidget(statusLabel);
+  timelineControlsAreaLayout.addWidget(timeline_auto_select);
 
-rootView.setStyleSheet(assets.css);
+  rootViewLayout.addWidget(postViewArea.get_widget());
+  rootViewLayout.addWidget(timeline.get_widget());
+  rootViewLayout.addWidget(timelineControlsArea);
+  rootViewLayout.addWidget(postbox.area);
+  rootViewLayout.addWidget(statusLabel);
 
-win.setMenuBar(menu_bar.get_widget());
-win.setCentralWidget(rootView);
+  rootView.setStyleSheet(assets.css);
 
-// 始めにウインドウを出しておくと何故かプロセスが死なない
-win.show();
+  win.setMenuBar(menu_bar.get_widget());
+  win.setCentralWidget(rootView);
 
-// ウィジェットサイズだとバグってることあるのでウインドウサイズをもぎ取るためにウインドウを渡す
-postViewArea.set_main_win(win);
+  // 設定読み込み後にやるやつ
+  await _setting_init;
 
-client.login().then(async () => {
-    postViewArea.set_host(client.host);
-    await settings_loader.init();
-    desktop_notification.set_is_enable(settings_loader.use_desktop_notification);
-    timeline.set_settings(settings_loader.post_cache_limit, settings_loader.post_cache_clear_count);
-    await emoji_parser.init(settings_loader.use_emojis);
-    await timeline.init();
-    timeline.start_streaming(statusLabel, client);
-    post_action.init(client, timeline);
-    statusLabel.setText('ログイン成功!');
-});
+  default_font = new QFont(settings_loader.font, 9);
+  statusLabel.setFont(default_font);
 
-global.win = win;
+  desktop_notification.set_is_enable(settings_loader.use_desktop_notification);
+
+  timeline.set_settings(settings_loader);
+  postViewArea.set_font(settings_loader.font);
+  postbox.set_font(settings_loader.font);
+  menu_bar.set_font(settings_loader.font);
+  checkboxs.set_font(settings_loader.font);
+
+  // 始めにウインドウを出しておくと何故かプロセスが死なない
+  win.show();
+
+  // ウィジェットサイズだとバグってることあるのでウインドウサイズをもぎ取るためにウインドウを渡す
+  postViewArea.set_main_win(win);
+
+  client.login().then(async () => {
+      await emoji_parser.init(settings_loader.use_emojis);
+      postViewArea.set_host(client.host);
+      await timeline.init();
+      timeline.start_streaming(statusLabel, client);
+      post_action.init(client, timeline);
+      statusLabel.setText('ログイン成功!');
+  });
+
+  global.win = win;
+}
+
+init_cha();
+

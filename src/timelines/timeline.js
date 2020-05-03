@@ -12,12 +12,11 @@ const {
   QSize,
   QWidget,
   FlexLayout,
-  QFont,
   SelectionMode
 } = require('@nodegui/nodegui');
 
 class Timeline{
-  constructor(){
+  constructor(font){
     const assets = new Assets("TimelineWidget");
     const tree = new QListWidget();
     tree.setFlexNodeSizeControlled(false);
@@ -30,6 +29,7 @@ class Timeline{
     this.tl = [];
     this.item_queue = [];
     this.is_now_add = false;
+    this.font = font;
   }
 
   get_widget(){
@@ -62,12 +62,12 @@ class Timeline{
   }
 
   add_note(note){
-    var item = new NoteItem(note);
+    var item = new NoteItem(note, this.font);
     this.add_item(item, note.id, note.createdAt);
   }
 
   add_notification(notification){
-    var item = new NotificationItem(notification);
+    var item = new NotificationItem(notification, this.font);
     this.add_item(item, notification.id, notification.createdAt);
   }
 

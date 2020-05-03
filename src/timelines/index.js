@@ -12,10 +12,8 @@ const NotificationParser = require('../tools/notification_parser/index.js');
 
 class Timelines{
   constructor(){
-    const font = new QFont('sans', 9);
     const tabWidget = new QTabWidget();
     tabWidget.setObjectName('timelines');
-    tabWidget.setFont(font);
 
     this.tab_widget = tabWidget;
     this.tabs = [];
@@ -51,7 +49,7 @@ class Timelines{
       id: tab.id,
       name: tab.name,
       source: tab.source,
-      timeline: new Timeline(),
+      timeline: new Timeline(this.font),
       is_auto_select: false,
       post_view: false
     }
@@ -269,9 +267,11 @@ class Timelines{
     this.desktop_notification = desktop_notification;
   }
 
-  set_settings(cache_limit, cache_clear_count){
-    this.cache_limit = cache_limit;
-    this.cache_clear_count = cache_clear_count;
+  set_settings(settings){
+    this.cache_limit = settings.cache_limit;
+    this.cache_clear_count = settings.cache_clear_count;
+    this.font = settings.font;
+    this.tab_widget.setFont(new QFont(this.font, 9));
   }
 
   _show_mes_dialog(mes_str){

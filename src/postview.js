@@ -17,8 +17,6 @@ const NotificationParser = require('./tools/notification_parser/index.js');
 
 class PostView{
   constructor(){
-    const font = new QFont('sans', 9);
-
     const postViewArea = new QWidget();
     const postViewAreaLayout = new FlexLayout();
     postViewArea.setObjectName('postViewArea');
@@ -50,14 +48,11 @@ class PostView{
 
     const userFlagLabel = new QLabel();
     userFlagLabel.setObjectName('postViewUserFlagLabel');
-    userFlagLabel.setFont(font);
     userFlagLabel.setAlignment(AlignmentFlag.AlignCenter);
     postViewLeftLayout.addWidget(userFlagLabel);
 
     const userNameLabel = new QLabel();
-    const NameFont = new QFont('sans', 9, QFontWeight.Bold);
     userNameLabel.setObjectName('postViewUserNameLabel');
-    userNameLabel.setFont(NameFont);
     userNameLabel.setWordWrap(true);
     userNameLabel.setAlignment(AlignmentFlag.AlignTop);
     userNameLabel.setFlexNodeSizeControlled(false);
@@ -65,7 +60,6 @@ class PostView{
 
     const dateLabel = new QLabel();
     dateLabel.setObjectName('postViewDateLabel');
-    dateLabel.setFont(font);
     dateLabel.setWordWrap(false);
     dateLabel.setFixedSize(126, 12);
     dateLabel.setAlignment(AlignmentFlag.AlignTop);
@@ -77,7 +71,6 @@ class PostView{
     const bodyLabel = new QLabel();
     bodyLabel.setFlexNodeSizeControlled(false);
     bodyLabel.setObjectName('postViewBodyLabel');
-    bodyLabel.setFont(font);
     bodyLabel.setWordWrap(false);
     bodyLabel.setAlignment(AlignmentFlag.AlignTop);
     bodyLabel.setTextInteractionFlags(TextInteractionFlag.LinksAccessibleByMouse | TextInteractionFlag.TextSelectableByMouse);
@@ -348,6 +341,16 @@ class PostView{
 
   set_host(host){
     this.host = host;
+  }
+
+  set_font(_font){
+    const font = new QFont(_font, 9);
+    const NameFont = new QFont(_font, 9, QFontWeight.Bold);
+
+    this.user_flag_label.setFont(font);
+    this.user_name_label.setFont(NameFont);
+    this.date_label.setFont(font);
+    this.body_label.setFont(font);
   }
 
   set_main_win(win){

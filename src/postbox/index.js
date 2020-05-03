@@ -15,8 +15,6 @@ const Assets = require('../assets.js');
 
 class PostBox{
   constructor(){
-    const font = new QFont('sans', 9);
-
     const Area = new QWidget();
     const AreaLayout = new FlexLayout();
     Area.setObjectName('postArea');
@@ -31,26 +29,17 @@ class PostBox{
     postTextInput.setObjectName('postTextInput');
     postTextInput.setReadOnly(false);
     postTextInput.setWordWrapMode(3);
-    postTextInput.setFont(font);
 
     const postButton = new QPushButton();
     postButton.setText('Post!');
     postButton.setObjectName('postButton');
-    postButton.setFont(font);
 
     const visibilitySelect = new QComboBox();
     visibilitySelect.setObjectName('postVisibilitySelect');
-    visibilitySelect.setFont(font);
-    visibilitySelect.addItem(undefined, '公開');
-    visibilitySelect.addItem(undefined, 'ホーム');
-    visibilitySelect.addItem(undefined, 'フォロワー');
-    visibilitySelect.addItem(undefined, 'ダイレクト');
-    visibilitySelect.addItem(undefined, 'ランダム');
 
     const isLocalCheck = new QCheckBox();
     isLocalCheck.setObjectName('postIsLocalCheck');
     isLocalCheck.setText('ローカルのみ');
-    isLocalCheck.setFont(font);
 
     SubAreaLayout.addWidget(postButton);
     SubAreaLayout.addWidget(visibilitySelect);
@@ -61,7 +50,6 @@ class PostBox{
 
     this.assets = new Assets("Postbox");
 
-    this.font = font;
     this.area = Area;
     this.layout = AreaLayout;
     this.post_text_input = postTextInput;
@@ -132,6 +120,25 @@ class PostBox{
     var _placeholder = this.assets.placeholder;
     var placeholder = _placeholder[Math.floor(Math.random() * _placeholder.length)];
     this.post_text_input.setPlaceholderText(placeholder);
+  }
+
+  set_font(_font){
+    const font = new QFont(_font, 9);
+
+    this.post_text_input.setFont(font);
+    this.post_button.setFont(font);
+    this.visibility_select.setFont(font);
+    this.is_local_check.setFont(font);
+
+    this.visibility_select_setup();
+  }
+
+  visibility_select_setup(){
+    this.visibility_select.addItem(undefined, '公開');
+    this.visibility_select.addItem(undefined, 'ホーム');
+    this.visibility_select.addItem(undefined, 'フォロワー');
+    this.visibility_select.addItem(undefined, 'ダイレクト');
+    this.visibility_select.addItem(undefined, 'ランダム');
   }
 
   add_post_filter(callback){

@@ -10,7 +10,7 @@ const {
 const NotificationParser = require('../tools/notification_parser/index.js');
 
 class NotificationItem{
-  constructor(notification){
+  constructor(notification, font){
     const list_item = new QListWidgetItem();
     const widget = new QWidget();
     const widget_layout = new FlexLayout();
@@ -46,7 +46,7 @@ class NotificationItem{
     icon_label.setFixedSize(item_height -1, item_height -1);
     name_label.setFixedSize(120, item_height);
 
-    var f = new QFont('sans', 9);
+    var f = new QFont(font, 9);
     desc_label.setFont(f);
     name_label.setFont(f);
     type_label.setText(f);
