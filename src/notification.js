@@ -2,7 +2,7 @@ const Note = require('./notes.js');
 const User = require('./users.js');
 
 class Notification{
-  constructor(notify, user_map, parser){
+  constructor(notify, user_map, parser, notes){
     return (async () => {
       this.el_type = 'Notification';
       this.id = notify.id;
@@ -13,7 +13,7 @@ class Notification{
       this.note;
 
       if(notify.note){
-        this.note = await new Note(notify.note, user_map, parser);
+        this.note = await new Note(notify.note, user_map, notes, parser);
       }
 
       if(notify.user){

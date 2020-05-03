@@ -107,6 +107,7 @@ client.login().then(async () => {
     postViewArea.set_host(client.host);
     await settings_loader.init();
     desktop_notification.set_is_enable(settings_loader.use_desktop_notification);
+    timeline.set_settings(settings_loader.post_cache_limit, settings_loader.post_cache_clear_count);
     await emoji_parser.init(settings_loader.use_emojis);
     await timeline.init();
     timeline.start_streaming(statusLabel, client);

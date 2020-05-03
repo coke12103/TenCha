@@ -2,7 +2,7 @@ const User = require('./users.js');
 const post_parser = require('./tools/post_parser/index.js');
 
 class Note{
-  constructor(json, user_map, parser){
+  constructor(json, posts, user_map, parser){
     return (async () => {
       this.el_type = 'Note';
       this.id = json.id;
@@ -15,7 +15,6 @@ class Note{
       this.userId = json.userId;
       this.replyId = json.replyId;
       this.renoteId = json.renoteId;
-      // this.reply = if あとで
       this.viaMobile = json.viaMobile;
       this.isHidden = json.isHidden;
       this.visibility = json.visibility;
@@ -33,9 +32,27 @@ class Note{
       this.uri = json.uri;
 
       if(json.renote){
-        this.renote = await new Note(json.renote, user_map, parser);
+        var _renote = posts[json.renote.id];
+        if(_renote){
+          this.renote = _renote;
+        }else{
+          this.renote = await new Note(json.renote, posts, user_map, parser);
+          posts[json.renote.id] = this.renote;
+        }
       }else{
         this.renote = null;
+      }
+
+      if(json.reply){
+        var _reply = posts[json.reply.id];
+        if(_reply){
+          this.reply = _reply;
+        }else{
+          this.reply = await new Note(json.reply, posts, user_map, parser);
+          posts[json.reply.id] = this.reply;
+        }
+      }else{
+        this.reply = null;
       }
 
       if(this.text) this.text = post_parser.escape_html(this.text);
