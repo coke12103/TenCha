@@ -149,36 +149,15 @@ class PostView{
     var _date = '<a href="' + _l + '">' + _d + '</a>';
     this.date_label.setText(_date);
 
-    var text = '';
+    var text;
     if(note.renote){
-      var r_text = "RN @" + note.renote.user.acct + ' ';
-      if(note.cw){
-        text = note.cw + '\n------------CW------------\n';
-        text = text + note.text;
-      }else if(note.text){
-        text = note.text + ' ';
-      }
-
-      if(note.renote.cw){
-        r_text = r_text + note.renote.cw;
-        r_text = r_text + '\n------------CW------------\n';
-        r_text = r_text + note.renote.text;
-      }else{
-        r_text = r_text + note.renote.text;
-      }
-
-      text = text + r_text;
+      text = this._parse_renote(note);
+    }else if(note.reply){
+      text = this._parse_reply(note);
     }else{
-      if(note.cw){
-        text = note.cw + '\n------------CW------------\n';
-        text = text + note.text;
-      }else{
-        text = note.text;
-      }
+      text = this._parse_note_text(note);
     }
 
-    //this.body_label.setText(this.wrap_text(text));
-    //    this.body_label.setText(text);
     text = this.post_parser.parse(text);
     this.body_label.setText(this.wrap_text(text));
 
@@ -228,6 +207,68 @@ class PostView{
     var right_size = (_a_s.width() -10) - (_l_s.width() + _p_s);
 
     this.area.resize(right_size, 0);
+  }
+
+  _parse_renote(note){
+    var result = this._parse_note_text(note);
+    var _note = note;
+    var c = 0;
+
+    while(true){
+      var renote = _note.renote;
+      if(!renote || c > 2) break;
+
+      var r_text = `RN @${renote.user.acct} `;
+      if(result) result += " ";
+
+      if(renote.reply){
+        r_text += this._parse_reply(renote);
+      }else if(renote.renote){
+        r_text += this._parse_renote(renote);
+      }else{
+        r_text += this._parse_note_text(renote);
+      }
+
+      result += r_text;
+      _note = renote;
+      c++;
+    }
+
+    return result;
+  }
+
+  _parse_reply(note){
+    var result = this._parse_note_text(note);
+    var _note = note;
+    var c = 0;
+    while(true){
+      var reply = _note.reply;
+      if(!reply || c > 2) break;
+
+      if(reply.renote){
+        var re_text = this._parse_renote(reply);
+      }else if(reply.reply){
+        var re_text = this._parse_reply(reply);
+      }else{
+        var re_text = this._parse_note_text(reply);
+      }
+
+      result += `\nRE: ${re_text}`;
+      _note = reply;
+      c++;
+    }
+
+    return result;
+  }
+
+  _parse_note_text(note){
+    var result = '';
+    if(note.cw){
+      result = note.cw + '\n------------CW------------\n';
+    }
+    result += note.text;
+
+    return result;
   }
 
   wrap_text(text){
