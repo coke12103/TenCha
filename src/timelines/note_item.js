@@ -90,36 +90,25 @@ class NoteItem{
     var note_color = '#000';
     var note_back = 'transparent';
 
+    var m_text = '';
+
     if(note.renote){
       note_back = 'rgba(119, 221, 117, 0.3)';
-      var text = "";
-      var r_text = "RN @" + note.renote.user.acct + ' ';
-      if(note.cw){
-        text = note.cw + ' ';
-        note_color = '#555753';
-      }else if(note.text){
-        text = note.text + ' ';
-      }
-
-      if(note.renote.cw){
-        r_text = r_text + note.renote.cw;
-        note_color = '#555753';
-      }else{
-        if(!note.renote.text) note.renote.text = '';
-        r_text = r_text + note.renote.text;
-      }
-
-      text = text + r_text;
-      text_label.setText(text.replace(/(\r\n|\n|\r)/gm," "));
+      m_text = this._parse_renote(note);
+    }else if(note.reply){
+      // color
+      note_back = 'rgba(112, 116, 255, 0.3)';
+      m_text = this._parse_reply(note);
     }else{
-      if(note.cw){
-        text_label.setText(note.cw.replace(/(\r\n|\n|\r)/gm," "));
-        note_color = '#555753';
-      }else{
-        if(!note.text) note.text = '';
-        text_label.setText(note.text.replace(/(\r\n|\n|\r)/gm," "));
-      }
+      m_text = this._parse_note_text(note);
     }
+
+    // 1階層でしか色付かないのは後で直す
+    if(note.cw){
+      note_color = '#555753';
+    }
+
+    text_label.setText(m_text);
 
     widget.setInlineStyle(`
       height: ${item_height}px;
@@ -150,6 +139,69 @@ class NoteItem{
     this.icon_label = icon_label;
     this.name_label = name_label;
     this.text_label = text_label;
+  }
+
+  _parse_renote(note){
+    var result = this._parse_note_text(note);
+    var _note = note;
+    var c = 0;
+    while(true){
+      var renote = _note.renote;
+      if(!renote || c > 2) break;
+
+      var r_text = `RN @${renote.user.acct} `;
+      if(result) result += " ";
+
+      if(renote.reply){
+        r_text += this._parse_reply(renote);
+      }else if(renote.renote){
+        r_text += this._parse_renote(renote);
+      }else{
+        r_text += this._parse_note_text(renote);
+      }
+
+      result += r_text;
+      _note = renote;
+      c++;
+    }
+
+    return result;
+  }
+
+  _parse_reply(note){
+    var result = this._parse_note_text(note);
+    var _note = note;
+    var c = 0;
+    while(true){
+      var reply = _note.reply;
+      if(!reply || c > 2) break;
+
+      if(reply.renote){
+        var re_text = this._parse_renote(reply);
+      }else if(reply.reply){
+        var re_text = this._parse_reply(reply);
+      }else{
+        var re_text = this._parse_note_text(reply);
+      }
+
+      result += ` RE: ${re_text}`;
+      _note = reply;
+      c++;
+    }
+
+    return result;
+  }
+
+  _parse_note_text(note){
+    var result;
+    if(note.cw){
+      result = note.cw.replace(/(\r\n|\n|\r)/gm," ");
+    }else{
+      if(!note.text) note.text = '';
+      result = note.text.replace(/(\r\n|\n|\r)/gm," ");
+    }
+
+    return result;
   }
 
   destroy(){
