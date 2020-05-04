@@ -15,6 +15,7 @@ const EmojiParser = require('./tools/emoji_parser/index.js');
 const PostAction = require('./post_action.js');
 const SettingsLoader = require('./tools/settings_loader/index.js');
 const DesktopNotification = require('./tools/desktop_notification/index.js');
+const Blocker = require('./blocker/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
@@ -55,6 +56,7 @@ var desktop_notification = new DesktopNotification();
 var post_action = new PostAction();
 var assets = new Assets('MainWindow');
 var default_font;
+var blocker = new Blocker();
 
 postbox.add_event_listener(async () => {
     var data = postbox.get_data();
@@ -78,6 +80,7 @@ postbox.add_event_listener(async () => {
 async function init_cha(){
   // 設定読み込みはFont指定もあるので先に
   var _setting_init = settings_loader.init();
+  var _blocker_init = blocker.init();
 
   timeline.set_auto_select_check(timeline_auto_select);
   timeline.set_post_view(postViewArea);
@@ -113,6 +116,11 @@ async function init_cha(){
   postbox.set_font(settings_loader.font);
   menu_bar.set_font(settings_loader.font);
   checkboxs.set_font(settings_loader.font);
+
+  // ブロッカーの読み込み後にやるやつ
+  await _blocker_init;
+
+  timeline.add_timeline_filter(blocker.is_block.bind(blocker));
 
   // 始めにウインドウを出しておくと何故かプロセスが死なない
   win.show();
