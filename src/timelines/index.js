@@ -129,7 +129,12 @@ class Timelines{
           if(!tab.timeline.check_exist_item(item.id)) tab.timeline.add_notification(item);
         }else{
           var item = await this.create_note(body, this.users);
-          if(!tab.timeline.check_exist_item(item.id)) tab.timeline.add_note(item);
+          var is_display = true;
+          for(var filter of this.filters){
+            var result = filter(item);
+            if(!result) is_display = false;
+          }
+          if(!tab.timeline.check_exist_item(item.id) && is_display) tab.timeline.add_note(item);
         }
 
         if(tab.is_auto_select){
