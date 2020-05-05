@@ -1,0 +1,20 @@
+{
+  "block_words":[
+    {
+      "word": "ミュートしたいワード",
+      "regexp": false,
+      "ignore_case": false
+    },
+    {
+      "word": "^ミュートしたいワード$",
+      "regexp": true,
+      "ignore_case": false
+    },
+    {
+      "word": "[a-z0-9]+",
+      "regexp": true,
+      "ignore_case": true
+    }
+  ]
+}
+
