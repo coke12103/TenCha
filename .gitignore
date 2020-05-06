@@ -8,3 +8,4 @@ tmp/
 /config.json1
 /domain_blocks.json
 /word_blocks.json
+/user_id_blocks.json
