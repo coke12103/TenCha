@@ -28,9 +28,9 @@ class UserIdBlocker{
   }
 
   is_block(note){
-    var u_id = note.user.username;
+    var u_id = note.user.acct;
     var r_u_id;
-    if(note.renote) r_u_id = note.renote.user.username;
+    if(note.renote) r_u_id = note.renote.user.acct;
 
     var result = false;
     for(var id of this.block_user_ids){
