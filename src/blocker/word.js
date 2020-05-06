@@ -28,8 +28,8 @@ class WordBlocker{
   }
 
   is_block(note){
-    var cw = note.cw;
-    var text = note.text;
+    var cw = note.no_emoji_cw;
+    var text = note.no_emoji_text;
     var renote = note.renote;
     var reply = note.reply;
 
@@ -49,10 +49,10 @@ class WordBlocker{
 
       if(cw && word_regexp.test(cw)) result = true;
       if(text && word_regexp.test(text)) result = true;
-      if(renote && renote.cw && word_regexp.test(renote.cw))  result = true;
-      if(renote && renote.text && word_regexp.test(renote.text)) result = true;
-      if(reply && reply.cw && word_regexp.test(reply.cw)) result = true;
-      if(reply && reply.text && word_regexp.test(reply.text)) result = true;
+      if(renote && renote.no_emoji_cw && word_regexp.test(renote.no_emoji_cw))  result = true;
+      if(renote && renote.no_emoji_text && word_regexp.test(renote.no_emoji_text)) result = true;
+      if(reply && reply.no_emoji_cw && word_regexp.test(reply.no_emoji_cw)) result = true;
+      if(reply && reply.no_emoji_text && word_regexp.test(reply.no_emoji_text)) result = true;
     }
 
     return result;
