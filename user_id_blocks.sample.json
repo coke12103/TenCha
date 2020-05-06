@@ -1,0 +1,10 @@
+{
+  "block_user_ids":[
+    {
+      "id": "followbot",
+      "regexp": true,
+      "ignore_case": true
+    }
+  ]
+}
+
