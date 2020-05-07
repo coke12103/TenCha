@@ -1,0 +1,16 @@
+{
+  "replace_words":[
+    {
+      "from": "Nvidia",
+      "to": "謎のAI半導体メーカー",
+      "regexp": false,
+      "ignore_case": false
+    },
+    {
+      "from": "GTX([0-9]+)",
+      "to": "RTX$1",
+      "regexp": true,
+      "ignore_case": false
+    }
+  ]
+}
