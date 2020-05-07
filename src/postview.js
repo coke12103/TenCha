@@ -127,7 +127,7 @@ class PostView{
     this.user_flag_label.setText(flag);
 
     if(note.user.name){
-      this.user_name_label.setText(note.user.name + '/' + note.user.acct);
+      this.user_name_label.setText('<html>' + note.user.name + '/' + note.user.acct + '</html>');
     }else{
       this.user_name_label.setText(note.user.acct);
     }
@@ -180,7 +180,7 @@ class PostView{
     this.user_flag_label.setText(flag);
 
     if(notification.user.name){
-      this.user_name_label.setText(notification.user.name + '/' + notification.user.acct);
+      this.user_name_label.setText('<html>' + notification.user.name + '/' + notification.user.acct + '</html>');
     }else{
       this.user_name_label.setText(notification.user.acct);
     }
