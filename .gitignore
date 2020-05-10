@@ -2,6 +2,7 @@ node_modules/
 dist/
 deploy/
 tmp/
+user_contents/
 /config.json
 /tabs.json
 /settings.json
