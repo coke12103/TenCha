@@ -15,6 +15,7 @@ const EmojiParser = require('./tools/emoji_parser/index.js');
 const PostAction = require('./post_action.js');
 const SettingsLoader = require('./tools/settings_loader/index.js');
 const DesktopNotification = require('./tools/desktop_notification/index.js');
+const ImageViewer = require('./tools/image_viewer/index.js');
 const Blocker = require('./blocker/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
@@ -53,6 +54,7 @@ var random_emoji = new RandomEmoji(postbox);
 var emoji_parser = new EmojiParser();
 var settings_loader = new SettingsLoader();
 var desktop_notification = new DesktopNotification();
+var image_viewer = new ImageViewer();
 var post_action = new PostAction();
 var assets = new Assets('MainWindow');
 var default_font;
@@ -81,6 +83,7 @@ async function init_cha(){
   // 設定読み込みはFont指定もあるので先に
   var _setting_init = settings_loader.init();
   var _blocker_init = blocker.init();
+  var _image_viewer_init = image_viewer.init();
 
   timeline.set_auto_select_check(timeline_auto_select);
   timeline.set_post_view(postViewArea);
@@ -122,6 +125,8 @@ async function init_cha(){
 
   timeline.add_timeline_filter(blocker.is_block.bind(blocker));
 
+  await _image_viewer_init;
+
   // 始めにウインドウを出しておくと何故かプロセスが死なない
   win.show();
 
@@ -133,7 +138,7 @@ async function init_cha(){
       postViewArea.set_host(client.host);
       await timeline.init();
       timeline.start_streaming(statusLabel, client);
-      post_action.init(client, timeline);
+      post_action.init(client, timeline, image_viewer);
       statusLabel.setText('ログイン成功!');
   });
 
