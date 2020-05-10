@@ -68,6 +68,8 @@ class ImageViewer{
       }
     }
 
+    if(!files.length) return;
+
     var q = [];
     for(var f of files){
       q.push(this._download(f));
