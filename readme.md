@@ -47,6 +47,10 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
   - ミュートするユーザーの一覧
 - `replace_blocks.json`
   - 置換ミュートの設定
+- `user_contents/`
+  - 閲覧した添付ファイルのキャッシュ
+- `content_settings.json`
+  - 各種添付ファイルの種類ごとに呼び出されるアプリケーションの設定
 
 上記ファイルをすべて削除してください
 
