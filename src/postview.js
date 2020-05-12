@@ -204,52 +204,40 @@ class PostView{
 
   _parse_renote(note){
     var result = this._parse_note_text(note);
-    var _note = note;
-    var c = 0;
 
-    while(true){
-      var renote = _note.renote;
-      if(!renote || c > 2) break;
+    var renote = note.renote;
+    if(!renote) return result;
 
-      var r_text = `RN @${renote.user.acct} `;
-      if(result) result += " ";
+    var r_text = `RN @${renote.user.acct} `;
+    if(result) result += " ";
 
-      if(renote.reply){
-        r_text += this._parse_reply(renote);
-      }else if(renote.renote){
-        r_text += this._parse_renote(renote);
-      }else{
-        r_text += this._parse_note_text(renote);
-      }
-
-      result += r_text;
-      _note = renote;
-      c++;
+    if(renote.reply){
+      r_text += this._parse_reply(renote);
+    }else if(renote.renote){
+      r_text += this._parse_renote(renote);
+    }else{
+      r_text += this._parse_note_text(renote);
     }
+
+    result += r_text;
 
     return result;
   }
 
   _parse_reply(note){
     var result = this._parse_note_text(note);
-    var _note = note;
-    var c = 0;
-    while(true){
-      var reply = _note.reply;
-      if(!reply || c > 2) break;
+    var reply = note.reply;
+    if(!reply) return result;
 
-      if(reply.renote){
-        var re_text = this._parse_renote(reply);
-      }else if(reply.reply){
-        var re_text = this._parse_reply(reply);
-      }else{
-        var re_text = this._parse_note_text(reply);
-      }
-
-      result += `\nRE: ${re_text}`;
-      _note = reply;
-      c++;
+    if(reply.renote){
+      var re_text = this._parse_renote(reply);
+    }else if(reply.reply){
+      var re_text = this._parse_reply(reply);
+    }else{
+      var re_text = this._parse_note_text(reply);
     }
+
+    result += `\nRE: ${re_text}`;
 
     return result;
   }
