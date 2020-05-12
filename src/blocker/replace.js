@@ -28,12 +28,6 @@ class ReplaceBlocker{
   }
 
   is_block(note){
-    var screen_name = note.user.name;
-    var cw = note.cw;
-    var text = note.text;
-    var renote = note.renote;
-    var reply = note.reply;
-
     var result = false;
     for(var word of this.replace_words){
       var replace_word = word.from;
@@ -48,13 +42,13 @@ class ReplaceBlocker{
         replace_regexp = new RegExp(this.escape_regexp(replace_word), 'g');
       }
 
-      if(word.screen_name && screen_name) note.user.name = screen_name.replace(replace_regexp, word.to);
-      if(cw) note.cw = cw.replace(replace_regexp, word.to);
-      if(text) note.text = text.replace(replace_regexp, word.to);
-      if(renote && renote.cw)  note.renote.cw = renote.cw.replace(replace_regexp, word.to);
-      if(renote && renote.text) note.renote.text = renote.text.replace(replace_regexp, word.to);
-      if(reply && reply.cw) note.reply.cw = reply.cw.replace(replace_regexp, word.to);
-      if(reply && reply.text) note.reply.text = reply.text.replace(replace_regexp, word.to);
+      if(word.screen_name && note.user.screen_name) note.user.name = note.user.screen_name.replace(replace_regexp, word.to);
+      if(note.cw) note.cw = note.cw.replace(replace_regexp, word.to);
+      if(note.text) note.text = note.text.replace(replace_regexp, word.to);
+      if(note.renote && note.renote.cw)  note.renote.cw = note.renote.cw.replace(replace_regexp, word.to);
+      if(note.renote && note.renote.text) note.renote.text = note.renote.text.replace(replace_regexp, word.to);
+      if(note.reply && note.reply.cw) note.reply.cw = note.reply.cw.replace(replace_regexp, word.to);
+      if(note.reply && note.reply.text) note.reply.text = note.reply.text.replace(replace_regexp, word.to);
     }
 
     return false;
