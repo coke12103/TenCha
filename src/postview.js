@@ -304,7 +304,11 @@ class PostView{
     for(var t of sp_text){
       if(sp_reg.test(t)){
         if(/<br>$/gi.test(t)) p = 0;
-        if(img_reg.test(t)) p += 2;
+        if(img_reg.test(t)) p += 5;
+        if(p > max_str_len){
+          result += '<br>';
+          p = 0;
+        }
         result += t;
         continue;
       }
