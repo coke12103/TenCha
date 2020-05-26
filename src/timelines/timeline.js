@@ -56,7 +56,9 @@ class Timeline{
     this.tree.insertItem((this.tl.length - pos), data.item.list_item);
     this.tree.setItemWidget(data.item.list_item, data.item.widget);
 
-    await sleep(10);
+    // nodegui v0.20.0では動作しない
+    // await sleep(10);
+
     this.is_now_add = false;
     this._add_item();
   }
