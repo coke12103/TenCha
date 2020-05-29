@@ -273,8 +273,8 @@ class Timelines{
   }
 
   set_settings(settings){
-    this.cache_limit = settings.cache_limit;
-    this.cache_clear_count = settings.cache_clear_count;
+    this.cache_limit = settings.post_cache_limit;
+    this.cache_clear_count = settings.post_cache_clear_count;
     this.font = settings.font;
     this.tab_widget.setFont(new QFont(this.font, 9));
   }
