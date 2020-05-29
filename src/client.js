@@ -62,7 +62,7 @@ class Client{
         this._create_channel_connect(connection, "local", "localTimeline");
         this._create_channel_connect(connection, "social", "hybridTimeline");
         this._create_channel_connect(connection, "global", "globalTimeline");
-      }, 300);
+      }, 100);
     });
 
     connection.on('ping', this._ws_heartbeat);
@@ -75,13 +75,13 @@ class Client{
 
     connection.on('close', (cl) => {
         console.log('closed!', cl);
-        statusLabel.setText('サーバーから切断されました。3秒後に再接続を試みます。');
+        statusLabel.setText('サーバーから切断されました。0.5秒後に再接続を試みます。');
         clearTimeout(this.pingTimeout)
         setTimeout(() => {
             this.ws_connected = false;
             this.ws = null;
             this._connect(statusLabel, count + 1, timeline);
-        }, 3000);
+        }, 500);
     });
 
     connection.on('message', (data) => {
@@ -108,7 +108,7 @@ class Client{
     console.log('heartbeat!');
     this.pingTimeout = setTimeout(() => {
         this.ws.terminate();
-    }, 30000 + 1000);
+    }, 120000 + 1000);
   }
 }
 
