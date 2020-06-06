@@ -26,6 +26,18 @@ _file.load = function(path){
   return file;
 }
 
+_file.load_bin = function(path){
+  var file;
+  if(this.exist_check(path)){
+    file = fs.readFileSync(path);
+  }else{
+    console.log("File Not Found.: " + path);
+    file = null;
+  }
+
+  return file;
+}
+
 _file.mkdir = function(dir){
   try{
     fs.mkdirSync(dir);
