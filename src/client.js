@@ -32,6 +32,23 @@ class Client{
     })
   }
 
+  async call_multipart(path, data){
+    return new Promise((resolve, reject) => {
+        var req = {
+          url: "https://" + this.host + "/api/" + path,
+          method: "POST",
+          formData: data
+        }
+        data.i = this.api_token;
+
+        request(req).then(async (body) => {
+            resolve(body)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+  }
+
   connect_ws(statusLabel, timeline){
     return new Promise((resolve, reject) => {
       this._connect(statusLabel, 0, timeline);
@@ -63,6 +80,14 @@ class Client{
         this._create_channel_connect(connection, "social", "hybridTimeline");
         this._create_channel_connect(connection, "global", "globalTimeline");
       }, 100);
+//      var data = {
+//        type: "sn",
+//        body: {
+//          id: "id"
+//        }
+//      }
+//
+//      connection.send(JSON.stringify(data));
     });
 
     connection.on('ping', this._ws_heartbeat);
