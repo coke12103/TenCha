@@ -16,6 +16,7 @@ const PostAction = require('./post_action.js');
 const SettingsLoader = require('./tools/settings_loader/index.js');
 const DesktopNotification = require('./tools/desktop_notification/index.js');
 const ImageViewer = require('./tools/image_viewer/index.js');
+const CustomPostWindow = require('./custom_post_window/index.js');
 const Blocker = require('./blocker/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
@@ -50,11 +51,12 @@ var postViewArea = new _post_view_area();
 var checkboxs = new _checkboxs();
 var timeline_auto_select = checkboxs.get('timeline_auto_select');
 var postbox = new _post_box();
-var random_emoji = new RandomEmoji(postbox);
+var random_emoji = new RandomEmoji();
 var emoji_parser = new EmojiParser();
 var settings_loader = new SettingsLoader();
 var desktop_notification = new DesktopNotification();
 var image_viewer = new ImageViewer();
+var custom_post_window = new CustomPostWindow();
 var post_action = new PostAction();
 var assets = new Assets('MainWindow');
 var default_font;
@@ -77,7 +79,7 @@ postbox.add_event_listener(async () => {
       console.log(err);
       statusLabel.setText(err.error.error.message);
     }
-})
+});
 
 async function init_cha(){
   // 設定読み込みはFont指定もあるので先に
@@ -90,7 +92,8 @@ async function init_cha(){
   timeline.set_emoji_parser(emoji_parser);
   timeline.set_desktop_notification(desktop_notification);
 
-  menu_bar.post_menu.set_random_emoji(random_emoji);
+  menu_bar.post_menu.set_postbox(postbox);
+  menu_bar.post_menu.set_custom_post(custom_post_window);
   menu_bar.timeline_menu.set_post_action(post_action);
 
   timelineControlsAreaLayout.addWidget(timeline_auto_select);
@@ -116,9 +119,12 @@ async function init_cha(){
 
   timeline.set_settings(settings_loader);
   postViewArea.set_font(settings_loader.font);
-  postbox.set_font(settings_loader.font);
+
   menu_bar.set_font(settings_loader.font);
   checkboxs.set_font(settings_loader.font);
+  custom_post_window.set_font(settings_loader.font);
+
+  postbox.setup(settings_loader.font, random_emoji);
 
   // ブロッカーの読み込み後にやるやつ
   await _blocker_init;
@@ -139,6 +145,7 @@ async function init_cha(){
       await timeline.init();
       timeline.start_streaming(statusLabel, client);
       post_action.init(client, timeline, image_viewer);
+      custom_post_window.set_client(client);
       statusLabel.setText('ログイン成功!');
   });
 

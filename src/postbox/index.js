@@ -122,13 +122,15 @@ class PostBox{
     this.post_text_input.setPlaceholderText(placeholder);
   }
 
-  set_font(_font){
+  setup(_font, random_emoji){
     const font = new QFont(_font, 9);
 
     this.post_text_input.setFont(font);
     this.post_button.setFont(font);
     this.visibility_select.setFont(font);
     this.is_local_check.setFont(font);
+
+    this.emoji_gen = random_emoji;
 
     this.visibility_select_setup();
   }
@@ -147,6 +149,11 @@ class PostBox{
 
   filter(callback){
     callback(this.post_text_input);
+  }
+
+  random_emoji(){
+    var emoji = this.emoji_gen.exec();
+    this.post_text_input.insertPlainText(emoji);
   }
 }
 

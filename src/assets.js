@@ -22,6 +22,10 @@ class Asset{
       case "SettingsLoader":
         this.settings_template = require('../assets/settings.json').settings;
         break;
+      case "CustomPostWindow":
+        this.css = require('!!raw-loader!../assets/css/custom_post.css').default;
+        this.placeholder = require('../assets/placeholder.json').placeholder;
+        break;
     }
 
     return;

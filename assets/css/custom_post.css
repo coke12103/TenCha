@@ -1,0 +1,48 @@
+#postTextArea, #cwTextArea, #imageArea, #replyRenoteArea, #pollArea, #buttonsArea{
+  flex-direction: row;
+  margin-bottom: 5px;
+}
+
+#postTextAreaSettingArea, #imageAddArea, #pollAreaRight, #imageStatusArea{
+  flex-direction: column;
+}
+
+#postTextArea, #cwTextArea, #visibleUserIdsInput{
+  height: 76px;
+}
+
+#imageArea, #imageStatusArea, #imageArea{
+  height: 82px;
+}
+
+#postTextInput, #cwTextInput, #choicesInput, #imageStatusArea, #pollAreaLeft{
+  align-self: stretch;
+  flex-grow: 2;
+}
+
+#postTextAreaSettingArea, #visibleUserIdsInputArea, #imageAddArea{
+  align-self: stretch;
+  width: 96px;
+  margin-left: 5px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#imageAddArea, #pollAreaRight{
+  width: 140px;
+}
+
+#pollArea, #pollAreaLeft, #choicesInput{
+  height: 140px;
+}
+
+#replyRenoteArea, #buttonsArea{
+  height: 32px;
+}
+
+#rootView{
+  padding: 5px;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+}
