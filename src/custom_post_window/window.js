@@ -235,8 +235,18 @@ class CustomPostWindow{
   }
 
   set_info( {replyId = "", renoteId = "", visibility = "", visible_user_ids = []} ){
-    this.reply_id_input.setText(replyId);
-    this.renote_id_input.setText(renoteId);
+    if(!replyId){
+      this.reply_id_input.clear();
+    }else{
+      this.reply_id_input.setText(replyId);
+    }
+
+    if(!renoteId){
+      this.renote_id_input.clear();
+    }else{
+      this.renote_id_input.setText(renoteId);
+    }
+
     // TODO:
     // visibility
     // visible_user_ids

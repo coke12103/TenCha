@@ -17,6 +17,7 @@ class PostAction{
         var item_id = item.id;
 
         if(item.renote && (!item.no_emoji_text && !item.no_emoji_cw)) item_id = item.renote.id;
+        if(!(item.visibility === 'public' || item.visibility === 'home')) return;
 
         var data = {
           renoteId: item_id
@@ -46,6 +47,7 @@ class PostAction{
         var item_id = item.id;
 
         if(item.renote && (!item.no_emoji_text && !item.no_emoji_cw)) item_id = item.renote.id;
+        if(!(item.visibility === 'public' || item.visibility === 'home')) return;
 
         this.custom_post_window.show({ renoteId: item_id });
     })
