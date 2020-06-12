@@ -343,8 +343,8 @@ class CustomPostWindow{
     this.post_text_input.setPlainText('');
     this.cw_text_input.setPlainText('');
     this.visible_user_ids_input.setPlainText('');
-    this.reply_id_input.setText('');
-    this.renote_id_input.setText('');
+    this.reply_id_input.clear();
+    this.renote_id_input.clear();
 
     this.image_area.clear();
     this.poll_area.clear();
