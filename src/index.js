@@ -144,7 +144,7 @@ async function init_cha(){
       postViewArea.set_host(client.host);
       await timeline.init();
       timeline.start_streaming(statusLabel, client);
-      post_action.init(client, timeline, image_viewer);
+      post_action.init(client, timeline, image_viewer, custom_post_window);
       custom_post_window.set_client(client);
       statusLabel.setText('ログイン成功!');
   });
