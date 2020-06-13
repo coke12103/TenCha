@@ -130,6 +130,10 @@ class CustomPostWindow{
     closeButton.setObjectName('closeButton');
     closeButton.setText('閉じる');
 
+    var isAfterCloseCheck = new QCheckBox();
+    isAfterCloseCheck.setObjectName('isAfterCloseCheck');
+    isAfterCloseCheck.setText('投稿後に閉じない');
+
     // rootView
     winLayout.addWidget(rootView);
 
@@ -157,6 +161,7 @@ class CustomPostWindow{
     buttonsAreaLayout.addWidget(postButton);
     buttonsAreaLayout.addWidget(clearButton);
     buttonsAreaLayout.addWidget(closeButton);
+    buttonsAreaLayout.addWidget(isAfterCloseCheck);
 
     // emoji + visibility + localOnly + viaMobile
     postTextAreaSettingAreaLayout.addWidget(visibilitySelect);
@@ -214,6 +219,7 @@ class CustomPostWindow{
     this.post_button = postButton;
     this.clear_button = clearButton;
     this.close_button = closeButton;
+    this.is_after_close_check = isAfterCloseCheck;
 
     this.post_button.addEventListener('clicked', () => {
         this.post();
@@ -231,6 +237,7 @@ class CustomPostWindow{
   }
 
   hide(){
+    this.clear();
     this.win.hide();
   }
 
@@ -343,6 +350,7 @@ class CustomPostWindow{
     try{
       await this.client.call('notes/create', data);
       this.clear();
+      if(!this.is_after_close_check.isChecked()) this.hide();
       // post done
     }catch(err){
       console.log(err);
