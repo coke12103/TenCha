@@ -19,7 +19,7 @@ class Note{
       this.isHidden = json.isHidden;
       this.visibility = json.visibility;
       // this.mentions = if あとで
-      // this.visibleUserIds = if あとで
+      this.visibleUserIds = json.visibleUserIds;
       this.fileIds = json.fileIds;
       this.files = json.files;
       this.renoteCount = json.renoteCount;

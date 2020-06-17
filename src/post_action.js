@@ -52,6 +52,24 @@ class PostAction{
         this.custom_post_window.show({ renoteId: item_id });
     })
   }
+  reply(){
+    this.timelines.filter((item) => {
+        if(!item) return;
+        if(item.el_type == 'Notification') return;
+
+        var _item = item;
+        if(item.renote && (!item.no_emoji_text && !item.no_emoji_cw)) _item = item.renote;
+
+        var opt = {
+          replyId: _item.id,
+          visibility: _item.visibility
+        }
+
+        if(_item.visibility === 'specified') opt.visibleUserIds = _item.visibleUserIds;
+
+        this.custom_post_window.show(opt);
+    })
+  }
 }
 
 module.exports = PostAction;
