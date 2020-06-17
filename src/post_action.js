@@ -70,6 +70,23 @@ class PostAction{
         this.custom_post_window.show(opt);
     })
   }
+  uni_renote(){
+    this.timelines.filter((item) => {
+        if(!item) return;
+        if(item.el_type == 'Notification') return;
+
+        var item_id = item.id;
+
+        if(item.renote && (!item.no_emoji_text && !item.no_emoji_cw)) item_id = item.renote.id;
+        if(!(item.visibility === 'public' || item.visibility === 'home')) return;
+
+        var data = {
+          renoteId: item_id
+        };
+        this.client.call('notes/create',data);
+        this.custom_post_window.show({ renoteId: item_id });
+    })
+  }
 }
 
 module.exports = PostAction;
