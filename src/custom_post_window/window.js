@@ -230,6 +230,14 @@ class CustomPostWindow{
     this.close_button.addEventListener('clicked', () => {
         this.hide();
     });
+
+    this.visibilitys = [
+      { name: "public", text: "公開" },
+      { name: "home", text: "ホーム" },
+      { name: "followers", text: "フォロワー" },
+      { name: "specified", text: "ダイレクト" },
+      { name: "random", text: "ランダム" }
+    ];
   }
 
   show(){
@@ -254,9 +262,12 @@ class CustomPostWindow{
       this.renote_id_input.setText(renoteId);
     }
 
-    // TODO:
-    // visibility
-    // visible_user_ids
+    if(visibility){
+      this.set_visibility(visibility);
+      if(visibility == "specified"){
+        this.visible_user_ids_input.setPlainText(visible_user_ids.join('\n'));
+      }
+    }
   }
 
   set_is_hide(callback){
@@ -301,11 +312,17 @@ class CustomPostWindow{
   }
 
   visibility_select_setup(){
-    this.visibility_select.addItem(undefined, '公開');
-    this.visibility_select.addItem(undefined, 'ホーム');
-    this.visibility_select.addItem(undefined, 'フォロワー');
-    this.visibility_select.addItem(undefined, 'ダイレクト');
-    this.visibility_select.addItem(undefined, 'ランダム');
+    for(var vis of this.visibilitys){
+      this.visibility_select.addItem(undefined, vis.text);
+    }
+  }
+
+  set_visibility(vis){
+    for(var v of this.visibilitys){
+      if(v.name == vis){
+        this.visibility_select.setCurrentText(v.text);
+      }
+    }
   }
 
   async post(){
@@ -367,6 +384,7 @@ class CustomPostWindow{
     this.image_area.clear();
     this.poll_area.clear();
     this._update_placeholder_text();
+    this.set_visibility('pubic');
   }
 
   _update_placeholder_text(){
