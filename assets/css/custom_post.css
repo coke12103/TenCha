@@ -40,6 +40,10 @@
   height: 32px;
 }
 
+#isAfterCloseCheck{
+  padding-left: 10px;
+}
+
 #rootView{
   padding: 5px;
   flex-direction: column;
