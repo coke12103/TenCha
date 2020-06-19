@@ -50,7 +50,7 @@ _file.mkdir = function(dir){
 _file.json_write = function(path, data){
   return new Promise(async (resolve, reject) => {
     try{
-      fs.writeFileSync(path, JSON.stringify(data), (err) => {
+      fs.writeFileSync(path, JSON.stringify(data, null, " "), (err) => {
         if(err){
           console.log(err);
           throw err;
