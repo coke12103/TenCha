@@ -123,8 +123,10 @@ class Timelines{
 
   async add_tl_mess(id, body){
     for(var tab of this.tabs){
-      if(tab.source == id){
-        if(tab.source == 'notification'){
+      for(var f of tab.source.from){
+        if(f != id) continue;
+
+        if(id == 'notification'){
           var item = await this.create_notification(body, this.users);
           if(!tab.timeline.check_exist_item(item.id)) tab.timeline.add_notification(item);
         }else{
@@ -137,11 +139,11 @@ class Timelines{
           if(!tab.timeline.check_exist_item(item.id) && is_display) tab.timeline.add_note(item);
         }
 
-        if(tab.is_auto_select){
-          tab.timeline.select_top_item();
-        }
+        if(tab.is_auto_select) tab.timeline.select_top_item();
+
         tab.timeline.fix_items();
       }
+
     }
 
     console.log(Object.keys(this.notes).length);

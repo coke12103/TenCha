@@ -19,33 +19,44 @@ class TabLoader{
     return f;
   }
 
+  // TODO: limit
   async create_default_tab(){
     var default_tabs = {
       tabs: [
         {
           "id": "home",
           "name": "ホーム",
-          "source": "home"
+          "source": {
+            "from": ["home"]
+          }
         },
         {
           "id": "local",
           "name": "ローカル",
-          "source": "local"
+          "source": {
+            "from": ["local"]
+          }
         },
         {
           "id": "social",
           "name": "ソーシャル",
-          "source": "social"
+          "source": {
+            "from": ["social"]
+          }
         },
         {
           "id": "global",
           "name": "グローバル",
-          "source": "global"
+          "source": {
+            "from": ["global"]
+          }
         },
         {
           "id": "notification",
           "name": "通知",
-          "source": "notification"
+          "source": {
+            "from": ["notification"]
+          }
         }
       ]
     }
