@@ -191,14 +191,6 @@ class Timelines{
         case 'text':
           com.push(item.no_emoji_text);
           com.push(item.no_emoji_cw);
-          if(item.renote){
-            com.push(item.renote.no_emoji_text);
-            com.push(item.renote.no_emoji_cw);
-          }
-          if(item.reply){
-            com.push(item.reply.no_emoji_text);
-            com.push(item.reply.no_emoji_cw);
-          }
           break;
         case 'host':
           var host = item.user.host;
@@ -214,10 +206,10 @@ class Timelines{
               if(!item.files.length == parseInt(f.match)) result = false;
               break;
             case 'more':
-              if(!item.files.length > parseInt(f.match)) result = false;
+              if(!item.files.length >= parseInt(f.match)) result = false;
               break;
             case 'under':
-              if(!item.files.length < parseInt(f.match)) result = false;
+              if(!item.files.length <= parseInt(f.match)) result = false;
               break;
             default:
               break;
