@@ -208,6 +208,22 @@ class Timelines{
         case 'visibility':
           com.push(item.visibility);
           break;
+        case 'file_count':
+          switch(f.match_type){
+            case 'match':
+              if(!item.files.length == parseInt(f.match)) result = false;
+              break;
+            case 'more':
+              if(!item.files.length > parseInt(f.match)) result = false;
+              break;
+            case 'under':
+              if(!item.files.length < parseInt(f.match)) result = false;
+              break;
+            default:
+              break;
+          }
+          continue;
+          break;
         default:
           break;
       }
