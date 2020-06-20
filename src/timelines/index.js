@@ -27,8 +27,9 @@ class Timelines{
     return this.tab_widget;
   }
 
-  async init(){
+  async init(host){
     var loader = new TabLoader();
+    this.local = host;
 
     try{
       var tabs = await loader.load();
@@ -131,11 +132,17 @@ class Timelines{
           if(!tab.timeline.check_exist_item(item.id)) tab.timeline.add_notification(item);
         }else{
           var item = await this.create_note(body, this.users);
+
+          // Timeline単位での表示チェック
+          if(!this._check_timeline_show(item, tab.source.filter)) continue;
+
+          // Globalのフィルター単位での表示チェック
           var is_display = true;
           for(var filter of this.filters){
             var result = filter(item);
             if(!result) is_display = false;
           }
+
           if(!tab.timeline.check_exist_item(item.id) && is_display) tab.timeline.add_note(item);
         }
 
@@ -143,11 +150,104 @@ class Timelines{
 
         tab.timeline.fix_items();
       }
-
     }
 
     console.log(Object.keys(this.notes).length);
     this.fix_notes();
+  }
+
+  _check_timeline_show(item, filter){
+    if(!filter) return true;
+    if(!(filter.length > 0)) return true;
+
+    var result = true;
+
+    for(var f of filter){
+      var com = [];
+      var match_reg;
+
+      // マッチングするものを用意
+      switch(f.type){
+        case 'username':
+          com.push(item.user.username);
+          break;
+        case 'acct':
+          var acct = item.user.username;
+          if(item.user.host){
+            acct += item.user.host;
+          }else{
+            acct += "@" + this.local;
+          }
+
+          com.push(acct);
+          break;
+        case 'name':
+          if(!item.user.name){
+            com.push(item.user.username);
+          }else{
+            com.push(item.user.name);
+          }
+          break;
+        case 'text':
+          com.push(item.no_emoji_text);
+          com.push(item.no_emoji_cw);
+          if(item.renote){
+            com.push(item.renote.no_emoji_text);
+            com.push(item.renote.no_emoji_cw);
+          }
+          if(item.reply){
+            com.push(item.reply.no_emoji_text);
+            com.push(item.reply.no_emoji_cw);
+          }
+          break;
+        case 'host':
+          var host = item.user.host;
+          if(!host) com.push(this.local);
+          com.push(host);
+          break;
+        case 'visibility':
+          com.push(item.visibility);
+          break;
+        default:
+          break;
+      }
+
+      // マッチング用の正規表現の作成
+      var reg_str = '';
+      switch(f.match_type){
+        case 'full':
+          reg_str = `^${this._escape_regexp(f.match)}$`;
+          break;
+        case 'part':
+          reg_str = this._escape_regexp(f.match);
+          break;
+        case 'regexp':
+          reg_str = f.match;
+          break;
+        default:
+          reg_str = `^${this._escape_regexp(f.match)}$`;
+      }
+
+      if(f.ignore_case){
+        match_reg = new RegExp(reg_str, 'gi');
+      }else{
+        match_reg = new RegExp(reg_str, 'g');
+      }
+
+      var _match = false;
+      for(var s of com){
+        if(match_reg.test(s)) _match = true;
+      }
+
+      if(f.negative && _match) result = false;
+      if(!f.negative && !_match) result = false;
+    }
+
+    return result;
+  }
+
+  _escape_regexp(str){
+    return str.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
   }
 
   async fix_notes(){

@@ -142,7 +142,7 @@ async function init_cha(){
   client.login().then(async () => {
       await emoji_parser.init(settings_loader.use_emojis);
       postViewArea.set_host(client.host);
-      await timeline.init();
+      await timeline.init(client.host);
       timeline.start_streaming(statusLabel, client);
       post_action.init(client, timeline, image_viewer, custom_post_window);
       custom_post_window.set_client(client);
