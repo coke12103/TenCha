@@ -50,6 +50,7 @@ class Timelines{
       id: tab.id,
       name: tab.name,
       source: tab.source,
+      disable_global_filter: tab.disable_global_filter,
       timeline: new Timeline(this.font),
       is_auto_select: false,
       post_view: false
@@ -138,9 +139,12 @@ class Timelines{
 
           // Globalのフィルター単位での表示チェック
           var is_display = true;
-          for(var filter of this.filters){
-            var result = filter(item);
-            if(!result) is_display = false;
+
+          if(!tab.disable_global_filter){
+            for(var filter of this.filters){
+              var result = filter(item);
+              if(!result) is_display = false;
+            }
           }
 
           if(!tab.timeline.check_exist_item(item.id) && is_display) tab.timeline.add_note(item);
