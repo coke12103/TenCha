@@ -16,7 +16,7 @@ const {
 } = require('@nodegui/nodegui');
 
 class Timeline{
-  constructor(font){
+  constructor(font, limit){
     const assets = new Assets("TimelineWidget");
     const tree = new QListWidget();
     tree.setFlexNodeSizeControlled(false);
@@ -30,6 +30,7 @@ class Timeline{
     this.item_queue = [];
     this.is_now_add = false;
     this.font = font;
+    this.limit = limit;
   }
 
   get_widget(){
@@ -83,7 +84,7 @@ class Timeline{
   }
 
   fix_items(){
-    var limit = 200;
+    var limit = this.limit;
     if(this.tl.length < limit) return;
 
     while(this.tl.length > limit){

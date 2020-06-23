@@ -46,12 +46,14 @@ class Timelines{
   }
 
   async set_timeline(tab){
+    if(!tab.limit) tab.limit = 200;
+
     var data = {
       id: tab.id,
       name: tab.name,
       source: tab.source,
       disable_global_filter: tab.disable_global_filter,
-      timeline: new Timeline(this.font),
+      timeline: new Timeline(this.font, tab.limit),
       is_auto_select: false,
       post_view: false
     }
