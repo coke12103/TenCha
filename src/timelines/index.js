@@ -72,7 +72,7 @@ class Timelines{
 
   async start_load_tl(client){
     var data = {
-      limit: 40
+      limit: this.start_load_limit
     };
 
     var calls = [
@@ -391,6 +391,7 @@ class Timelines{
   set_settings(settings){
     this.cache_limit = settings.post_cache_limit;
     this.cache_clear_count = settings.post_cache_clear_count;
+    this.start_load_limit = settings.start_load_limit;
     this.font = settings.font;
     this.tab_widget.setFont(new QFont(this.font, 9));
   }

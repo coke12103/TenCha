@@ -4,13 +4,13 @@
       "id": "use_emojis",
       "name": "絵文字を表示",
       "description": "不安定な絵文字実装を利用して絵文字を表示するか",
-      "default_value": false
+      "default_value": true
     },
     {
       "id": "use_desktop_notification",
       "name": "デスクトップ通知を使用",
       "description": "デスクトップ通知を使用するか",
-      "default_value": false
+      "default_value": true
     },
     {
       "id": "post_cache_limit",
@@ -22,7 +22,13 @@
       "id": "post_cache_clear_count",
       "name": "投稿キャッシュ開放処理の1回の処理数",
       "description": "開放処理1回につき何件処理するか。",
-      "default_value": 500
+      "default_value": 1000
+    },
+    {
+      "id": "start_load_limit",
+      "name": "起動直後の読み込み数上限",
+      "description": "1~100の間で指定",
+      "default_value": 40
     },
     {
       "id": "font",
