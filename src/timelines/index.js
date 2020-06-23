@@ -54,7 +54,7 @@ class Timelines{
       source: tab.source,
       disable_global_filter: tab.disable_global_filter,
       timeline: new Timeline(this.font, tab.limit),
-      is_auto_select: false,
+      is_auto_select: true,
       post_view: false
     }
 
