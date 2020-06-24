@@ -25,20 +25,7 @@ class PostAction{
         this.client.call('notes/create',data);
     })
   }
-  image_view(){
-    this.timelines.filter((item) => {
-        if(!item) return;
-        if(item.el_type == 'Notification') return;
 
-        var _item = item;
-
-        if(item.renote && !item.no_emoji_text && !item.no_emoji_cw && !Object.keys(item.files).length) _item = item.renote;
-
-        if(!Object.keys(_item.files).length) return;
-
-        this.image_viewer.show(_item);
-    })
-  }
   quote(){
     this.timelines.filter((item) => {
         if(!item) return;
@@ -85,6 +72,46 @@ class PostAction{
         };
         this.client.call('notes/create',data);
         this.custom_post_window.show({ renoteId: item_id });
+    })
+  }
+
+  is_image_view_ready(){
+    var result = true;
+
+    this.timelines.filter((item) => {
+        if((!item) || (item.el_type == 'Notification')){
+          result = false
+        }
+
+        var _item = item;
+
+        if(
+          item.renote &&
+          !item.no_emoji_text &&
+          !item.no_emoji_cw &&
+          !Object.keys(item.files).length
+        ) _item = item.renote;
+
+        if(!Object.keys(_item.files).length){
+          result = false;
+        }
+    })
+
+    return result;
+  }
+
+  image_view(){
+    this.timelines.filter((item) => {
+        if(!item) return;
+        if(item.el_type == 'Notification') return;
+
+        var _item = item;
+
+        if(item.renote && !item.no_emoji_text && !item.no_emoji_cw && !Object.keys(item.files).length) _item = item.renote;
+
+        if(!Object.keys(_item.files).length) return;
+
+        this.image_viewer.show(_item);
     })
   }
 }

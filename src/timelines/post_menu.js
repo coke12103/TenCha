@@ -36,21 +36,25 @@ class PostMenu{
   }
 
   set_post_action(action){
+    this.post_action = action;
+
     this.renote_action.addEventListener('triggered', () => {
-        action.renote();
+        this.post_action.renote();
     });
     this.image_view_action.addEventListener('triggered', () => {
-        action.image_view();
+        this.post_action.image_view();
     });
     this.quote_action.addEventListener('triggered', () => {
-        action.quote();
+        this.post_action.quote();
     });
     this.reply_action.addEventListener('triggered', () => {
-        action.reply();
+        this.post_action.reply();
     });
   }
 
   exec(pos){
+    this.image_view_action.setEnabled(this.post_action.is_image_view_ready());
+
     this.menu.exec(pos);
   }
 }
