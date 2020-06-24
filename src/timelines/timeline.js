@@ -20,7 +20,8 @@ class Timeline{
     const assets = new Assets("TimelineWidget");
     const tree = new QListWidget();
     tree.setFlexNodeSizeControlled(false);
-    tree.setInlineStyle(assets.css)
+    tree.setInlineStyle(assets.css);
+
 //    nodegui v0.18.2 にはsetSelectionModeか何かがない
 //    tree.setSelectionMode(SelectionMode.SingleSelection);
 
@@ -65,7 +66,7 @@ class Timeline{
   }
 
   add_note(note){
-    var item = new NoteItem(note, this.font);
+    var item = new NoteItem(note, this.font, this.exe);
     this.add_item(item, note.id, note.createdAt);
   }
 
@@ -124,6 +125,10 @@ class Timeline{
     }
 
     return i;
+  }
+
+  set_context_menu_event_exec(exe){
+    this.exe = exe;
   }
 }
 

@@ -1,7 +1,8 @@
 const {
   QTabWidget,
   QIcon,
-  QFont
+  QFont,
+  QPoint
 } = require('@nodegui/nodegui');
 
 const TabLoader = require('./tab_loader.js');
@@ -9,11 +10,14 @@ const Timeline = require('./timeline.js');
 const Note = require('../notes.js');
 const Notification = require('../notification.js');
 const NotificationParser = require('../tools/notification_parser/index.js');
+const PostMenu = require('./post_menu.js');
 
 class Timelines{
   constructor(){
     const tabWidget = new QTabWidget();
     tabWidget.setObjectName('timelines');
+
+    this.post_menu = new PostMenu();
 
     this.tab_widget = tabWidget;
     this.tabs = [];
@@ -61,6 +65,7 @@ class Timelines{
     this.tabs.push(data);
 
     data.timeline.tree.addEventListener('itemSelectionChanged', this._update_post_view.bind(this));
+    data.timeline.set_context_menu_event_exec(this._exec_context_menu.bind(this));
     this.tab_widget.addTab(data.timeline.get_widget(), new QIcon(), data.name);
   }
 
@@ -388,12 +393,13 @@ class Timelines{
     this.desktop_notification = desktop_notification;
   }
 
-  set_settings(settings){
+  setup(settings, post_action){
     this.cache_limit = settings.post_cache_limit;
     this.cache_clear_count = settings.post_cache_clear_count;
     this.start_load_limit = settings.start_load_limit;
     this.font = settings.font;
     this.tab_widget.setFont(new QFont(this.font, 9));
+    this.post_menu.set_post_action(post_action);
   }
 
   _show_mes_dialog(mes_str){
@@ -424,6 +430,21 @@ class Timelines{
     }
 
     callback(selected_item);
+  }
+
+  _exec_context_menu(pos){
+    var selected_tab = this.tabs[this.tab_widget.currentIndex()];
+    var selected_timeline = selected_tab.timeline;
+
+    var selected_widget = null;
+    try{
+      var selected_item = selected_timeline.get_selected_item();
+      selected_widget = selected_item.item.widget;
+    }catch(err){
+      console.log(err);
+      return;
+    }
+    this.post_menu.exec(selected_widget.mapToGlobal(new QPoint(pos.x, pos.y)));
   }
 }
 

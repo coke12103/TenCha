@@ -5,6 +5,7 @@ const {
   QWidget,
   FlexLayout,
   QFont,
+  ContextMenuPolicy
 } = require('@nodegui/nodegui');
 
 function parse_flag(note){
@@ -36,12 +37,14 @@ function parse_flag(note){
 }
 
 class NoteItem{
-  constructor(note, font){
+  constructor(note, font, exe){
     const list_item = new QListWidgetItem();
     const widget = new QWidget();
     const widget_layout = new FlexLayout();
     widget.setLayout(widget_layout);
     widget.setFlexNodeSizeControlled(false);
+    widget.setContextMenuPolicy(ContextMenuPolicy.CustomContextMenu);
+    widget.addEventListener('customContextMenuRequested', exe);
 
     const flag_label = new QLabel();
     const icon_label = new QLabel();

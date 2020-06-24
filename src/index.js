@@ -117,7 +117,7 @@ async function init_cha(){
 
   desktop_notification.set_is_enable(settings_loader.use_desktop_notification);
 
-  timeline.set_settings(settings_loader);
+  timeline.setup(settings_loader, post_action);
   postViewArea.set_font(settings_loader.font);
 
   menu_bar.set_font(settings_loader.font);
