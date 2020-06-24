@@ -19,9 +19,11 @@ class TimelineMenu{
     reply_action.setText('リプライ');
     image_view_action.setText('画像を表示');
 
+    menu.addAction(reply_action);
+    menu.addSeparator(renote_action);
     menu.addAction(renote_action);
     menu.addAction(quote_action);
-    menu.addAction(reply_action);
+    menu.addSeparator(image_view_action);
     menu.addAction(image_view_action);
 
     this.menu = menu;
@@ -36,17 +38,19 @@ class TimelineMenu{
   }
 
   set_post_action(action){
+    this.post_action = action;
+
     this.renote_action.addEventListener('triggered', () => {
-        action.renote();
+        this.post_action.renote();
     });
     this.image_view_action.addEventListener('triggered', () => {
-        action.image_view();
+        this.post_action.image_view();
     });
     this.quote_action.addEventListener('triggered', () => {
-        action.quote();
+        this.post_action.quote();
     });
     this.reply_action.addEventListener('triggered', () => {
-        action.reply();
+        this.post_action.reply();
     });
   }
 }
