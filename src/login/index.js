@@ -23,7 +23,8 @@ class Login{
     }
     try{
       var api = new Api(this.host);
-      await api.call_api('i', { i: this.api_token });
+      var s = await api.call_api('i', { i: this.api_token });
+      this.username = s.username;
     }catch{
       await this._show_mes_dialog('何らかの原因でサーバーからのデータ取得に失敗しました。\n「わかった」を押すと終了します。');
     }

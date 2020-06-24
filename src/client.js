@@ -14,6 +14,8 @@ class Client{
     this.token = login.token;
     this.secret = login.secret;
     this.api_token = login.api_token;
+
+    this.username = login.username;
   }
   async call(path, data){
     return new Promise((resolve, reject) => {
