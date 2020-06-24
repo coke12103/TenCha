@@ -114,6 +114,52 @@ class PostAction{
         this.image_viewer.show(_item);
     })
   }
+
+  is_remove_ready(){
+    var result = true;
+
+    this.timelines.filter((item) => {
+        if((!item) || (item.el_type == 'Notification')){
+          result = false
+        }
+
+        var _item = item;
+
+        if(
+          item.renote &&
+          !(item.user.username == this.client.username && !item.user.host)
+        ) _item = item.renote;
+
+        if(!(_item.user.username == this.client.username && !_item.user.host)){
+          result = false;
+        }
+    })
+
+    return result;
+  }
+
+  note_remove(){
+    this.timelines.filter((item) => {
+        if((!item) || (item.el_type == 'Notification')){
+          return;
+        }
+
+        var _item = item;
+
+        if(
+          item.renote &&
+          !(item.user.username == this.client.username && !item.user.host)
+        ) _item = item.renote;
+
+        if(!(_item.user.username == this.client.username && !_item.user.host)) return;
+
+        var data = {
+          noteId: _item.id
+        };
+        this.client.call('notes/delete',data);
+    })
+
+  }
 }
 
 module.exports = PostAction;
