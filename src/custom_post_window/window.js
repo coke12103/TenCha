@@ -241,6 +241,7 @@ class CustomPostWindow{
   }
 
   show(){
+    this.poll_area.reset_exp_date_time();
     this.win.show();
   }
 

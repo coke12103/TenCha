@@ -6,7 +6,9 @@ const {
   QDateTimeEdit,
   QSpinBox,
   QRadioButton,
-  DateFormat
+  DateFormat,
+  QDate,
+  QTime
 } = require('@nodegui/nodegui');
 
 class PollArea{
@@ -45,7 +47,7 @@ class PollArea{
 
     var expRadioAt = new QRadioButton();
     expRadioAt.setObjectName('expRadioAt');
-    expRadioAt.setText('日付指定')
+    expRadioAt.setText('日付指定');
 
     var expRadioAfter = new QRadioButton();
     expRadioAfter.setObjectName('expRadioAfter');
@@ -129,6 +131,19 @@ class PollArea{
 
   clear(){
     this.choices_input.setPlainText('');
+    this.reset_exp_date_time();
+  }
+
+  // 動かないけど悪影響もないので動いたらラッキー程度で
+  reset_exp_date_time(){
+    var _next_day = new Date();
+    _next_day.setDate(_next_day.getDate() + 1);
+    var _d = new QDate();
+    var _t = new QTime();
+    _d.setDate(_next_day.getFullYear(), _next_day.getMonth(), _next_day.getDay());
+    _t.setHMS(_next_day.getHours(), _next_day.getMinutes(), _next_day.getSeconds());
+    this.expires_at_input.setTime(_d);
+    this.expires_at_input.setDate(_t);
   }
 
   widget(){
