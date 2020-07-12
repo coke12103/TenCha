@@ -1,8 +1,8 @@
 const request = require("request-promise");
 
-const NoteItem = require('./note_item.js');
 const NotificationItem = require('./notification_item.js');
 const Assets = require("../assets.js");
+const Skin = require("./skin.js");
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 const {
@@ -16,8 +16,9 @@ const {
 } = require('@nodegui/nodegui');
 
 class Timeline{
-  constructor(font, limit){
+  constructor(font, limit, skin_name){
     const assets = new Assets("TimelineWidget");
+    const skin = new Skin();
     const tree = new QListWidget();
     tree.setFlexNodeSizeControlled(false);
     tree.setInlineStyle(assets.css);
@@ -27,6 +28,8 @@ class Timeline{
 
     this.tree = tree;
     this.post_view;
+    this.skin = skin;
+    this.skin_name = skin_name;
     this.tl = [];
     this.item_queue = [];
     this.is_now_add = false;
@@ -66,7 +69,8 @@ class Timeline{
   }
 
   add_note(note){
-    var item = new NoteItem(note, this.font, this.exe);
+    var skin = this.skin.get(this.skin_name);
+    var item = new skin(note, this.font, this.exe);
     this.add_item(item, note.id, note.createdAt);
   }
 
