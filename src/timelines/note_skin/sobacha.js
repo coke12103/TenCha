@@ -169,6 +169,8 @@ class SobachaSkin{
     this.list_item = list_item;
     this.widget = widget;
     this.widget_layout = widget_layout;
+    this.line_one = line_one;
+    this.line_one_layout = line_one_layout;
     this.icon_label = icon_label;
     this.text_label = text_label;
   }
@@ -199,24 +201,26 @@ class SobachaSkin{
   }
 
   destroy(){
-    this.widget_layout.removeWidget(this.line_one);
-
     this.line_one_layout.removeWidget(this.text_label);
     this.line_one_layout.removeWidget(this.icon_label);
 
-    this.line_one.close();
+    this.widget_layout.removeWidget(this.line_one);
+
     this.text_label.close();
     this.icon_label.close();
 
-    if(this.line_two){
-      this.widget_layout.removeWidget(this.line_two);
+    this.line_one.close();
 
+    if(this.line_two){
       this.line_two_layout.removeWidget(this.sub_icon_label);
       this.line_two_layout.removeWidget(this.sub_text_label);
 
-      this.line_two.close();
+      this.widget_layout.removeWidget(this.line_two);
+
       this.sub_icon_label.close();
       this.sub_text_label.close();
+
+      this.line_two.close();
 
       this.line_two = undefined;
       this.line_two_layout = undefined;
@@ -227,7 +231,7 @@ class SobachaSkin{
     this.widget.close();
 
     this.line_one = undefined;
-    tiis.line_one_layout = undefined;
+    this.line_one_layout = undefined;
     this.list_item = undefined;
     this.widget = undefined;
     this.widget_layout = undefined;
