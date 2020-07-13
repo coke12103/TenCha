@@ -36,7 +36,7 @@ class SobachaSkin{
       width: ${item_height - 1}px;
     `);
 
-    list_item.setSizeHint(new QSize(1200, 15));
+    list_item.setSizeHint(new QSize(1200, 15 + 1));
     icon_label.setFixedSize(item_height -1, item_height -1);
 
     var f = new QFont(font, 9);
@@ -67,7 +67,6 @@ class SobachaSkin{
       this.line_two = line_two;
       this.line_two_layout = line_two_layout;
 
-
       const sub_icon_label = new QLabel();
       const sub_text_label = new QLabel();
       sub_icon_label.setInlineStyle(`
@@ -88,7 +87,7 @@ class SobachaSkin{
 
       widget_layout.addWidget(line_two);
 
-      list_item.setSizeHint(new QSize(1200, 29));
+      list_item.setSizeHint(new QSize(1200, 29 + 1));
 
       this.sub_icon_label = sub_icon_label;
       this.sub_text_label = sub_text_label;
@@ -111,10 +110,11 @@ class SobachaSkin{
       this.sub_text_label.setText(sub_text);
 
       widget.setInlineStyle(`
-        height: ${item_height *2}px;
+        height: ${(item_height *2) + 1}px;
         align-items: flex-start;
         justify-content: flex-start;
         flex-direction: column;
+        border-bottom: 1px solid #d6d6d6;
         `);
 
       if(note.user.avater){
@@ -138,10 +138,11 @@ class SobachaSkin{
       }
     }else{
       widget.setInlineStyle(`
-        height: ${item_height}px;
+        height: ${item_height + 1}px;
         justify-content: flex-start;
         align-items: stretch;
         flex-direction: column;
+        border-bottom: 1px solid #d6d6d6;
       `);
       if(note.user.avater){
         var s = icon_label.size();
