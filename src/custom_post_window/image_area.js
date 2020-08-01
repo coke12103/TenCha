@@ -197,13 +197,32 @@ class ImageArea{
         var file = this.files[i];
 
         file.gui_item.hide();
-        file.gui_item.set_file_name("");
+        file.gui_item.name_label.clear();
         file.data = {};
         file.isUse = false;
         file.gui_item.remove_button.removeEventListener('clicked', remove_func);
       }
 
+      var toggle_nsfw_func = async function(i){
+        var file = this.files[i];
+        var is_sensitive = file.data.isSensitive;
+
+        var data = {
+          fileId: file.data.id,
+          isSensitive: !is_sensitive
+        }
+
+        file.data = await this.client.call("drive/files/update", data);
+
+        if(is_sensitive){
+          file.gui_item.nsfw_button.setText("NSFW");
+        }else{
+          file.gui_item.nsfw_button.setText("普通");
+        }
+      }
+
       file.gui_item.remove_button.addEventListener('clicked', remove_func.bind(this, i, remove_func));
+      file.gui_item.nsfw_button.addEventListener('clicked', toggle_nsfw_func.bind(this, i));
 
       file.gui_item.set_file_name(data.name);
       file.data = data;
