@@ -245,9 +245,37 @@ class PostView{
   _parse_note_text(note){
     var result = '';
     if(note.cw){
-      result = note.cw + '\n------------CW------------\n';
+      result = this._parse_search(note, true) + '\n------------CW------------\n';
     }
-    result += note.text;
+    result += this._parse_search(note, false);
+
+    return result;
+  }
+
+  _parse_search(note, is_cw){
+    var result = '';
+    var from = is_cw ? note.no_emoji_cw : note.no_emoji_text;
+    var from_em = is_cw ? note.cw : note.text;
+
+    if(!from) return "";
+
+    var from_arr = from.split('\n');
+    var from_em_arr = from_em.split('\n');
+
+    for(var i = 0; from_arr.length > i; i++){
+      var text = from_arr[i];
+      var _t = text;
+      if(text.search(/^(^.+) (\[search\]|検索)$/i) != -1){
+        _t = text.match(/^(.+) (\[search\]|検索)$/i)[1];
+        _t = encodeURIComponent(_t);
+        text = text.replace(/ (\[search\]|検索)$/i, '');
+        text = text.replace(/:/gi, "<%3A>");
+        _t = `search://duckduckgo.com/?q=${_t} [${text} 検索]`;
+      }else{
+        _t = from_em_arr[i];
+      }
+      result += _t + "\n";
+    }
 
     return result;
   }
