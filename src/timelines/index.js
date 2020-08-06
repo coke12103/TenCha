@@ -4,6 +4,7 @@ const {
   QFont,
   QPoint
 } = require('@nodegui/nodegui');
+const player = require('play-sound')(opts = {});
 
 const TabLoader = require('./tab_loader.js');
 const Timeline = require('./timeline.js');
@@ -117,6 +118,12 @@ class Timelines{
           var _body = body.body;
           var _notification = this.notes[_body.id];
           if(!_notification) return;
+
+          try{
+            player.play(this.notification_sound);
+          }catch(err){
+            console.log(err);
+          }
 
           var d_notification_text = NotificationParser.gen_desc_text(_notification, 'desktop_notification');
           this.desktop_notification.show(d_notification_text.title, d_notification_text.message);
@@ -398,6 +405,7 @@ class Timelines{
     this.cache_limit = settings.post_cache_limit;
     this.cache_clear_count = settings.post_cache_clear_count;
     this.start_load_limit = settings.start_load_limit;
+    this.notification_sound = settings.notification_sound;
     this.font = settings.font;
     this.tab_widget.setFont(new QFont(this.font, 9));
     this.post_menu.set_post_action(post_action);
