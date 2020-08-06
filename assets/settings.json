@@ -35,6 +35,12 @@
       "name": "フォント",
       "description": "フォント名を指定します。サイズは固定です。",
       "default_value": "sans"
+    },
+    {
+      "id": "notification_sound",
+      "name": "通知音",
+      "description": "ファイルを指定します。",
+      "default_value": "./notify.mp3"
     }
   ]
 }
