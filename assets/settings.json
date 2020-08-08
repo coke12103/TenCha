@@ -41,6 +41,12 @@
       "name": "通知音",
       "description": "ファイルを指定します。",
       "default_value": "./notify.mp3"
+    },
+    {
+      "id": "post_sound",
+      "name": "投稿が来た時の音",
+      "description": "ファイルを指定します。",
+      "default_value": "./post.mp3"
     }
   ]
 }
