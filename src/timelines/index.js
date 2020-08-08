@@ -133,25 +133,45 @@ class Timelines{
       case 'local':
       case 'social':
       case 'global':
-        this.add_tl_mess(body.id, body.body);
+        this.add_tl_mess(body.id, body.body).then((val) => {
+          if(val.is_notification) return;
+          var selected = this._get_selected_tab();
+          for(var tab of val.added_tab_ids){
+            if(tab == selected.id){
+              try{
+                player.play(this.post_sound);
+              }catch(err){
+                console.log(err);
+              }
+            }
+          }
+        });
         break;
     }
   }
 
   async add_tl_mess(id, body){
+    var add_result = {
+      is_notification: false,
+      added_tab_ids: []
+    };
+
     for(var tab of this.tabs){
       for(var f of tab.source.from){
         if(f != id) continue;
 
         if(id == 'notification'){
+          add_result.is_notification = true;
           var item = await this.create_notification(body, this.users);
-          if(!tab.timeline.check_exist_item(item.id)) tab.timeline.add_notification(item);
+          if(!tab.timeline.check_exist_item(item.id)){
+            tab.timeline.add_notification(item);
+            add_result.added_tab_ids.push(tab.id);
+          }
         }else{
           var item = await this.create_note(body, this.users);
 
           // Timeline単位での表示チェック
           if(!this._check_timeline_show(item, tab.source.filter)) continue;
-
           // Globalのフィルター単位での表示チェック
           var is_display = true;
 
@@ -162,7 +182,10 @@ class Timelines{
             }
           }
 
-          if(!tab.timeline.check_exist_item(item.id) && is_display) tab.timeline.add_note(item);
+          if(!tab.timeline.check_exist_item(item.id) && is_display){
+            tab.timeline.add_note(item);
+            add_result.added_tab_ids.push(tab.id);
+          }
         }
 
         if(tab.is_auto_select) tab.timeline.select_top_item();
@@ -173,6 +196,8 @@ class Timelines{
 
     console.log(Object.keys(this.notes).length);
     this.fix_notes();
+
+    return add_result;
   }
 
   _check_timeline_show(item, filter){
@@ -340,6 +365,7 @@ class Timelines{
 
   change_tab(){
     var selected = this.tabs[this.tab_widget.currentIndex()].id
+
     for(var tab of this.tabs){
       if(tab.id == selected){
         this.check.setChecked(tab.is_auto_select);
@@ -349,6 +375,13 @@ class Timelines{
       }else{
         tab.post_view = false;
       }
+    }
+  }
+
+  _get_selected_tab(){
+    var selected = this.tabs[this.tab_widget.currentIndex()].id
+    for(var tab of this.tabs){
+      if(tab.id == selected) return tab;
     }
   }
 
@@ -375,6 +408,7 @@ class Timelines{
     if(_item.el_type == 'Note'){
       this.post_view.set_note(_item);
     }else if(_item.el_type == 'Notification'){
+      console.log('Notification selected');
       this.post_view.set_notification(_item);
     }
   }
@@ -406,6 +440,7 @@ class Timelines{
     this.cache_clear_count = settings.post_cache_clear_count;
     this.start_load_limit = settings.start_load_limit;
     this.notification_sound = settings.notification_sound;
+    this.post_sound = settings.post_sound;
     this.font = settings.font;
     this.tab_widget.setFont(new QFont(this.font, 9));
     this.post_menu.set_post_action(post_action);
