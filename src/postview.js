@@ -14,6 +14,7 @@ const string_width = require('string-width');
 
 const PostParser = require('./tools/post_parser/index.js');
 const NotificationParser = require('./tools/notification_parser/index.js');
+const IconLabel = require('./widgets/icon_label/index.js');
 
 class PostView{
   constructor(){
@@ -41,9 +42,8 @@ class PostView{
     postViewRightTop.setFlexNodeSizeControlled(false);
     postViewRightLayout.addWidget(postViewRightTop);
 
-    const iconLabel = new QLabel();
+    const iconLabel = new IconLabel(52);
     iconLabel.setObjectName('postViewIconLabel');
-    iconLabel.setFixedSize(52, 52);
     postViewLeftLayout.addWidget(iconLabel);
 
     const userFlagLabel = new QLabel();
@@ -110,11 +110,7 @@ class PostView{
 
   set_note(note){
     if(note.user.avater){
-      var s = this.icon_label.size();
-      var w = s.width();
-      var h = s.height();
-      var icon = note.user.avater.scaled(w, h);
-      this.icon_label.setPixmap(icon);
+      this.icon_label.setPixmap(note.user.avater);
     }
 
     var flag = '';
@@ -163,11 +159,7 @@ class PostView{
 
   async set_notification(notification){
     if(notification.user.avater){
-      var s = this.icon_label.size();
-      var w = s.width();
-      var h = s.height();
-      var icon = notification.user.avater.scaled(w, h);
-      this.icon_label.setPixmap(icon);
+      this.icon_label.setPixmap(notification.user.avater);
     }
 
     var flag = '';
