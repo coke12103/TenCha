@@ -406,10 +406,10 @@ class Timelines{
     var _item = this.notes[id];
 
     if(_item.el_type == 'Note'){
-      this.post_view.set_note(_item);
+      this.post_view.setNote(_item);
     }else if(_item.el_type == 'Notification'){
       console.log('Notification selected');
-      this.post_view.set_notification(_item);
+      this.post_view.setNotification(_item);
     }
   }
 

@@ -21,7 +21,7 @@ const Blocker = require('./blocker/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
-const _post_view_area = require('./postview.js');
+const _post_view_area = require('./widgets/postview/index.js');
 const _post_box = require('./postbox/index.js');
 const Client = require('./client.js');
 const client = new Client();
@@ -98,7 +98,7 @@ async function init_cha(){
 
   timelineControlsAreaLayout.addWidget(timeline_auto_select);
 
-  rootViewLayout.addWidget(postViewArea.get_widget());
+  rootViewLayout.addWidget(postViewArea);
   rootViewLayout.addWidget(timeline.get_widget());
   rootViewLayout.addWidget(timelineControlsArea);
   rootViewLayout.addWidget(postbox.area);
