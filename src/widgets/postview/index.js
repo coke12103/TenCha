@@ -1,0 +1,409 @@
+const {
+  QWidget,
+  QBoxLayout,
+  QLabel,
+  QFont,
+  QFontWeight,
+  QScrollArea,
+  AlignmentFlag,
+  TextInteractionFlag,
+  Direction
+} = require('@nodegui/nodegui');
+const dateformat = require('dateformat');
+const jp_wrap = require('jp-wrap');
+const string_width = require('string-width');
+
+const PostParser = require('../../tools/post_parser/index.js');
+const NotificationParser = require('../../tools/notification_parser/index.js');
+const IconLabel = require('../icon_label/index.js');
+
+class PostView extends QWidget{
+  constructor(){
+    super();
+
+    this.layout = new QBoxLayout(Direction.LeftToRight);
+
+    this.left = new QWidget();
+    this.right = new QWidget();
+    this.right_info = new QWidget();
+    //this.reactions = new QWidget();
+
+    this.left_layout = new QBoxLayout(Direction.TopToBottom);
+    this.right_layout = new QBoxLayout(Direction.TopToBottom);
+    this.right_info_layout = new QBoxLayout(Direction.LeftToRight);
+    //this.reactions_layout = new QBoxLayout(Direction.LeftToRight);
+
+    this.avater = new IconLabel(52);
+    this.flag = new QLabel();
+    this.post_flag = new QLabel();
+    this.name = new QLabel();
+    this.date = new QLabel();
+    this.content = new QLabel();
+
+    this.post_parser = new PostParser();
+
+    this.setObjectName("postViewArea");
+    this.setLayout(this.layout);
+
+    this.layout.setContentsMargins(0,0,0,0);
+    this.layout.setSpacing(5);
+
+    this.left.setObjectName("postViewLeft");
+    this.left.setLayout(this.left_layout);
+
+    this.left_layout.setContentsMargins(0,0,0,0);
+    this.left_layout.setSpacing(5);
+
+    this.right.setObjectName("postViewRight");
+    this.right.setLayout(this.right_layout);
+
+    this.right_layout.setContentsMargins(0,0,0,0);
+    this.right_layout.setSpacing(0);
+
+    this.right_info.setObjectName('postViewRightTop');
+    this.right_info.setLayout(this.right_info_layout);
+
+    this.right_info_layout.setContentsMargins(0,0,0,0);
+    this.right_info_layout.setSpacing(5);
+
+    //this.reactions.setObjectName('postViewReactionsArea');
+    //this.reactions.setLayout(this.reactions_layout);
+
+    this.avater.setObjectName('postViewIconLabel');
+
+    this.flag.setObjectName('postViewUserFlagLabel');
+    this.flag.setAlignment(AlignmentFlag.AlignCenter);
+
+    this.post_flag.setObjectName('postViewPostFlagLabel');
+    this.post_flag.setAlignment(AlignmentFlag.AlignCenter);
+
+    this.name.setObjectName('postViewUserNameLabel');
+    //this.name.setWordWrap(true);
+    this.name.setMinimumSize(0, 16);
+    this.name.setAlignment(AlignmentFlag.AlignVCenter|AlignmentFlag.AlignLeft);
+
+    this.date.setObjectName('postViewDateLabel');
+    this.date.setWordWrap(false);
+    this.date.setAlignment(AlignmentFlag.AlignVCenter|AlignmentFlag.AlignRight);
+    this.date.setTextInteractionFlags(TextInteractionFlag.LinksAccessibleByMouse);
+    this.date.setOpenExternalLinks(true);
+
+    this.content.setObjectName('postViewBodyLabel');
+    this.content.setWordWrap(false);
+    this.content.setAlignment(AlignmentFlag.AlignTop|AlignmentFlag.AlignLeft);
+    this.content.setTextInteractionFlags(
+      TextInteractionFlag.LinksAccessibleByMouse
+      | TextInteractionFlag.TextSelectableByMouse
+    );
+    this.content.setOpenExternalLinks(true);
+
+    this.flag.setFixedSize(52, 12);
+    this.post_flag.setFixedSize(52, 12);
+    this.date.setFixedSize(126, 16);
+
+    this.left_layout.addWidget(this.avater);
+    this.left_layout.addWidget(this.flag);
+    this.left_layout.addWidget(this.post_flag);
+    this.left_layout.addStretch(1);
+
+    this.right_info_layout.addWidget(this.name, 1);
+    this.right_info_layout.addWidget(this.date);
+
+    this.right_layout.addWidget(this.right_info);
+    this.right_layout.addWidget(this.content, 1);
+    this.right_layout.addStretch(1);
+    //this.right_layout.addWidget(this.reactions);
+
+    this.layout.addWidget(this.left);
+    this.layout.addWidget(this.right, 1);
+  }
+
+  _parse_user_flag(user){
+    var flag = '';
+    if(user.isLocked) flag += '鍵';
+    if(user.isBot) flag += '機';
+    if(user.isCat) flag += '猫';
+
+    if(!flag || flag == "鍵") flag += '人';
+
+    return flag;
+  }
+
+  _parse_note_flag(note){
+    var flag = '';
+
+    if(note.renote) flag += "RN";
+    if(note.files[0]) flag += "画";
+
+    switch(note.visibility){
+      case 'public':
+        flag += "開";
+        break;
+      case 'home':
+        flag += "家";
+        break;
+      case 'followers':
+        flag += "鍵";
+        break;
+      case 'specified':
+        flag += "宛";
+        break;
+      default:
+        flag += "他";
+        break
+    }
+
+    return flag;
+  }
+
+  _parse_renote(note){
+    var result = this._parse_note_text(note);
+
+    var renote = note.renote;
+    if(!renote) return result;
+
+    var r_text = `RN @${renote.user.acct} `;
+    if(result) result += " ";
+
+    if(renote.reply){
+      r_text += this._parse_reply(renote);
+    }else if(renote.renote){
+      r_text += this._parse_renote(renote);
+    }else{
+      r_text += this._parse_note_text(renote);
+    }
+
+    result += r_text;
+
+    return result;
+  }
+
+  _parse_reply(note){
+    var result = this._parse_note_text(note);
+    var reply = note.reply;
+    if(!reply) return result;
+
+    if(reply.renote){
+      var re_text = this._parse_renote(reply);
+    }else if(reply.reply){
+      var re_text = this._parse_reply(reply);
+    }else{
+      var re_text = this._parse_note_text(reply);
+    }
+
+    result += `\nRE: ${re_text}`;
+
+    return result;
+  }
+
+  _parse_note_text(note){
+    var result = '';
+    if(note.cw){
+      result = this._parse_search(note, true) + '\n------------CW------------\n';
+    }
+    result += this._parse_search(note, false);
+
+    return result;
+  }
+
+  _parse_search(note, is_cw){
+    var result = '';
+    var from = is_cw ? note.no_emoji_cw : note.no_emoji_text;
+    var from_em = is_cw ? note.cw : note.text;
+
+    if(!from) return "";
+
+    var from_arr = from.split('\n');
+    var from_em_arr = from_em.split('\n');
+
+    for(var i = 0; from_arr.length > i; i++){
+      var text = from_arr[i];
+      var _t = text;
+      if(text.search(/^(^.+) (\[search\]|検索)$/i) != -1){
+        _t = text.match(/^(.+) (\[search\]|検索)$/i)[1];
+        _t = encodeURIComponent(_t);
+        text = text.replace(/ (\[search\]|検索)$/i, '');
+        text = text.replace(/:/gi, "<%3A>");
+        _t = `search://duckduckgo.com/?q=${_t} [${text} 検索]`;
+      }else{
+        _t = from_em_arr[i];
+      }
+      result += _t + "\n";
+    }
+
+    return result;
+  }
+  _parse_note_content(note){
+    var text;
+
+    if(note.renote){
+      text = this._parse_renote(note);
+    }else if(note.reply){
+      text = this._parse_reply(note);
+    }else{
+      text = this._parse_note_text(note);
+    }
+    text = this.post_parser.parse(text);
+    text = this.wrap_text(text);
+
+    return text;
+  }
+
+  setNote(note){
+    // avater
+    if(note.user.avater) this.avater.setPixmap(note.user.avater);
+
+    // flags
+    this.flag.setText(this._parse_user_flag(note.user));
+    this.post_flag.setText(this._parse_note_flag(note));
+
+    // name
+    var name;
+    if(note.user.name){
+      name = `<html>${note.user.name}/${note.user.acct}</html>`;
+    }else{
+      name = note.user.acct;
+    }
+    this.name.setText(name);
+
+    // date
+    var date = dateformat(note.createdAt, 'yyyy/mm/dd HH:MM:ss');
+    var date_url;
+    if(note.uri){
+      date_url = note.uri;
+    }else{
+      date_url = 'https://' + this.host + '/notes/' + note.id;
+    }
+    this.date.setText(`<html><a style="text-decoration: none;" href="${date_url}">${date}</a>`);
+
+    // content
+    var text = this._parse_note_content(note);
+    this.content.setText(text);
+  }
+
+  setNotification(notification){
+    // avater
+    if(notification.user.avater) this.avater.setPixmap(notification.user.avater);
+
+    // flags
+    this.flag.setText(this._parse_user_flag(notification.user));
+
+    // name
+    var name;
+    if(notification.user.name){
+      name = `<html>${notification.user.name}/${notification.user.acct}</html>`;
+    }else{
+      name = notification.user.acct;
+    }
+    this.name.setText(name);
+
+    // date
+    this.date.setText(dateformat(notification.createdAt, 'yyyy/mm/dd HH:MM:ss'));
+
+    // content
+    var text = NotificationParser.gen_desc_text(notification, 'postview');
+    text = this.post_parser.parse(text);
+    text = this.wrap_text(text);
+    this.content.setText(text);
+  }
+
+  wrap_text(text){
+    var base_str_size = 6.6;
+
+    var _a_s = this.main_win.size();
+    var _l_s = this.left.size();
+    var _p_s = 5;
+
+    var right_size = (_a_s.width() -10) - (_l_s.width() + _p_s);
+    var max_str_len = parseInt(right_size / base_str_size);
+
+    var sp_reg = /<\/?[a-zA-Z]+[^>]*>/igm;
+    var img_reg = /<img ?[^>]*>/gim;
+
+    var last = 0;
+    var sp_text = [];
+
+    var arr;
+    while((arr = sp_reg.exec(text)) != null){
+      var start = arr.index;
+      var end = arr[0].length;
+
+      if(start != 0){
+        sp_text.push(text.slice(last, start));
+      }
+      sp_text.push(text.substr(start, end));
+
+      last = start + end;
+    }
+    if(text.length > last){
+      sp_text.push(text.substr(last, text.length - last));
+    }
+
+    var setting = {
+      fullWidthSpace: false,
+      breakAll: true,
+      regexs: [
+        { pattern: /(&lt;)|(&gt;)/i, width: 1 },
+        { pattern: /%/, width: 2 },
+        { pattern: /[a-z]/, width: 1.2 },
+        { pattern: /[A-Z]/, width: 1.2 },
+        { pattern: /[0-9]/, width: 1.2 }
+      ]
+    }
+
+    var wrap = new jp_wrap(max_str_len, setting);
+
+    var result = '';
+
+    var p = 0;
+    for(var t of sp_text){
+      if(sp_reg.test(t)){
+        if(/<br>$/gi.test(t)) p = 0;
+        if(img_reg.test(t)) p += 5;
+        if(p > max_str_len){
+          result += '<br>';
+          p = 0;
+        }
+        result += t;
+        continue;
+      }
+      if(!t){
+        continue;
+      }
+      var _text = wrap(t);
+      var _t_l = _text.split('\n');
+      if((p + string_width(_t_l[0])) > max_str_len) _text = '\n' + _text;
+      _text = _text.replace(new RegExp('\n', 'gi'), '<br>');
+      result += _text;
+      if(_t_l.length == 1){
+        p += string_width(_t_l[0]);
+      }else{
+        p = string_width(_t_l[_t_l.length -1]);
+      }
+      if(/<br>$/gi.test(_text)) p = 0;
+    }
+
+    return result;
+  }
+
+  set_host(host){
+    this.host = host;
+  }
+
+  set_font(_font){
+    const font = new QFont(_font, 9);
+    const NameFont = new QFont(_font, 9, QFontWeight.Bold);
+
+    this.flag.setFont(font);
+    this.post_flag.setFont(font);
+    this.name.setFont(NameFont);
+    this.date.setFont(font);
+    this.content.setFont(font);
+  }
+
+  set_main_win(win){
+    this.main_win = win;
+  }
+}
+
+module.exports = PostView;
