@@ -7,54 +7,9 @@
 
 /* PostView */
 
+
 #postViewArea{
-  flex-direction: row;
   height: 120px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-#postViewLeft{
-  width: 52px;
-  margin-right: 5px;
-  flex-direction: column;
-}
-
-#postViewRight{
-  flex-grow: 3;
-  align-items: stretch;
-  justify-content: flex-start;
-  flex-direction: column;
-}
-
-#postViewRightTop{
-  flex-direction: row;
-  flex-grow: 0;
-}
-
-#postViewIconLabel{
-}
-
-#postViewUserFlagLabel{
-  /*align-self: stretch*/
-  margin-top: 4px;
-}
-
-#postViewUserNameLabel{
-  flex-grow: 1;
-  align-self: flex-start;
-  height: 14px;
-}
-
-#postViewDateLabel{
-  flex-grow: 0;
-  width: 124px;
-  height: 12px;
-  align-self: flex-start;
-}
-
-#postViewBodyLabel{
-  flex-grow: 2;
 }
 
 /* timeline(tabWidget)*/
