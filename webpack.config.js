@@ -42,8 +42,11 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new CopyPlugin([
-      { from: './node_modules/node-notifier/vendor/snoreToast/snoretoast-x86.exe', to: './snoreToast/snoretoast-x86.exe' },
-      { from: './node_modules/node-notifier/vendor/snoreToast/snoretoast-x64.exe', to: './snoreToast/snoretoast-x64.exe' },
-    ])]
+    new CopyPlugin({
+      patterns: [
+        { from: './node_modules/node-notifier/vendor/snoreToast/snoretoast-x86.exe', to: './snoreToast/snoretoast-x86.exe' },
+        { from: './node_modules/node-notifier/vendor/snoreToast/snoretoast-x64.exe', to: './snoreToast/snoretoast-x64.exe' },
+      ]
+    })
+  ]
 };
