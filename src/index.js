@@ -136,9 +136,6 @@ async function init_cha(){
   // 始めにウインドウを出しておくと何故かプロセスが死なない
   win.show();
 
-  // ウィジェットサイズだとバグってることあるのでウインドウサイズをもぎ取るためにウインドウを渡す
-  postViewArea.set_main_win(win);
-
   client.login().then(async () => {
       await emoji_parser.init(settings_loader.use_emojis);
       postViewArea.set_host(client.host);

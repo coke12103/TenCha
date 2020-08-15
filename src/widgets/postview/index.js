@@ -4,18 +4,16 @@ const {
   QLabel,
   QFont,
   QFontWeight,
-  QScrollArea,
   AlignmentFlag,
   TextInteractionFlag,
   Direction
 } = require('@nodegui/nodegui');
 const dateformat = require('dateformat');
-const jp_wrap = require('jp-wrap');
-const string_width = require('string-width');
 
 const PostParser = require('../../tools/post_parser/index.js');
 const NotificationParser = require('../../tools/notification_parser/index.js');
 const IconLabel = require('../icon_label/index.js');
+const ContentBox = require('./content_box.js');
 
 class PostView extends QWidget{
   constructor(){
@@ -38,7 +36,7 @@ class PostView extends QWidget{
     this.post_flag = new QLabel();
     this.name = new QLabel();
     this.date = new QLabel();
-    this.content = new QLabel();
+    this.content = new ContentBox();
 
     this.post_parser = new PostParser();
 
@@ -88,15 +86,6 @@ class PostView extends QWidget{
     this.date.setTextInteractionFlags(TextInteractionFlag.LinksAccessibleByMouse);
     this.date.setOpenExternalLinks(true);
 
-    this.content.setObjectName('postViewBodyLabel');
-    this.content.setWordWrap(false);
-    this.content.setAlignment(AlignmentFlag.AlignTop|AlignmentFlag.AlignLeft);
-    this.content.setTextInteractionFlags(
-      TextInteractionFlag.LinksAccessibleByMouse
-      | TextInteractionFlag.TextSelectableByMouse
-    );
-    this.content.setOpenExternalLinks(true);
-
     this.flag.setFixedSize(52, 12);
     this.post_flag.setFixedSize(52, 12);
     this.date.setFixedSize(126, 16);
@@ -111,7 +100,6 @@ class PostView extends QWidget{
 
     this.right_layout.addWidget(this.right_info);
     this.right_layout.addWidget(this.content, 1);
-    this.right_layout.addStretch(1);
     //this.right_layout.addWidget(this.reactions);
 
     this.layout.addWidget(this.left);
@@ -244,7 +232,6 @@ class PostView extends QWidget{
       text = this._parse_note_text(note);
     }
     text = this.post_parser.parse(text);
-    text = this.wrap_text(text);
 
     return text;
   }
@@ -303,87 +290,7 @@ class PostView extends QWidget{
     // content
     var text = NotificationParser.gen_desc_text(notification, 'postview');
     text = this.post_parser.parse(text);
-    text = this.wrap_text(text);
     this.content.setText(text);
-  }
-
-  wrap_text(text){
-    var base_str_size = 6.6;
-
-    var _a_s = this.main_win.size();
-    var _l_s = this.left.size();
-    var _p_s = 5;
-
-    var right_size = (_a_s.width() -10) - (_l_s.width() + _p_s);
-    var max_str_len = parseInt(right_size / base_str_size);
-
-    var sp_reg = /<\/?[a-zA-Z]+[^>]*>/igm;
-    var img_reg = /<img ?[^>]*>/gim;
-
-    var last = 0;
-    var sp_text = [];
-
-    var arr;
-    while((arr = sp_reg.exec(text)) != null){
-      var start = arr.index;
-      var end = arr[0].length;
-
-      if(start != 0){
-        sp_text.push(text.slice(last, start));
-      }
-      sp_text.push(text.substr(start, end));
-
-      last = start + end;
-    }
-    if(text.length > last){
-      sp_text.push(text.substr(last, text.length - last));
-    }
-
-    var setting = {
-      fullWidthSpace: false,
-      breakAll: true,
-      regexs: [
-        { pattern: /(&lt;)|(&gt;)/i, width: 1 },
-        { pattern: /%/, width: 2 },
-        { pattern: /[a-z]/, width: 1.2 },
-        { pattern: /[A-Z]/, width: 1.2 },
-        { pattern: /[0-9]/, width: 1.2 }
-      ]
-    }
-
-    var wrap = new jp_wrap(max_str_len, setting);
-
-    var result = '';
-
-    var p = 0;
-    for(var t of sp_text){
-      if(sp_reg.test(t)){
-        if(/<br>$/gi.test(t)) p = 0;
-        if(img_reg.test(t)) p += 5;
-        if(p > max_str_len){
-          result += '<br>';
-          p = 0;
-        }
-        result += t;
-        continue;
-      }
-      if(!t){
-        continue;
-      }
-      var _text = wrap(t);
-      var _t_l = _text.split('\n');
-      if((p + string_width(_t_l[0])) > max_str_len) _text = '\n' + _text;
-      _text = _text.replace(new RegExp('\n', 'gi'), '<br>');
-      result += _text;
-      if(_t_l.length == 1){
-        p += string_width(_t_l[0]);
-      }else{
-        p = string_width(_t_l[_t_l.length -1]);
-      }
-      if(/<br>$/gi.test(_text)) p = 0;
-    }
-
-    return result;
   }
 
   set_host(host){
@@ -399,10 +306,6 @@ class PostView extends QWidget{
     this.name.setFont(NameFont);
     this.date.setFont(font);
     this.content.setFont(font);
-  }
-
-  set_main_win(win){
-    this.main_win = win;
   }
 }
 
