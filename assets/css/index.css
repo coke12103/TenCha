@@ -23,44 +23,12 @@
 #timeline_widget{
 }
 
+/* postbox */
 #postArea{
-  height: 76px;
-  flex-direction: row;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  height: 86px;
 }
 
-#postSubArea{
-  align-self: stretch;
-  width: 96px;
-  margin-left: 5px;
-  flex-direction: column;
-  justify-content: center;
-}
-
-#postTextInput{
-  align-self: stretch;
-  flex-grow: 2;
-}
-
-#postButton{
-  align-self: stretch;
-  height: 24px;
-  margin-bottom: 2px;
-}
-
-#postVisibilitySelect{
-  align-self: stretch;
-  height: 24px;
-  padding-left: 2px
-}
-
-#postIsLocalCheck{
-  height: 24px;
-  align-self: stretch;
-  margin-bottom: 2px;
-}
-
+/* status label */
 #statusLabel{
   height: 14px;
 }

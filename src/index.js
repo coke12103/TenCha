@@ -19,7 +19,7 @@ const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
 const _post_view_area = require('./widgets/postview/index.js');
-const _post_box = require('./postbox/index.js');
+const _post_box = require('./widgets/postbox/index.js');
 const Client = require('./client.js');
 const client = new Client();
 
@@ -59,25 +59,6 @@ var assets = new Assets('MainWindow');
 var default_font;
 var blocker = new Blocker();
 
-postbox.add_event_listener(async () => {
-    var data = postbox.get_data();
-    console.log(data)
-    if(!data.text){
-      statusLabel.setText('本文を入れてね');
-      return;
-    }
-
-    statusLabel.setText('投稿中...');
-    try{
-      await client.call('notes/create', data);
-      postbox.clear();
-      statusLabel.setText('投稿成功!');
-    }catch(err){
-      console.log(err);
-      statusLabel.setText(err.error.error.message);
-    }
-});
-
 async function init_cha(){
   // 設定読み込みはFont指定もあるので先に
   var _setting_init = settings_loader.init();
@@ -98,7 +79,7 @@ async function init_cha(){
   rootViewLayout.addWidget(postViewArea);
   rootViewLayout.addWidget(timeline.get_widget());
   rootViewLayout.addWidget(timelineControlsArea);
-  rootViewLayout.addWidget(postbox.area);
+  rootViewLayout.addWidget(postbox);
   rootViewLayout.addWidget(statusLabel);
 
   rootView.setStyleSheet(assets.css);
@@ -148,3 +129,6 @@ async function init_cha(){
 
 init_cha();
 
+exports.status_label = statusLabel;
+exports.client = client;
+exports.random_emoji = random_emoji;
