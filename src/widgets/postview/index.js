@@ -121,7 +121,7 @@ class PostView extends QWidget{
     var flag = '';
 
     if(note.renote) flag += "RN";
-    if(note.files[0]) flag += "画";
+    if(note.files[0] || (note.renote && note.renote.files[0])) flag += "画";
 
     switch(note.visibility){
       case 'public':
