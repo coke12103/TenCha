@@ -177,8 +177,6 @@ class SobachaSkin{
   }
 
   _parse_renote(note){
-    var renote = note.renote;
-
     var r_text;
     if(note.text || note.cw){
       r_text = `QN by @${note.user.acct} `;

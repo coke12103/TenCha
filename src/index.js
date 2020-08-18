@@ -1,14 +1,11 @@
-const request = require("request-promise");
 const {
   QMainWindow,
   QLabel,
   FlexLayout,
   QWidget,
-  QApplication,
   QFont
 } = require('@nodegui/nodegui');
 
-const file = require('./file.js');
 const Assets = require('./assets.js');
 const RandomEmoji = require('./tools/random_emoji/index.js');
 const EmojiParser = require('./tools/emoji_parser/index.js');

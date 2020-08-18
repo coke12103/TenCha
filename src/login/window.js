@@ -3,10 +3,8 @@ const {
   QLabel,
   FlexLayout,
   QPushButton,
-  QPushButtonEvents,
   QWidget,
-  QLineEdit,
-  QApplication
+  QLineEdit
 } = require('@nodegui/nodegui');
 
 const Assets = require('../assets.js');
