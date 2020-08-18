@@ -9,7 +9,7 @@
     "build": "webpack -p",
     "start": "webpack && qode ./dist/index.js",
     "debug": "webpack && qode --inspect ./dist/index.js",
-    "lint": "eslint src/*.js"
+    "lint": "eslint 'src/**/*.js'"
   },
   "dependencies": {
     "@nodegui/nodegui": "^0.24.0",
