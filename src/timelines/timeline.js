@@ -1,18 +1,9 @@
-const request = require("request-promise");
-
 const NotificationItem = require('./notification_item.js');
 const Assets = require("../assets.js");
 const Skin = require("./skin.js");
-const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 const {
-  QLabel,
-  QListWidget,
-  QListWidgetItem,
-  QSize,
-  QWidget,
-  FlexLayout,
-  SelectionMode
+  QListWidget
 } = require('@nodegui/nodegui');
 
 class Timeline{
