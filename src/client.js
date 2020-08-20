@@ -17,14 +17,18 @@ class Client{
 
     this.username = login.username;
   }
-  async call(path, data){
+
+  async call(path, data, is_ano = false, override_host = null){
     return new Promise((resolve, reject) => {
+        var host = this.host;
+
+        if(override_host) host = override_host;
         var req = {
-          url: "https://" + this.host + "/api/" + path,
+          url: "https://" + host + "/api/" + path,
           method: "POST",
           json: data
         }
-        data.i = this.api_token;
+        if(!is_ano) data.i = this.api_token;
 
         request(req).then(async (body) => {
             resolve(body)
