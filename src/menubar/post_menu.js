@@ -34,7 +34,7 @@ class PostMenu{
 
   set_custom_post(custom_post){
     this.custom_post_action.addEventListener('triggered', () => {
-        custom_post.show({});
+        custom_post.exec({});
     })
   }
 }

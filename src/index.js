@@ -13,13 +13,13 @@ const PostAction = require('./post_action.js');
 const SettingsLoader = require('./tools/settings_loader/index.js');
 const DesktopNotification = require('./tools/desktop_notification/index.js');
 const ImageViewer = require('./tools/image_viewer/index.js');
-const CustomPostWindow = require('./custom_post_window/index.js');
+const CustomPostWindow = require('./widgets/custom_post_window/index.js');
 const Blocker = require('./blocker/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
 const _checkboxs = require('./checkboxs.js');
 const _post_view_area = require('./widgets/postview/index.js');
-const _post_box = require('./postbox/index.js');
+const _post_box = require('./widgets/postbox/index.js');
 const Client = require('./client.js');
 const client = new Client();
 
@@ -59,25 +59,6 @@ var assets = new Assets('MainWindow');
 var default_font;
 var blocker = new Blocker();
 
-postbox.add_event_listener(async () => {
-    var data = postbox.get_data();
-    console.log(data)
-    if(!data.text){
-      statusLabel.setText('本文を入れてね');
-      return;
-    }
-
-    statusLabel.setText('投稿中...');
-    try{
-      await client.call('notes/create', data);
-      postbox.clear();
-      statusLabel.setText('投稿成功!');
-    }catch(err){
-      console.log(err);
-      statusLabel.setText(err.error.error.message);
-    }
-});
-
 async function init_cha(){
   // 設定読み込みはFont指定もあるので先に
   var _setting_init = settings_loader.init();
@@ -98,7 +79,7 @@ async function init_cha(){
   rootViewLayout.addWidget(postViewArea);
   rootViewLayout.addWidget(timeline.get_widget());
   rootViewLayout.addWidget(timelineControlsArea);
-  rootViewLayout.addWidget(postbox.area);
+  rootViewLayout.addWidget(postbox);
   rootViewLayout.addWidget(statusLabel);
 
   rootView.setStyleSheet(assets.css);
@@ -112,6 +93,8 @@ async function init_cha(){
   default_font = new QFont(settings_loader.font, 9);
   statusLabel.setFont(default_font);
 
+  custom_post_window.setup();
+
   desktop_notification.set_is_enable(settings_loader.use_desktop_notification);
 
   timeline.setup(settings_loader, post_action);
@@ -119,7 +102,6 @@ async function init_cha(){
 
   menu_bar.set_font(settings_loader.font);
   checkboxs.set_font(settings_loader.font);
-  custom_post_window.set_font(settings_loader.font);
 
   postbox.setup(settings_loader.font, random_emoji);
 
@@ -139,7 +121,6 @@ async function init_cha(){
       await timeline.init(client.host);
       timeline.start_streaming(statusLabel, client);
       post_action.init(client, timeline, image_viewer, custom_post_window);
-      custom_post_window.set_client(client);
       statusLabel.setText('ログイン成功!');
   });
 
@@ -148,3 +129,7 @@ async function init_cha(){
 
 init_cha();
 
+exports.status_label = statusLabel;
+exports.client = client;
+exports.random_emoji = random_emoji;
+exports.settings = settings_loader;
