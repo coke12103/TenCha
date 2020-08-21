@@ -35,10 +35,6 @@ class ButtonArea extends QWidget{
     this.is_after_close_check.setObjectName('isAfterCloseCheck');
     this.is_after_close_check.setText('投稿後に閉じない');
 
-    //this.post_button.setFixedSize(60, 20);
-    //this.clear_button.setFixedSize(60, 20);
-    //this.close_button.setFixedSize(60, 20);
-
     this.layout.addWidget(this.post_button);
     this.layout.addWidget(this.clear_button);
     this.layout.addWidget(this.close_button);
