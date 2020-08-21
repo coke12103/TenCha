@@ -3,7 +3,6 @@ const {
   QFileDialog,
   QPushButton,
   QBoxLayout,
-  QClipboard,
   QClipboardMode,
   QApplication,
   FileMode,

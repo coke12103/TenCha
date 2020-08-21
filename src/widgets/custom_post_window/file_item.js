@@ -1,6 +1,5 @@
 const {
   QWidget,
-  QLabel,
   QBoxLayout,
   QPushButton,
   QLineEdit,

@@ -9,8 +9,7 @@ const {
   QFont,
   QComboBox,
   QCheckBox,
-  Direction,
-  AlignmentFlag
+  Direction
 } = require('@nodegui/nodegui');
 
 const Assets = require('../../assets.js');

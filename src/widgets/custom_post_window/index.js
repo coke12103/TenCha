@@ -1,17 +1,11 @@
 const {
-  QComboBox,
   QLineEdit,
-  QPlainTextEdit,
   QWidget,
-  QCheckBox,
-  QPushButton,
   WindowType,
   QBoxLayout,
   QFont,
   Direction
 } = require('@nodegui/nodegui');
-const fs = require('fs');
-const dateformat = require('dateformat');
 
 const ImageArea = require("./image_area.js");
 const PollArea = require("./poll_area.js");
