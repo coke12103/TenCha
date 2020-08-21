@@ -36,7 +36,7 @@ class PostAction{
         if(item.renote && (!item.no_emoji_text && !item.no_emoji_cw)) item_id = item.renote.id;
         if(!(item.visibility === 'public' || item.visibility === 'home')) return;
 
-        this.custom_post_window.show({ renoteId: item_id });
+        this.custom_post_window.exec({ renoteId: item_id });
     })
   }
   reply(){
@@ -54,7 +54,7 @@ class PostAction{
 
         if(_item.visibility === 'specified') opt.visibleUserIds = _item.visibleUserIds;
 
-        this.custom_post_window.show(opt);
+        this.custom_post_window.exec(opt);
     })
   }
   uni_renote(){
@@ -71,7 +71,7 @@ class PostAction{
           renoteId: item_id
         };
         this.client.call('notes/create',data);
-        this.custom_post_window.show({ renoteId: item_id });
+        this.custom_post_window.exec({ renoteId: item_id });
     })
   }
 

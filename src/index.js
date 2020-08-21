@@ -13,7 +13,7 @@ const PostAction = require('./post_action.js');
 const SettingsLoader = require('./tools/settings_loader/index.js');
 const DesktopNotification = require('./tools/desktop_notification/index.js');
 const ImageViewer = require('./tools/image_viewer/index.js');
-const CustomPostWindow = require('./custom_post_window/index.js');
+const CustomPostWindow = require('./widgets/custom_post_window/index.js');
 const Blocker = require('./blocker/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
@@ -93,6 +93,8 @@ async function init_cha(){
   default_font = new QFont(settings_loader.font, 9);
   statusLabel.setFont(default_font);
 
+  custom_post_window.setup();
+
   desktop_notification.set_is_enable(settings_loader.use_desktop_notification);
 
   timeline.setup(settings_loader, post_action);
@@ -100,7 +102,6 @@ async function init_cha(){
 
   menu_bar.set_font(settings_loader.font);
   checkboxs.set_font(settings_loader.font);
-  custom_post_window.set_font(settings_loader.font);
 
   postbox.setup(settings_loader.font, random_emoji);
 
@@ -120,7 +121,6 @@ async function init_cha(){
       await timeline.init(client.host);
       timeline.start_streaming(statusLabel, client);
       post_action.init(client, timeline, image_viewer, custom_post_window);
-      custom_post_window.set_client(client);
       statusLabel.setText('ログイン成功!');
   });
 
@@ -132,3 +132,4 @@ init_cha();
 exports.status_label = statusLabel;
 exports.client = client;
 exports.random_emoji = random_emoji;
+exports.settings = settings_loader;
