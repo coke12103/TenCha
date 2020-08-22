@@ -1,4 +1,4 @@
-const Login = require('./login/index.js');
+const Login = require('./login.js');
 const request = require("request-promise");
 const WebSocket = require("ws");
 
@@ -8,7 +8,13 @@ class Client{
   }
   async login(){
     var login = new Login();
-    await login.start();
+    try{
+      await login.start();
+    }catch(err){
+      console.log(err);
+      // TODO: dialog
+      process.exit(1);
+    }
 
     this.host = login.host;
     this.token = login.token;
