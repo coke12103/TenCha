@@ -4,8 +4,6 @@ const {
   QBoxLayout,
   Direction,
   QPushButton,
-  QLineEdit,
-  WindowType,
   TextInteractionFlag
 } = require('@nodegui/nodegui');
 

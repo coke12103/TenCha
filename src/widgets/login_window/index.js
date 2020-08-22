@@ -1,10 +1,7 @@
 const {
   QWidget,
-  QLabel,
   QBoxLayout,
   Direction,
-  QPushButton,
-  QLineEdit,
   WindowType,
   QStackedWidget
 } = require('@nodegui/nodegui');
