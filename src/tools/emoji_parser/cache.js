@@ -1,18 +1,21 @@
 const file = require('../../file.js');
 const request = require('request-promise');
 const uuid = require('uuid');
+const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 class EmojiCache{
   constructor(){
-    return (async () => {
+    // 必須のファイル郡の作成
+    try{
       if(!file.exist_check('./tmp')) file.mkdir('./tmp');
-      if(!file.exist_check('./tmp/tmplist.json')) await file.json_write('./tmp/tmplist.json', {tmp: []});
-
+      if(!file.exist_check('./tmp/tmplist.json')) file.json_write_sync('./tmp/tmplist.json', {tmp: []});
       this.tmplist = JSON.parse(file.load('./tmp/tmplist.json'));
       this.worked = [];
+      this.lock = false;
       console.log(this.tmplist.tmp.length + ' Emojis loaded!');
-      return this;
-    })();
+    }catch(err){
+      throw err;
+    }
   }
 
   // tmplist.json
@@ -20,59 +23,64 @@ class EmojiCache{
   // - String type
   // - String filename
   // - String url
-  async get(match_obj){
-    var _emoji;
-    var _match;
-    var _type;
-    var _url;
-
-    // check match type
-    if(match_obj.name){
-      // Misskey Custom Emoji
-      _match = match_obj.name;
-      _type = 'MisskeyCustomEmoji'
-      _url = match_obj.url;
-    }else{
-      // Twemoji
-      _match = match_obj.text;
-      _type = 'Twemoji';
-      _url = match_obj.url.replace('/v/latest/svg/', '/2/72x72/');
-      _url = _url.replace('svg', 'png')
+  async get(req){
+    var data = {
+      match_str: "",
+      type: "",
+      url: ""
     }
 
+    // name がある場合はMisskey Emoji
+    if(req.name){
+      data.match_str = req.name;
+      data.type = 'MisskeyCustomEmoji';
+      data.url = req.url;
+    // そうでなければTwemoji
+    }else{
+      data.match_str = req.text;
+      data.type = 'Twemoji';
+      // svgではなくpngで
+      data.url = req.url.replace('/v/latest/svg/', '/2/72x72/').replace('svg', 'png');
+    }
+
+    // 自分のキャッシュから参照してあったらそれを返す
     for(var emoji of this.tmplist.tmp){
-      if(_url == emoji.url){
+      if(data.url == emoji.url) {
         return emoji;
       }
     }
 
-    if(!_emoji){
-      try{
-        console.log('add Emoji cache');
-        var _emoji = await this._cache_emoji(_match, _type, _url);
-      }catch(err){
-        throw err;
-      }
-    }
+    // もし自身のキャッシュになければ
+    if(!data.url) throw 'url undefined';
 
-    return _emoji;
+    try{
+      for(;;){
+        var result = await this._cache_emoji(data);
+        if(!result) await sleep(500);
+
+        for(var emoji of this.tmplist.tmp){
+          if(data.url == emoji.url) return emoji;
+        }
+        console.log('emoji loop: ', data.match_str);
+      }
+    }catch(err){
+      throw err;
+    }
   }
 
-  async _cache_emoji(match_str, type, url){
+  async _cache_emoji(data){
     for(var e of this.worked){
-      if(e.str == match_str && e.type == type) return;
+      if(e.url == data.url) return false;
     }
-    this.worked.push({str: match_str, type: type});
+    if(this.lock) return false;
 
-    var data = {
-      match_str: match_str,
-      type: type,
-      filename: '',
-      url: url
-    };
+    this.lock = true;
+    this.worked.push(data);
+
+    data.filename = '';
 
     var opt = {
-      url: url,
+      url: data.url,
       encoding: null,
       method: 'GET',
       resolveWithFullResponse: true
@@ -80,32 +88,31 @@ class EmojiCache{
 
     try{
       var res = await request(opt);
-      var _filename = uuid.v4().split('-').join('');
-      data.filename = './tmp/' + _filename;
-      await file.bin_write(data.filename, res.body);
+
+      data.filename = `./tmp/${uuid.v4().split('-').join('')}`;
+      file.bin_write_sync(data.filename, res.body);
+
       this.tmplist.tmp.push(data);
-      await this._write_list();
-      var i = 0;
-      for(var e of this.worked){
-        if(e.str == match_str && e.type == type){
+
+      file.json_write_sync('./tmp/tmplist.json', this.tmplist);
+
+      for(var i = 0; i < this.worked.length; i++){
+        if(this.worked[i].url == data.url){
           this.worked.splice(i, 1);
           break;
-        };
-        i++;
+        }
       }
+      this.lock = false;
+      return true;
     }catch(err){
       console.log(err);
-      throw err;
-    }
-
-    return data;
-  }
-
-  async _write_list(){
-    try{
-      await file.json_write('./tmp/tmplist.json', this.tmplist);
-      return;
-    }catch(err){
+      for(var i = 0; i < this.worked.length; i++){
+        if(this.worked[i].url == data.url){
+          this.worked.splice(i, 1);
+          break;
+        }
+      }
+      this.lock = false;
       throw err;
     }
   }
