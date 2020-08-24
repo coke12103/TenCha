@@ -64,6 +64,23 @@ _file.json_write = function(path, data){
   });
 }
 
+// なんか影響あると怖いのでSyncとして用意しておく
+_file.json_write_sync = function(path, data){
+  try{
+    fs.writeFileSync(path, JSON.stringify(data, null, " "));
+  }catch(err){
+    throw err;
+  }
+}
+
+_file.bin_write_sync = function(path, data){
+  try{
+    fs.writeFileSync(path, data);
+  }catch(err){
+    throw err;
+  }
+}
+
 _file.bin_write = function(path, data){
   return new Promise(async (resolve, reject) => {
       try{
