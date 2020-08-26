@@ -47,6 +47,18 @@
       "name": "投稿が来た時の音",
       "description": "ファイルを指定します。",
       "default_value": "./post.mp3"
+    },
+    {
+      "id": "start_visibility",
+      "name": "初期公開範囲",
+      "description": "初期の公開範囲を指定します",
+      "default_value": "public"
+    },
+    {
+      "id": "memory_visibility",
+      "name": "公開範囲を記憶",
+      "description": "有効にすると投稿後に公開範囲をリセットしません",
+      "default_value": true
     }
   ]
 }
