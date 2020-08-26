@@ -2,6 +2,7 @@ const request = require("request-promise");
 const { QPixmap } = require('@nodegui/nodegui');
 const no_image_image = require('../assets/no_image.png');
 const post_parser = require('./tools/post_parser/index.js');
+const App = require('./index.js');
 
 class User{
   constructor(json, parser){
@@ -10,6 +11,7 @@ class User{
       this.username = json.username;
       this.name = json.name;
       this.no_emoji_name = json.name;
+//      this.display_name = json.name;
       this.description = json.description;
       this.host = json.host;
       if(this.host){
@@ -55,7 +57,10 @@ class User{
       this.bannerId = json.bannerId;
       this.emojis = json.emojis;
 
-      if(this.name) this.name = post_parser.escape_html(this.name);
+//      if(this.name){
+//        this.display_name = post_parser.escape_html(this.name);
+//        this.display_name = App.emoji_parser.parse(this.name, this.emojis);
+//      }
 
       await this.load_avater().then((avater) => {
           this.avater = avater;
@@ -65,6 +70,7 @@ class User{
           this.avater = null;
       })
 
+      if(this.name) this.name = post_parser.escape_html(this.name);
       await parser.parse_user(this);
 
       return this;
@@ -73,6 +79,7 @@ class User{
 
   async update(json, parser){
     if(this.name && (this.name != json.name)) this.name = json.name;
+    if(this.emojis && (this.emojis != json.emojis)) this.emojis = json.emojis;
     if(this.avatarUrl && (this.avatarUrl != json.avatarUrl)){
       this.avatarUrl = json.avatarUrl;
       await this.load_avater().then((avater) => {
@@ -82,6 +89,10 @@ class User{
           console.log(err);
       })
     }
+//    if(this.name){
+//      this.display_name = post_parser.escape_html(this.name);
+//      this.display_name = App.emoji_parser.parse(this.name, this.emojis);
+//    }
     if(this.name) this.name = post_parser.escape_html(this.name);
     await parser.parse_user(this);
   }

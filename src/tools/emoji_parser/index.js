@@ -1,95 +1,90 @@
 const { parse } = require('twemoji-parser');
+const { QPixmap } = require('@nodegui/nodegui');
 
 const Cache = require('./cache.js');
+const App = require('../../index.js')
 
 class EmojiParser{
   constructor(){
-  }
-
-  async init(is_enable){
-    if(is_enable){
-      const cache = await new Cache();
-      this.cache = cache;
-    }
-
-    this.is_enable = is_enable;
-
-    return this;
+    this.cache = new Cache();
   }
 
   async parse(text, mk_emojis){
-    if(!this.is_enable) return;
-    var emojis = parse(text);
+    if(!App.settings.use_emojis) return text;
 
-    var emoji_regs = [];
+    var emojis = [];
 
-    for(var emoji of emojis){
-      emoji_regs.push(this._get_emojis_regexp(emoji, 'Twemoji'));
-    }
-    for(var emoji of mk_emojis){
-      emoji_regs.push(this._get_emojis_regexp(emoji, 'MisskeyCustomEmoji'));
-    }
+    var twemojis = parse(text);
 
-    try{
-      var _emoji_regs = await Promise.all(emoji_regs);
+    for(var emoji of twemojis) emojis.push(this._get_emoji_regexp(emoji, 'Twemoji'));
+    for(var emoji of mk_emojis) emojis.push(this._get_emoji_regexp(emoji, 'MisskeyCustomEmoji'));
 
-      for(var emoji of _emoji_regs){
-        if(!emoji) continue;
-        text = text.replace(emoji.regexp, emoji.img);
-      }
-    }catch(err){
-      console.log(err);
+    var _emojis = await Promise.all(emojis);
+
+    for(var emoji of _emojis){
+      if(!emoji.regexp) continue;
+
+      text = text.replace(emoji.regexp, emoji.img);
     }
 
     return text;
   }
 
+  // 廃止したい
   async parse_note(note){
-    if(!this.is_enable) return;
+    if(!App.settings.use_emojis) return note;
 
     var e_user = this.parse_user(note.user);
-    var e_text = this.parse(note.text, note.emojis);
-    if(note.cw){
-      var e_cw = this.parse(note.cw, note.emojis);
-    }
-    if(note.renote){
-      var e_renote_text = this.parse(note.renote.text, note.renote.emojis);
-      if(note.renote.cw){
-        var e_renote_cw = this.parse(note.renote.cw, note.renote.emojis);
-      }
-    }
+    if(note.text) var e_text = this.parse(note.text, note.emojis);
+    if(note.cw) var e_cw = this.parse(note.cw, note.emojis);
 
-    note.text = await e_text;
-    await e_user;
+    if(note.text) note.text = await e_text;
     if(note.cw) note.cw = await e_cw;
-    if(note.renote){
-      note.renote.text = await e_renote_text;
-      if(note.renote.cw) note.renote.cw = await e_renote_cw;
-    }
+
+    await e_user;
   }
 
   async parse_user(user){
-    if(!this.is_enable) return;
+    if(!App.settings.use_emojis) return user;
 
     if(user.name) user.name = await this.parse(user.name, user.emojis);
   }
 
-  async _get_emojis_regexp(emoji, type){
+  async _get_emoji_regexp(emoji_data, type){
+    var result = {
+      regexp: null,
+      img: null
+    }
+
     try{
-      var e = await this.cache.get(emoji);
-      var img = '<img src="' + e.filename + '" width="14" height="14" style="max-width:14px;max-height:14px;">';
-      var regexp;
+      var emoji = await this.cache.get(emoji_data);
+      var pix = new QPixmap(emoji.filename);
+
+      var width = pix.width();
+      var height = pix.height();
+      var ratio;
+
+      // 高さのみ制限
+      ratio = height / 14;
+
+      width = width / ratio;
+      height = 14;
+
+      width = Math.ceil(width);
+      height = Math.ceil(height);
+
+      result.img = `<img src="${emoji.filename}" width="${width}" height="${height}">`;
+
       if(type == 'Twemoji'){
-        regexp = new RegExp(this.escape_regexp(e.match_str), 'g');
+        result.regexp = new RegExp(this.escape_regexp(emoji.match_str), 'g');
       }else if(type == 'MisskeyCustomEmoji'){
-        regexp = new RegExp(this.escape_regexp(":" + e.match_str + ":"), 'g');
+        result.regexp = new RegExp(this.escape_regexp(`:${emoji.match_str}:`), 'g');
       }
     }catch(err){
       console.log(err);
-      return null;
     }
 
-    return {regexp: regexp, img: img};
+    return result;
   }
 
   escape_regexp(str){

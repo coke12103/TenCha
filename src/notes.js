@@ -1,5 +1,6 @@
 const User = require('./users.js');
 const post_parser = require('./tools/post_parser/index.js');
+const App = require('./index.js');
 
 class Note{
   constructor(json, posts, user_map, parser){
@@ -12,6 +13,8 @@ class Note{
       this.cw = json.cw;
       this.no_emoji_text = json.text;
       this.no_emoji_cw = json.cw;
+//      this.display_text = json.text;
+//      this.display_cw = json.cw;
       this.userId = json.userId;
       this.replyId = json.replyId;
       this.renoteId = json.renoteId;
@@ -58,6 +61,15 @@ class Note{
       if(this.text) this.text = post_parser.escape_html(this.text);
       if(this.cw) this.cw = post_parser.escape_html(this.cw);
 
+//      if(this.text){
+//        this.display_text = post_parser.escape_html(this.display_text);
+//        this.display_text = await App.emoji_parser.parse(this.display_text, this.emojis);
+//      }
+//      if(this.cw){
+//        this.display_cw = post_parser.escape_html(this.cw);
+//        this.display_cw = await App.emoji_parser.parse(this.display_text, this.emojis);
+//      }
+
       var _user = user_map[json.user.id];
       if(_user){
         this.user = _user;
@@ -67,6 +79,7 @@ class Note{
         user_map[json.user.id] = this.user;
       }
 
+      // 将来切りたい
       await parser.parse_note(this);
 
       return this;
