@@ -44,11 +44,8 @@ class EmojiCache{
     }
 
     // 自分のキャッシュから参照してあったらそれを返す
-    for(var emoji of this.tmplist.tmp){
-      if(data.url == emoji.url) {
-        return emoji;
-      }
-    }
+    var tmp_emoji = this.tmplist.tmp.find((v) => v.url == data.url);
+    if(tmp_emoji) return tmp_emoji;
 
     // もし自身のキャッシュになければ
     if(!data.url) throw 'url undefined';
@@ -56,11 +53,11 @@ class EmojiCache{
     try{
       for(;;){
         var result = await this._cache_emoji(data);
-        if(!result) await sleep(500);
+        if(!result) await sleep(50);
 
-        for(var emoji of this.tmplist.tmp){
-          if(data.url == emoji.url) return emoji;
-        }
+        var tmp_emoji = this.tmplist.tmp.find((v) => v.url == data.url);
+        if(tmp_emoji) return tmp_emoji;
+
         console.log('emoji loop: ', data.match_str);
       }
     }catch(err){
@@ -69,9 +66,8 @@ class EmojiCache{
   }
 
   async _cache_emoji(data){
-    for(var e of this.worked){
-      if(e.url == data.url) return false;
-    }
+    var isWork = this.worked.some((v) => v.url == data.url);
+    if(isWork) return false;
     if(this.lock) return false;
 
     this.lock = true;
