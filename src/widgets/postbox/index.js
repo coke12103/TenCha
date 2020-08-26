@@ -21,6 +21,13 @@ class PostBox extends QWidget{
 
     this.assets = new Assets("Postbox");
     this.filters = new Array();
+    this.visibilitys = [
+     { name: "public", text: "公開" },
+     { name: "home", text: "ホーム" },
+     { name: "followers", text: "フォロワー" },
+     { name: "specified", text: "ダイレクト" },
+     { name: "random", text: "ランダム" }
+    ];
 
     this.layout = new QBoxLayout(Direction.LeftToRight);
 
@@ -146,7 +153,10 @@ class PostBox extends QWidget{
     return data;
   }
 
-  clear(){ this.text_input.setPlainText(''); }
+  clear(){
+    this.text_input.setPlainText('');
+    if(!App.settings.memory_visibility) this.setVisibility(App.settings.start_visibility);
+  }
 
   update_placeholder(){
     var _placeholder = this.assets.placeholder;
@@ -161,6 +171,8 @@ class PostBox extends QWidget{
     this.post_button.setFont(font);
     this.visibility_select.setFont(font);
     this.is_local_check.setFont(font);
+
+    this.setVisibility(App.settings.start_visibility);
   }
 
   add_post_filter(callback){
@@ -174,6 +186,14 @@ class PostBox extends QWidget{
   random_emoji(){
     var emoji = App.random_emoji.exec();
     this.text_input.insertPlainText(emoji);
+  }
+
+  setVisibility(vis){
+    for(var v of this.visibilitys){
+      if(v.name == vis){
+        this.visibility_select.setCurrentText(v.text);
+      }
+    }
   }
 }
 

@@ -9,6 +9,7 @@ const {
 } = require('@nodegui/nodegui');
 
 const Assets = require("../../assets.js");
+const App = require("../../index.js");
 
 class PostTextArea extends QWidget{
   constructor(){
@@ -85,6 +86,8 @@ class PostTextArea extends QWidget{
     this.visibility_select.setFont(font);
     this.is_local_check.setFont(font);
     this.is_mobile_check.setFont(font);
+
+    this.setVisibility(App.settings.start_visibility);
   }
 
   setVisibility(vis){
@@ -124,7 +127,7 @@ class PostTextArea extends QWidget{
 
   clear(){
     this.text_input.setPlainText('');
-    this.setVisibility("public");
+    if(!App.settings.memory_visibility) this.setVisibility(App.settings.start_visibility);
     this.is_local_check.setChecked(false);
     this.is_mobile_check.setChecked(false);
   }
