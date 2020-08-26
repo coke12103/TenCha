@@ -59,6 +59,12 @@
       "name": "公開範囲を記憶",
       "description": "有効にすると投稿後に公開範囲をリセットしません",
       "default_value": true
+    },
+    {
+      "id": "search_engine",
+      "name": "検索エンジン",
+      "description": "なになに 検索の形式のリンクの検索エンジン(`https://`や%sはなしで指定)",
+      "default_value": "duckduckgo.com/?q="
     }
   ]
 }
