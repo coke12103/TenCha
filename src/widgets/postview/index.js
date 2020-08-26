@@ -14,6 +14,7 @@ const PostParser = require('../../tools/post_parser/index.js');
 const NotificationParser = require('../../tools/notification_parser/index.js');
 const IconLabel = require('../icon_label/index.js');
 const ContentBox = require('./content_box.js');
+const App = require("../../index.js");
 
 class PostView extends QWidget{
   constructor(){
@@ -212,7 +213,7 @@ class PostView extends QWidget{
         _t = encodeURIComponent(_t);
         text = text.replace(/ (\[search\]|検索)$/i, '');
         text = text.replace(/:/gi, "<%3A>");
-        _t = `search://duckduckgo.com/?q=${_t} [${text} 検索]`;
+        _t = `search://${App.settings.search_engine}${_t} [${text} 検索]`;
       }else{
         _t = from_em_arr[i];
       }
