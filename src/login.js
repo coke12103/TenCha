@@ -2,10 +2,11 @@ const crypto = require('crypto');
 
 const Window = require('./widgets/login_window/index.js');
 const file = require('./file.js');
+const App = require('./index.js');
 
 class Login{
   constructor(){
-    this.is_login_done = this.load_info();
+    this.is_login_done = false;
   }
 
   load_info(){
@@ -33,8 +34,23 @@ class Login{
   }
 
   start(){
-    return new Promise((resolve, reject) =>{
-        if(!this.is_login_done){
+    return new Promise(async (resolve, reject) =>{
+        // とりあえず読み込もうとする
+        this.is_login_done = this.load_info();
+
+        // 読み込めたなら疎通テストしてエラーだったら投げる
+        if(this.is_login_done){
+          try{
+            var s = await App.client.call('i', { i: this.api_token }, true, this.host);
+            this.username = s.username;
+          }catch(err){
+            throw(err);
+          }
+
+          resolve(0);
+
+        // 読み込めないならとりあえず新規ログインとして扱う
+        }else{
           const login_window = new Window();
 
           var done_func = function(){
@@ -47,8 +63,6 @@ class Login{
 
           login_window.addEventListener('Close', done_func.bind(this));
           login_window.show();
-        }else{
-          resolve(0);
         }
     })
   }
