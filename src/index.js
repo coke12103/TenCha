@@ -116,7 +116,6 @@ async function init_cha(){
   win.show();
 
   client.login().then(async () => {
-      await emoji_parser.init(settings_loader.use_emojis);
       postViewArea.set_host(client.host);
       await timeline.init(client.host);
       timeline.start_streaming(statusLabel, client);
@@ -133,3 +132,4 @@ exports.status_label = statusLabel;
 exports.client = client;
 exports.random_emoji = random_emoji;
 exports.settings = settings_loader;
+exports.emoji_parser = emoji_parser;
