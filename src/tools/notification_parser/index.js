@@ -46,7 +46,7 @@ class NotificationParser{
         desc_text = `引用Renoteされました!:\n${text}`;
         break;
       case 'reaction':
-        desc_text = `${notification.reaction}でリアクションされました!:\n${text}`;
+        desc_text = `${notification.display_reaction}でリアクションされました!:\n${text}`;
         break;
       case 'pollVote':
         desc_text = `投票しました!:\n${text}`;
@@ -102,7 +102,7 @@ class NotificationParser{
         break;
       case 'reaction':
         result.type_text = '！';
-        result.desc_text = `${notification.reaction}でリアクションされました!: ${text}`;
+        result.desc_text = `${notification.display_reaction}でリアクションされました!: ${text}`;
         break;
       case 'pollVote':
         result.type_text = '投';

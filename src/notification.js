@@ -1,5 +1,6 @@
 const Note = require('./notes.js');
 const User = require('./users.js');
+const App = require('./index.js');
 
 class Notification{
   constructor(notify, user_map, parser, notes){
@@ -10,10 +11,18 @@ class Notification{
       this.type = notify.type;
       this.userId = notify.userId;
       this.reaction = notify.reaction;
+      this.display_reaction = notify.reaction;
       this.note;
+      this.emojis = [];
 
-      if(notify.note){
-        this.note = await new Note(notify.note, user_map, notes, parser);
+      if(notify.note) this.note = await new Note(notify.note, user_map, notes, parser);
+
+      if(this.reaction){
+        if(this.note){
+          this.emojis = this.note.emojis;
+        }
+
+        this.display_reaction = await App.emoji_parser.parse(this.reaction, this.emojis);
       }
 
       if(notify.user){
