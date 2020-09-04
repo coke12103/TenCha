@@ -1,73 +1,83 @@
 const NotificationItem = require('./notification_item.js');
 const Assets = require("../assets.js");
 const Skin = require("./skin.js");
+const App = require("../index.js");
+const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 const {
   QListWidget
 } = require('@nodegui/nodegui');
 
-class Timeline{
-  constructor(font, limit, skin_name){
-    const assets = new Assets("TimelineWidget");
-    const skin = new Skin();
-    const tree = new QListWidget();
-    tree.setFlexNodeSizeControlled(false);
-    tree.setInlineStyle(assets.css);
+class Timeline extends QListWidget{
+  constructor(id,limit, skin_name, exe){
+    super();
 
-//    nodegui v0.18.2 にはsetSelectionModeか何かがない
-//    tree.setSelectionMode(SelectionMode.SingleSelection);
+    this.assets = new Assets("TimelineWidget");
+    this.skin = new Skin();
 
-    this.tree = tree;
     this.post_view;
-    this.skin = skin;
+
+    this.id = id;
     this.skin_name = skin_name;
     this.tl = [];
     this.item_queue = [];
-    this.is_now_add = false;
-    this.font = font;
+    this.isAdd = false;
     this.limit = limit;
+    this.exe = exe;
   }
 
-  get_widget(){
-    return this.tree;
-  }
+  addNote(note){
+    var skin = this.skin.get(this.skin_name);
+    var item = new skin(note, App.settings.font, this.exe);
+    var data = {
+      item: item,
+      id: note.id,
+      sort_base: note.createdAt
+    };
 
-  add_item(item, id, sort_base){
-    var data = { item: item, id: id, sort_base: sort_base };
     this.item_queue.push(data);
+    this._add_item();
+  }
 
+  addNotification(notification){
+    var item = new NotificationItem(notification, App.settings.font);
+    var data = {
+      item: item,
+      id: notification.id,
+      sort_base: notification.createdAt
+    };
+
+    this.item_queue.push(data);
     this._add_item();
   }
 
   async _add_item(){
-    if(this.is_now_add) return;
+    if(this.isAdd) return;
     if(this.item_queue.length == 0) return;
-    this.is_now_add = true;
+
+    this.isAdd = true;
 
     var data = this.item_queue.shift();
 
-    var pos = this.search_insert_pos(data.sort_base);
+    // 挿入位置の検索
+    var pos = 1;
+
+    for(var note of this.tl){
+      if(note.sort_base > data.sort_base) break;
+      pos++;
+    }
+
     this.tl.splice(pos -1, 0, data);
 
-    this.tree.insertItem((this.tl.length - pos), data.item.list_item);
-    this.tree.setItemWidget(data.item.list_item, data.item.widget);
+    this.insertItem((this.tl.length - pos), data.item.list_item);
+    this.setItemWidget(data.item.list_item, data.item.widget);
 
     // nodegui v0.20.0では動作しない
-    // await sleep(10);
+    //await sleep(10);
 
-    this.is_now_add = false;
+    this.isAdd = false;
+    this.fix_items();
     this._add_item();
-  }
-
-  add_note(note){
-    var skin = this.skin.get(this.skin_name);
-    var item = new skin(note, this.font, this.exe);
-    this.add_item(item, note.id, note.createdAt);
-  }
-
-  add_notification(notification){
-    var item = new NotificationItem(notification, this.font);
-    this.add_item(item, notification.id, notification.createdAt);
   }
 
   check_exist_item(id){
@@ -75,57 +85,38 @@ class Timeline{
         return (el.id == id);
     });
 
-    if(exist) console.log('Exist');
     return exist;
   }
 
   fix_items(){
     var limit = this.limit;
-    if(this.tl.length < limit) return;
-
-    while(this.tl.length > limit){
+    if(this.tl.length > limit){
       for(var i = 0; i < 10; i++){
         if(this.tl[i].item.list_item.isSelected()) return;
       }
-      this.remove_item(this.tl[0].item);
+      this.remove_item(this.tl[0]);
       this.tl.shift();
     }
   }
 
   remove_item(item){
-    this.tree.takeItem(this.tree.row(item.list_item));
-    item.destroy();
+    this.takeItem(this.row(item.item.list_item));
+    item.item.destroy();
+    App.note_cache.free(item.id, this.id);
 
     return;
   }
 
   get_selected_item(){
-    var items = this.tree.selectedItems();
-    var index = this.tree.row(items[0]);
+    var items = this.selectedItems();
+    var index = this.row(items[0]);
     index+=1
     return this.tl[this.tl.length - index];
   }
 
   select_top_item(){
-    this.tree.setCurrentRow(0);
-  }
-
-  search_insert_pos(base){
-    var tl = this.tl;
-    var i = 1;
-
-    for(var note of tl){
-      if(note.sort_base > base) break;
-      i++;
-    }
-
-    return i;
-  }
-
-  set_context_menu_event_exec(exe){
-    this.exe = exe;
+    this.setCurrentRow(0);
   }
 }
-
 
 module.exports = Timeline;
