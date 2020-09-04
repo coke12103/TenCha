@@ -65,6 +65,12 @@
       "name": "検索エンジン",
       "description": "なになに 検索の形式のリンクの検索エンジン(`https://`や%sはなしで指定)",
       "default_value": "duckduckgo.com/?q="
+    },
+    {
+      "id": "default_timeline_limit",
+      "name": "デフォルトのタイムラインの表示上限",
+      "description": "タイムラインに個別に上限指定がない場合何件まで表示するか",
+      "default_value": 200
     }
   ]
 }
