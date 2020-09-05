@@ -19,39 +19,39 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      
+
     - name: Install pakages(linux)
       if: ${{ runner.os == 'Linux' }}
-      run: sudo apt install -y pkg-config build-essential cmake make
-      
+      run: sudo apt install -y pkg-config build-essential cmake make libgl-dev
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
- 
+
     - name: Install deps
       run: npm ci
-    
+
     - name: Build
       run: npm run build --if-present
 
     - name: packer init
       run: npx nodegui-packer --init TenCha
-      
+
     - name: Pack TenCha
       run: npx nodegui-packer --pack ./dist
-      
+
     - name: Clean(Linux)
       if: ${{ runner.os == 'Linux' }}
       run: rm ${{ github.workspace }}/deploy/linux/build/TenCha/Application-x86_64.AppImage
-    
+
     - name: Upload Linux package
       uses: actions/upload-artifact@v2
       if: ${{ runner.os == 'Linux' }}
       with:
         name: Linux Package
         path: ${{ github.workspace }}/deploy/linux/build/TenCha/
-    
+
     - name: Upload Windows package
       uses: actions/upload-artifact@v2
       if: ${{ runner.os == 'Windows' }}
