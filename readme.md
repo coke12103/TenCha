@@ -1,4 +1,6 @@
 # TenCha
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcoke12103%2FTenCha.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcoke12103%2FTenCha?ref=badge_shield)
+
 2009年のTwitterへの夢と軽量クライアントの夢でできたMisskeyクライアント
 
 ## 特徴
@@ -71,3 +73,7 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
 ## 連絡先
 - Twitter: [coke12103](https://twitter.com/@coke12103)
 - Misskey: [c0_ke@misskey.dev](https://misskey.dev/@c0_ke)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcoke12103%2FTenCha.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcoke12103%2FTenCha?ref=badge_large)
