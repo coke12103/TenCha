@@ -109,10 +109,10 @@ jobs:
         run: url=$(cat artifact/url.txt) && echo "##[set-output name=upload_url;]$url"
 
       - name: zip(linux)
-        run: zip -j -r tencha_linux LinuxPackage
+        run: zip tencha_linux -r LinuxPackage
 
       - name: zip(win)
-        run: zip -j -r tencha_windows WindowsPackage
+        run: zip tencha_windows -r WindowsPackage
 
       - name: Upload release asset(linux)
         uses: actions/upload-release-asset@v1.0.1
