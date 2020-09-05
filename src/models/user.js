@@ -1,35 +1,36 @@
 const request = require("request-promise");
 const { QPixmap } = require('@nodegui/nodegui');
-const no_image_image = require('../assets/no_image.png');
-const post_parser = require('./tools/post_parser/index.js');
-const App = require('./index.js');
+
+const no_image_image = require('../../assets/no_image.png');
+const post_parser = require('../tools/post_parser/index.js');
+const App = require('../index.js');
 
 class User{
-  constructor(json, parser){
+  constructor(json){
     return (async () => {
+      // 変わらないデータ
       this.id = json.id;
       this.username = json.username;
-      this.name = json.name;
-      this.no_emoji_name = json.name;
-//      this.display_name = json.name;
-      this.description = json.description;
       this.host = json.host;
       if(this.host){
         this.acct = this.username + "@" + this.host;
       }else{
         this.acct = this.username;
       }
+      this.url = json.url;
+      this.createdAt = json.createdAt;
+
+      // 変わるデータ
+      this.name = json.name;
+      this.no_emoji_name = json.name;
+//      this.display_name = json.name;
+      this.description = json.description;
       this.avatarUrl = json.avatarUrl;
-      // これ使うタイミングあるの？
-      this.avatarColor = json.avatarColor;
       this.isCat = json.isCat;
       this.isAdmin = json.isAdmin;
       this.isBot = json.isBot;
-      this.url = json.url;
-      this.createdAt = json.createdAt;
       this.updatedAt = json.updatedAt;
       this.bannerUrl = json.bannerUrl;
-      this.bannerColor = json.bannerColor;
       this.isLocked = json.isLocked;
       this.isModerator = json.isModerator;
       this.isSilenced = json.isSilenced;
@@ -71,7 +72,7 @@ class User{
       })
 
       if(this.name) this.name = post_parser.escape_html(this.name);
-      await parser.parse_user(this);
+      await App.emoji_parser.parse_user(this);
 
       return this;
     })();
@@ -94,7 +95,7 @@ class User{
 //      this.display_name = App.emoji_parser.parse(this.name, this.emojis);
 //    }
     if(this.name) this.name = post_parser.escape_html(this.name);
-    await parser.parse_user(this);
+    await App.emoji_parser.parse_user(this);
   }
 
   load_avater(){

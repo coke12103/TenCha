@@ -1,11 +1,13 @@
-const User = require('./users.js');
-const post_parser = require('./tools/post_parser/index.js');
-const App = require('./index.js');
+const post_parser = require('../tools/post_parser/index.js');
+const App = require('../index.js');
 
 class Note{
-  constructor(json, posts, user_map, parser){
+  constructor(json){
     return (async () => {
       this.el_type = 'Note';
+      this.use_tl = {};
+
+      // 変わらない内容
       this.id = json.id;
       this.createdAt = Date.parse(json.createdAt);
       this.app = json.app;
@@ -25,35 +27,27 @@ class Note{
       this.visibleUserIds = json.visibleUserIds;
       this.fileIds = json.fileIds;
       this.files = json.files;
-      this.renoteCount = json.renoteCount;
-      this.repliesCount = json.repliesCount;
-      this.reactions = json.reactions;
-      this.emojis = json.emojis;
       this.tags = json.tags;
       this.poll = json.poll;
       this.geo = json.geo;
       this.uri = json.uri;
 
+      // 変わる内容
+      this.renoteCount = json.renoteCount;
+      this.repliesCount = json.repliesCount;
+      this.reactions = json.reactions;
+      this.emojis = json.emojis;
+
       if(json.renote){
-        var _renote = posts[json.renote.id];
-        if(_renote){
-          this.renote = _renote;
-        }else{
-          this.renote = await new Note(json.renote, posts, user_map, parser);
-          posts[json.renote.id] = this.renote;
-        }
+        this.renote = await App.note_cache.get(json.renote);
+        App.note_cache.use(this.renote.id, this.id);
       }else{
         this.renote = null;
       }
 
       if(json.reply){
-        var _reply = posts[json.reply.id];
-        if(_reply){
-          this.reply = _reply;
-        }else{
-          this.reply = await new Note(json.reply, posts, user_map, parser);
-          posts[json.reply.id] = this.reply;
-        }
+        this.reply = await App.note_cache.get(json.reply);
+        App.note_cache.use(this.reply.id, this.id);
       }else{
         this.reply = null;
       }
@@ -70,20 +64,22 @@ class Note{
 //        this.display_cw = await App.emoji_parser.parse(this.display_text, this.emojis);
 //      }
 
-      var _user = user_map[json.user.id];
-      if(_user){
-        this.user = _user;
-        await this.user.update(json.user, parser);
-      }else{
-        this.user = await new User(json.user, parser);
-        user_map[json.user.id] = this.user;
-      }
+      this.user = await App.user_cache.use(json.user);
 
       // 将来切りたい
-      await parser.parse_note(this);
+      await App.emoji_parser.parse_note(this);
 
       return this;
     })();
+  }
+
+  update(){
+
+  }
+
+  purge(){
+    if(this.reply) App.note_cache.free(this.reply.id, this.id);
+    if(this.renote) App.note_cache.free(this.renote.id, this.id);
   }
 }
 

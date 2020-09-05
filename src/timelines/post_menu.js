@@ -2,69 +2,58 @@ const {
   QMenu,
   QAction
 } = require('@nodegui/nodegui');
+const App = require('../index.js');
 
-class PostMenu{
+class PostMenu extends QMenu{
   constructor(){
-    const menu = new QMenu();
+    super();
 
-    const renote_action = new QAction();
-    const quote_action = new QAction();
-    const reply_action = new QAction();
-    const image_view_action = new QAction();
-    const note_remove_action = new QAction();
+    this.renote_action = new QAction();
+    this.quote_action = new QAction();
+    this.reply_action = new QAction();
+    this.image_view_action = new QAction();
+    this.note_remove_action = new QAction();
 
-    renote_action.setText('Renote');
-    quote_action.setText('引用Renote');
-    reply_action.setText('リプライ');
-    image_view_action.setText('画像を表示');
-    note_remove_action.setText('削除');
+    this.renote_action.setText('Renote');
+    this.quote_action.setText('引用Renote');
+    this.reply_action.setText('リプライ');
+    this.image_view_action.setText('画像を表示');
+    this.note_remove_action.setText('削除');
 
-    menu.addAction(reply_action);
-    menu.addSeparator(renote_action);
-    menu.addAction(renote_action);
-    menu.addAction(quote_action);
-    menu.addSeparator(image_view_action);
-    menu.addAction(image_view_action);
-    menu.addSeparator(note_remove_action);
-    menu.addAction(note_remove_action);
+    this.addAction(this.reply_action);
+    this.addSeparator(this.renote_action);
 
-    this.menu = menu;
-    this.renote_action = renote_action;
-    this.quote_action = quote_action;
-    this.reply_action = reply_action;
-    this.image_view_action = image_view_action;
-    this.note_remove_action = note_remove_action;
-  }
+    this.addAction(this.renote_action);
+    this.addAction(this.quote_action);
+    this.addSeparator(this.image_view_action);
 
-  get_widget(){
-    return this.menu;
-  }
+    this.addAction(this.image_view_action);
+    this.addSeparator(this.note_remove_action);
 
-  set_post_action(action){
-    this.post_action = action;
+    this.addAction(this.note_remove_action);
 
     this.renote_action.addEventListener('triggered', () => {
-        this.post_action.renote();
+        App.post_action.renote();
     });
     this.image_view_action.addEventListener('triggered', () => {
-        this.post_action.image_view();
+        App.post_action.image_view();
     });
     this.quote_action.addEventListener('triggered', () => {
-        this.post_action.quote();
+        App.post_action.quote();
     });
     this.reply_action.addEventListener('triggered', () => {
-        this.post_action.reply();
+        App.post_action.reply();
     });
     this.note_remove_action.addEventListener('triggered', () => {
-        this.post_action.note_remove();
+        App.post_action.note_remove();
     });
   }
 
   exec(pos){
-    this.image_view_action.setEnabled(this.post_action.is_image_view_ready());
-    this.note_remove_action.setEnabled(this.post_action.is_remove_ready());
+    this.image_view_action.setEnabled(App.post_action.is_image_view_ready());
+    this.note_remove_action.setEnabled(App.post_action.is_remove_ready());
 
-    this.menu.exec(pos);
+    super.exec(pos);
   }
 }
 

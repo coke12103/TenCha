@@ -17,11 +17,13 @@ const CustomPostWindow = require('./widgets/custom_post_window/index.js');
 const Blocker = require('./blocker/index.js');
 const MenuBar = require('./menubar/index.js');
 const _timeline = require('./timelines/index.js');
-const _checkboxs = require('./checkboxs.js');
 const _post_view_area = require('./widgets/postview/index.js');
 const _post_box = require('./widgets/postbox/index.js');
 const Client = require('./client.js');
 const client = new Client();
+const UserCache = require('./tools/user_cache/index.js');
+const NoteCache = require('./tools/note_cache/index.js');
+const NotificationCache = require('./tools/notification_cache/index.js');
 
 const win = new QMainWindow();
 win.setWindowTitle('TenCha');
@@ -37,16 +39,9 @@ statusLabel.setWordWrap(true);
 statusLabel.setText('ログインチェック中...');
 statusLabel.setObjectName('statusLabel');
 
-const timelineControlsArea = new QWidget();
-const timelineControlsAreaLayout = new FlexLayout();
-timelineControlsArea.setObjectName('timelineControlsArea');
-timelineControlsArea.setLayout(timelineControlsAreaLayout);
-
 var menu_bar = new MenuBar();
 var timeline = new _timeline();
 var postViewArea = new _post_view_area();
-var checkboxs = new _checkboxs();
-var timeline_auto_select = checkboxs.get('timeline_auto_select');
 var postbox = new _post_box();
 var random_emoji = new RandomEmoji();
 var emoji_parser = new EmojiParser();
@@ -58,6 +53,9 @@ var post_action = new PostAction();
 var assets = new Assets('MainWindow');
 var default_font;
 var blocker = new Blocker();
+var user_cache = new UserCache();
+var note_cache = new NoteCache();
+var notification_cache = new NotificationCache();
 
 async function init_cha(){
   // 設定読み込みはFont指定もあるので先に
@@ -65,20 +63,15 @@ async function init_cha(){
   var _blocker_init = blocker.init();
   var _image_viewer_init = image_viewer.init();
 
-  timeline.set_auto_select_check(timeline_auto_select);
   timeline.set_post_view(postViewArea);
-  timeline.set_emoji_parser(emoji_parser);
   timeline.set_desktop_notification(desktop_notification);
 
   menu_bar.post_menu.set_postbox(postbox);
   menu_bar.post_menu.set_custom_post(custom_post_window);
   menu_bar.timeline_menu.set_post_action(post_action);
 
-  timelineControlsAreaLayout.addWidget(timeline_auto_select);
-
   rootViewLayout.addWidget(postViewArea);
-  rootViewLayout.addWidget(timeline.get_widget());
-  rootViewLayout.addWidget(timelineControlsArea);
+  rootViewLayout.addWidget(timeline);
   rootViewLayout.addWidget(postbox);
   rootViewLayout.addWidget(statusLabel);
 
@@ -97,11 +90,9 @@ async function init_cha(){
 
   desktop_notification.set_is_enable(settings_loader.use_desktop_notification);
 
-  timeline.setup(settings_loader, post_action);
   postViewArea.set_font(settings_loader.font);
 
   menu_bar.set_font(settings_loader.font);
-  checkboxs.set_font(settings_loader.font);
 
   postbox.setup(settings_loader.font, random_emoji);
 
@@ -117,9 +108,9 @@ async function init_cha(){
 
   client.login().then(async () => {
       postViewArea.set_host(client.host);
-      await timeline.init(client.host);
-      timeline.start_streaming(statusLabel, client);
-      post_action.init(client, timeline, image_viewer, custom_post_window);
+      await timeline.init();
+      timeline.start_streaming();
+      post_action.init(timeline, image_viewer, custom_post_window);
       statusLabel.setText('ログイン成功!');
   });
 
@@ -133,3 +124,7 @@ exports.client = client;
 exports.random_emoji = random_emoji;
 exports.settings = settings_loader;
 exports.emoji_parser = emoji_parser;
+exports.user_cache = user_cache;
+exports.note_cache = note_cache;
+exports.notification_cache = notification_cache;
+exports.post_action = post_action;

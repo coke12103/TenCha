@@ -1,9 +1,10 @@
+const App = require('./index.js');
+
 class PostAction{
   constructor(){
   }
 
-  init(client, timelines, image_viewer, custom_post_window){
-    this.client = client;
+  init(timelines, image_viewer, custom_post_window){
     this.timelines = timelines;
     this.image_viewer = image_viewer;
     this.custom_post_window = custom_post_window;
@@ -22,7 +23,7 @@ class PostAction{
         var data = {
           renoteId: item_id
         };
-        this.client.call('notes/create',data);
+        App.client.call('notes/create',data);
     })
   }
 
@@ -70,7 +71,7 @@ class PostAction{
         var data = {
           renoteId: item_id
         };
-        this.client.call('notes/create',data);
+        App.client.call('notes/create',data);
         this.custom_post_window.exec({ renoteId: item_id });
     })
   }
@@ -127,10 +128,10 @@ class PostAction{
 
         if(
           item.renote &&
-          !(item.user.username == this.client.username && !item.user.host)
+          !(item.user.username == App.client.username && !item.user.host)
         ) _item = item.renote;
 
-        if(!(_item.user.username == this.client.username && !_item.user.host)){
+        if(!(_item.user.username == App.client.username && !_item.user.host)){
           result = false;
         }
     })
@@ -148,15 +149,15 @@ class PostAction{
 
         if(
           item.renote &&
-          !(item.user.username == this.client.username && !item.user.host)
+          !(item.user.username == App.client.username && !item.user.host)
         ) _item = item.renote;
 
-        if(!(_item.user.username == this.client.username && !_item.user.host)) return;
+        if(!(_item.user.username == App.client.username && !_item.user.host)) return;
 
         var data = {
           noteId: _item.id
         };
-        this.client.call('notes/delete',data);
+        App.client.call('notes/delete',data);
     })
 
   }

@@ -2,12 +2,7 @@ const file = require('../file.js');
 
 class TabLoader{
   constructor(){
-  }
-
-  async load(){
-    if(!file.exist_check('./tabs.json')){
-      await this.create_default_tab();
-    }
+    if(!file.exist_check('./tabs.json')) this.create_default_tab();
 
     try{
       var f = file.load('./tabs.json');
@@ -20,7 +15,7 @@ class TabLoader{
   }
 
   // TODO: limit
-  async create_default_tab(){
+  create_default_tab(){
     var default_tabs = {
       tabs: [
         {
@@ -61,7 +56,7 @@ class TabLoader{
       ]
     }
 
-    await file.json_write('./tabs.json', default_tabs);
+    file.json_write_sync('./tabs.json', default_tabs);
   }
 }
 

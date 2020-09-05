@@ -2,6 +2,8 @@ const Login = require('./login.js');
 const request = require("request-promise");
 const WebSocket = require("ws");
 
+const App = require('./index.js');
+
 class Client{
   constructor(){
     this.ws;
@@ -61,14 +63,14 @@ class Client{
     })
   }
 
-  connect_ws(statusLabel, timeline){
+  connect_ws(timeline){
     return new Promise((resolve, reject) => {
-      this._connect(statusLabel, 0, timeline);
+      this._connect(0, timeline);
       resolve(0);
     })
   }
 
-  _connect(statusLabel, count, timeline){
+  _connect(count, timeline){
     var url = 'wss://' + this.host + '/streaming?i=' + this.api_token;
 
     if(this.ws_connected) return;
@@ -79,7 +81,7 @@ class Client{
     connection.on('open', () => {
       console.log('connected');
 
-      statusLabel.setText('サーバーに接続しました');
+      App.status_label.setText('サーバーに接続しました');
 
       this.ws = connection;
       this.ws_connected = true;
@@ -107,17 +109,17 @@ class Client{
 
     connection.on('error', (err) => {
       console.log('error!: ' + err);
-      statusLabel.setText('WebSocketエラー');
+      App.status_label.setText('WebSocketエラー');
     });
 
     connection.on('close', (cl) => {
         console.log('closed!', cl);
-        statusLabel.setText('サーバーから切断されました。0.5秒後に再接続を試みます。');
+        App.status_label.setText('サーバーから切断されました。0.5秒後に再接続を試みます。');
         clearTimeout(this.pingTimeout)
         setTimeout(() => {
             this.ws_connected = false;
             this.ws = null;
-            this._connect(statusLabel, count + 1, timeline);
+            this._connect(count + 1, timeline);
         }, 500);
     });
 

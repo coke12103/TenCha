@@ -1,57 +1,74 @@
 const {
   QTabWidget,
+  QWidget,
+  QBoxLayout,
+  Direction,
   QIcon,
   QFont,
-  QPoint
+  QPoint,
+  QCheckBox
 } = require('@nodegui/nodegui');
 const player = require('play-sound')(opts = {});
 
 const TabLoader = require('./tab_loader.js');
 const Timeline = require('./timeline.js');
-const Note = require('../notes.js');
-const Notification = require('../notification.js');
 const NotificationParser = require('../tools/notification_parser/index.js');
 const PostMenu = require('./post_menu.js');
+const App = require('../index.js');
 
-class Timelines{
+class Timelines extends QWidget{
   constructor(){
-    const tabWidget = new QTabWidget();
-    tabWidget.setObjectName('timelines');
+    super();
 
     this.post_menu = new PostMenu();
 
-    this.tab_widget = tabWidget;
     this.tabs = [];
-    this.users = {};
-    this.notes = {};
-    this.sources = {};
+    this.sources = [];
     this.filters = [];
+
+    this.layout = new QBoxLayout(Direction.TopToBottom);
+
+    this.tab_widget = new QTabWidget();
+    this.auto_select_check = new QCheckBox();
+
+    this.setLayout(this.layout);
+
+    this.setObjectName('timelineBox');
+
+    this.layout.setContentsMargins(0,0,0,0);
+    this.layout.setSpacing(5);
+
+    this.tab_widget.setObjectName('timelines');
+
+    this.auto_select_check.setObjectName('timelineAutoSelect');
+    this.auto_select_check.setText('最新の投稿を追う');
+
+    this.layout.addWidget(this.tab_widget, 1);
+    this.layout.addWidget(this.auto_select_check);
+
+    this.auto_select_check.addEventListener('toggled', () => {
+        this.tabs[this.tab_widget.currentIndex()].is_auto_select = this.auto_select_check.isChecked();
+    })
   }
 
-  get_widget(){
-    return this.tab_widget;
-  }
-
-  async init(host){
-    var loader = new TabLoader();
-    this.local = host;
-
+  async init(){
     try{
-      var tabs = await loader.load();
-      tabs = tabs.tabs;
+      var loader = new TabLoader();
+      var tabs = loader.tabs;
     }catch(err){
       console.log(err);
       await this._show_mes_dialog('タブのロードに失敗しました!\ntabs.jsonを削除するか自力で直してください!');
       process.exit(1);
     }
 
-    for(var tab of tabs){
-      await this.set_timeline(tab);
-    }
+    for(var tab of tabs) this.setTimeline(tab);
+
+    this.tab_widget.setFont(new QFont(App.settings.font, 9));
+    this.auto_select_check.setFont(new QFont(App.settings.font, 9));
   }
 
-  async set_timeline(tab){
-    if(!tab.limit) tab.limit = 200;
+  setTimeline(tab){
+    if(!tab.limit) tab.limit = App.settings.default_timeline_limit;
     if(!tab.skin_name) tab.skin_name = 'default_skin';
 
     var data = {
@@ -59,28 +76,34 @@ class Timelines{
       name: tab.name,
       source: tab.source,
       disable_global_filter: tab.disable_global_filter,
-      timeline: new Timeline(this.font, tab.limit, tab.skin_name),
+      item: new Timeline(
+        tab.id,
+        tab.limit,
+        tab.skin_name,
+        this._exec_context_menu.bind(this)
+      ),
       is_auto_select: true,
       post_view: false
     }
 
     this.tabs.push(data);
 
-    data.timeline.tree.addEventListener('itemSelectionChanged', this._update_post_view.bind(this));
-    data.timeline.set_context_menu_event_exec(this._exec_context_menu.bind(this));
-    this.tab_widget.addTab(data.timeline.get_widget(), new QIcon(), data.name);
+    data.item.addEventListener('itemSelectionChanged', this._update_post_view_all.bind(this));
+    this.tab_widget.addTab(data.item, new QIcon(), data.name);
+
+    // 利用されているソースの一覧を記憶
+    Array.prototype.push.apply(this.sources, data.source.from);
+    this.source = this.sources.filter((x, i, self) => { return self.indexOf(x) === i; } );
   }
 
-  start_streaming(statusLabel, client){
-    this.start_load_tl(client);
-    client.connect_ws(statusLabel, this);
+  start_streaming(){
+    this.start_load_tl();
+    App.client.connect_ws(this);
     this.change_tab();
   }
 
-  async start_load_tl(client){
-    var data = {
-      limit: this.start_load_limit
-    };
+  async start_load_tl(){
+    var data = { limit: App.settings.start_load_limit };
 
     var calls = [
       { source: 'global',       call: 'notes/global-timeline' },
@@ -91,15 +114,20 @@ class Timelines{
     ];
 
     for(var c of calls){
-      var posts = await client.call(c.call, data);
+      var posts = await App.client.call(c.call, data);
       for(var note of posts){
-        this.add_tl_mess(c.source, note);
+        this.addItem(c.source, note);
       }
     }
   }
 
-  onMess(data){
-    data = JSON.parse(data);
+  async onMess(data){
+    try{
+      data = JSON.parse(data);
+    }catch(err){
+      console.log(err);
+      return;
+    }
     if(data.type != 'channel'){
       console.log(data);
       return;
@@ -114,62 +142,86 @@ class Timelines{
 
     switch(body.id){
       case 'notification':
-        this.add_tl_mess(body.id, body.body).then(() => {
-          var _body = body.body;
-          var _notification = this.notes[_body.id];
-          if(!_notification) return;
+        await this.addItem(body.id, body.body);
+        var notification = App.notification_cache.find_id(body.body.id);
+        if(!notification) return;
 
-          try{
-            player.play(this.notification_sound);
-          }catch(err){
-            console.log(err);
-          }
+        // 通知音
+        try{
+          player.play(App.settings.notification_sound);
+        }catch(err){
+          console.log(err);
+        }
 
-          var d_notification_text = NotificationParser.gen_desc_text(_notification, 'desktop_notification');
-          this.desktop_notification.show(d_notification_text.title, d_notification_text.message);
-        });
+        // デスクトップ通知
+        var d_notification_text = NotificationParser.gen_desc_text(notification, 'desktop_notification');
+        this.desktop_notification.show(d_notification_text.title, d_notification_text.message);
         break;
       case 'home':
       case 'local':
       case 'social':
       case 'global':
-        this.add_tl_mess(body.id, body.body).then((val) => {
-          if(val.is_notification) return;
-          var selected = this._get_selected_tab();
-          for(var tab of val.added_tab_ids){
-            if(tab == selected.id){
-              try{
-                player.play(this.post_sound);
-              }catch(err){
-                console.log(err);
-              }
-            }
+        var result = await this.addItem(body.id, body.body);
+        if(result.is_notification) return;
+
+        // 選択されているタブだったら投稿が来た時の音
+        var selected = this.tabs[this.tab_widget.currentIndex()].id
+        var is_add_selected = result.added_tab_ids.some((v) => { return v == selected });
+
+        if(is_add_selected){
+          try{
+            player.play(App.settings.post_sound);
+          }catch(err){
+            console.log(err);
           }
-        });
+        }
+
         break;
     }
   }
 
-  async add_tl_mess(id, body){
-    var add_result = {
+  async addItem(source_id, body){
+    var result = {
       is_notification: false,
       added_tab_ids: []
     };
+    if(source_id == 'notification') result.is_notification = true;
 
+    // 現在存在するタブのどれかにこのソースを利用するタブがあるか(なければ追加する投稿がないのでreturn)
+    if(!this.sources.some((v) => v == source_id)) return result;
+
+    // アイテムを先に作る
+    var item;
+
+    if(source_id == 'notification'){
+      try{
+        item = await App.notification_cache.get(body);
+      }catch(err){
+        console.log(err);
+        return;
+      }
+
+      // Notification は実際に通知しない内容もありその場合はnullが返ってくるのでreturn
+      if(!item) return result;
+    }else{
+      try{
+        item = await App.note_cache.get(body);
+      }catch(err){
+        console.log(err);
+        return;
+      }
+    }
+
+    // タブの数だけループ
     for(var tab of this.tabs){
-      for(var f of tab.source.from){
-        if(f != id) continue;
+      for(var from of tab.source.from){
+        if(from != source_id) continue;
+        if(tab.item.check_exist_item(item.id)) continue;
 
-        if(id == 'notification'){
-          add_result.is_notification = true;
-          var item = await this.create_notification(body, this.users);
-          if(!tab.timeline.check_exist_item(item.id)){
-            tab.timeline.add_notification(item);
-            add_result.added_tab_ids.push(tab.id);
-          }
+        if(source_id == 'notification'){
+          tab.item.addNotification(item);
+          tab.item.fix_items();
         }else{
-          var item = await this.create_note(body, this.users);
-
           // Timeline単位での表示チェック
           if(!this._check_timeline_show(item, tab.source.filter)) continue;
           // Globalのフィルター単位での表示チェック
@@ -177,32 +229,28 @@ class Timelines{
 
           if(!tab.disable_global_filter){
             for(var filter of this.filters){
-              var result = filter(item);
-              if(!result) is_display = false;
+              var filter_result = filter(item);
+              if(!filter_result) is_display = false;
             }
           }
 
-          if(!tab.timeline.check_exist_item(item.id) && is_display){
-            tab.timeline.add_note(item);
-            add_result.added_tab_ids.push(tab.id);
-          }
+          if(!is_display) continue;
+
+          App.note_cache.use(item.id, tab.id);
+          tab.item.addNote(item);
         }
 
-        if(tab.is_auto_select) tab.timeline.select_top_item();
-
-        tab.timeline.fix_items();
+        // 追加後に処理する諸々
+        result.added_tab_ids.push(tab.id);
+        if(tab.is_auto_select) tab.item.select_top_item();
       }
     }
 
-    console.log(Object.keys(this.notes).length);
-    this.fix_notes();
-
-    return add_result;
+    return result;
   }
 
   _check_timeline_show(item, filter){
-    if(!filter) return true;
-    if(!(filter.length > 0)) return true;
+    if(!filter || !(filter.length > 0)) return true;
 
     var result = true;
 
@@ -210,18 +258,13 @@ class Timelines{
       var com = [];
       var match_reg;
 
-      // マッチングするものを用意
       switch(f.type){
         case 'username':
           com.push(item.user.username);
           break;
         case 'acct':
-          var acct = item.user.username;
-          if(item.user.host){
-            acct += item.user.host;
-          }else{
-            acct += "@" + this.local;
-          }
+          var acct = item.user.acct;
+          if(!item.user.host) acct += `@${App.client.host}`;
 
           com.push(acct);
           break;
@@ -233,12 +276,13 @@ class Timelines{
           }
           break;
         case 'text':
+          // TODO: no_emoji_textやno_emoji_cwを廃止したい
           com.push(item.no_emoji_text);
           com.push(item.no_emoji_cw);
           break;
         case 'host':
           var host = item.user.host;
-          if(!host) com.push(this.local);
+          if(!host) host = App.client.host;
           com.push(host);
           break;
         case 'visibility':
@@ -258,11 +302,13 @@ class Timelines{
             default:
               break;
           }
-          continue;
           break;
         default:
           break;
-      }
+        }
+
+        // file_countはこの時点で処理終わってるので抜ける
+        if(f.type == 'file_count') continue;
 
       // マッチング用の正規表現の作成
       var reg_str = '';
@@ -287,12 +333,9 @@ class Timelines{
       }
 
       var _match = false;
-      for(var s of com){
-        if(match_reg.test(s)) _match = true;
-      }
+      for(var s of com) if(match_reg.test(s)) _match = true;
 
-      if(f.negative && _match) result = false;
-      if(!f.negative && !_match) result = false;
+      if((f.negative && _match) || (!f.negative && !_match)) result = false;
     }
 
     return result;
@@ -302,73 +345,17 @@ class Timelines{
     return str.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
   }
 
-  async fix_notes(){
-    var notes = this.notes;
-    var limit = this.cache_limit;
-    var clear_count = this.cache_clear_count;
-    if(Object.keys(this.notes).length < limit) return;
-
-    var i = 0;
-    for(var c = 0; c < clear_count; c++){
-      var is_exist = false;
-      for(var tab of this.tabs){
-        if(tab.timeline.check_exist_item(notes[Object.keys(notes)[i]].id)){
-          is_exist = true;
-          break;
-        }
-      }
-      if(is_exist){
-        i++;
-        continue;
-      }
-
-      console.log('removeing: ' + notes[Object.keys(notes)[i]]);
-      delete this.notes[Object.keys(this.notes)[i]];
-    }
-  }
-
-  async create_note(body, user_map){
-    var _note = this.notes[body.id];
-    var note;
-    if(_note){
-      note = _note;
-      // TODO: update note
-    }else{
-      var note = await new Note(body, user_map, this.notes, this.emoji_parser);
-      this.notes[body.id] = note;
-    }
-
-    return note;
-  }
-
-  async create_notification(body, user_map){
-    if(!body) return;
-    if(body.type == 'readAllUnreadMentions') return;
-    if(body.type == 'readAllUnreadSpecifiedNotes') return;
-    var _notification = this.notes[body.id];
-    var notification;
-    if(_notification){
-      notification = _notification;
-      // TODO: update
-    }else{
-      notification = await new Notification(body, user_map, this.emoji_parser, this.notes);
-      this.notes[body.id] = notification;
-    }
-
-    return notification;
-  }
-
   set_post_view(view){
     this.post_view = view;
     this.tab_widget.addEventListener('currentChanged', this.change_tab.bind(this));
   }
 
   change_tab(){
-    var selected = this.tabs[this.tab_widget.currentIndex()].id
+    var selected = this.tabs[this.tab_widget.currentIndex()].id;
 
     for(var tab of this.tabs){
       if(tab.id == selected){
-        this.check.setChecked(tab.is_auto_select);
+        this.auto_select_check.setChecked(tab.is_auto_select);
 
         tab.post_view = true;
         this.update_post_view(tab);
@@ -378,14 +365,7 @@ class Timelines{
     }
   }
 
-  _get_selected_tab(){
-    var selected = this.tabs[this.tab_widget.currentIndex()].id
-    for(var tab of this.tabs){
-      if(tab.id == selected) return tab;
-    }
-  }
-
-  _update_post_view(){
+  _update_post_view_all(){
     for(var tab of this.tabs){
       this.update_post_view(tab);
     }
@@ -395,55 +375,26 @@ class Timelines{
     if(!tab.post_view) return;
 
     try{
-      var item = tab.timeline.get_selected_item();
+      var item = tab.item.get_selected_item();
     }catch{
       return;
     }
-
     if(!item) return;
 
-    var id = item.id;
-    var _item = this.notes[id];
+    // Noteを参照してなければnotificationを参照する
+    var note = App.note_cache.find_id(item.id);
+    if(!note) var notification = App.notification_cache.find_id(item.id);
+    if(!note && !notification) return;
 
-    if(_item.el_type == 'Note'){
-      this.post_view.setNote(_item);
-    }else if(_item.el_type == 'Notification'){
-      console.log('Notification selected');
-      this.post_view.setNotification(_item);
+    if(note){
+      this.post_view.setNote(note);
+    }else{
+      this.post_view.setNotification(notification);
     }
-  }
-
-  set_auto_select_check(check){
-    this.check = check;
-    var tabs = this.tabs;
-    var tab_widget = this.tab_widget;
-    check.addEventListener('toggled', () => {
-        var selected = tabs[tab_widget.currentIndex()].id;
-        for(var tab of tabs){
-          if(tab.id == selected){
-            tab.is_auto_select = check.isChecked();
-          }
-        }
-    })
-  }
-
-  set_emoji_parser(parser){
-    this.emoji_parser = parser;
   }
 
   set_desktop_notification(desktop_notification){
     this.desktop_notification = desktop_notification;
-  }
-
-  setup(settings, post_action){
-    this.cache_limit = settings.post_cache_limit;
-    this.cache_clear_count = settings.post_cache_clear_count;
-    this.start_load_limit = settings.start_load_limit;
-    this.notification_sound = settings.notification_sound;
-    this.post_sound = settings.post_sound;
-    this.font = settings.font;
-    this.tab_widget.setFont(new QFont(this.font, 9));
-    this.post_menu.set_post_action(post_action);
   }
 
   _show_mes_dialog(mes_str){
@@ -463,12 +414,14 @@ class Timelines{
 
   filter(callback){
     var selected_tab = this.tabs[this.tab_widget.currentIndex()];
-    var selected_timeline = selected_tab.timeline;
+    var selected_timeline = selected_tab.item;
 
     var selected_item = null;
     try{
-      selected_item = selected_timeline.get_selected_item();
-      selected_item = this.notes[selected_item.id];
+      var selected = selected_timeline.get_selected_item();
+      selected_item = App.note_cache.find_id(selected.id);
+      if(!selected_item) selected_item = App.notification_cache.find_id(selected.id);
+      if(!selected_item) selected_item = null;
     }catch{
       return;
     }
@@ -477,8 +430,7 @@ class Timelines{
   }
 
   _exec_context_menu(pos){
-    var selected_tab = this.tabs[this.tab_widget.currentIndex()];
-    var selected_timeline = selected_tab.timeline;
+    var selected_timeline = this.tabs[this.tab_widget.currentIndex()].item;
 
     var selected_widget = null;
     try{
@@ -488,6 +440,7 @@ class Timelines{
       console.log(err);
       return;
     }
+
     this.post_menu.exec(selected_widget.mapToGlobal(new QPoint(pos.x, pos.y)));
   }
 }

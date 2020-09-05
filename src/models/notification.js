@@ -1,9 +1,7 @@
-const Note = require('./notes.js');
-const User = require('./users.js');
-const App = require('./index.js');
+const App = require('../index.js');
 
 class Notification{
-  constructor(notify, user_map, parser, notes){
+  constructor(notify){
     return (async () => {
       this.el_type = 'Notification';
       this.id = notify.id;
@@ -15,7 +13,10 @@ class Notification{
       this.note;
       this.emojis = [];
 
-      if(notify.note) this.note = await new Note(notify.note, user_map, notes, parser);
+      if(notify.note){
+        this.note = await App.note_cache.get(notify.note);
+        App.note_cache.use(this.note.id, 'notification');
+      }
 
       if(this.reaction){
         if(this.note){
@@ -25,17 +26,7 @@ class Notification{
         this.display_reaction = await App.emoji_parser.parse(this.reaction, this.emojis);
       }
 
-      if(notify.user){
-        var _user = user_map[notify.user.id];
-
-        if(_user){
-          this.user = _user;
-          await this.user.update(notify.user, parser);
-        }else{
-          this.user = await new User(notify.user, parser);
-          user_map[notify.user.id] = this.user;
-        }
-      }
+      if(notify.user) this.user = await App.user_cache.use(notify.user);
 
       return this;
     })();
