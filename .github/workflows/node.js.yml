@@ -70,7 +70,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: true
+          draft: false
           prerelease: false
 
       - name: Info create
@@ -121,7 +121,7 @@ jobs:
         with:
           upload_url: ${{ steps.get_url.outputs.upload_url }}
           asset_path: tencha_linux.zip
-          asset_name: tencha_linux_${{ github.ref }}.zip
+          asset_name: tencha_linux.zip
           asset_content_type: application/zip
 
       - name: Upload release asset(win)
@@ -131,5 +131,5 @@ jobs:
         with:
           upload_url: ${{ steps.get_url.outputs.upload_url }}
           asset_path: tencha_windows.zip
-          asset_name: tencha_windows_${{ github.ref }}.zip
+          asset_name: tencha_windows.zip
           asset_content_type: application/zip
