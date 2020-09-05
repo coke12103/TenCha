@@ -22,7 +22,7 @@ jobs:
 
     - name: Install pakages(linux)
       if: ${{ runner.os == 'Linux' }}
-      run: sudo apt install -y pkg-config build-essential cmake make libgl-dev
+      run: sudo apt install -y mesa-common-dev libglu1-mesa-dev libxkbcommon-x11-0
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
