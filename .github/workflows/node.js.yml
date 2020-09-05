@@ -15,14 +15,14 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x]
-        os: [windows-latest, ubuntu-16.04]
+        os: [windows-latest, ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v2
       
     - name: Install pakages(linux)
       if: ${{ runner.os == 'Linux' }}
-      run: sudo apt install -y pkg-config build-essential mesa-common-dev libglu1-mesa-dev
+      run: sudo apt install -y pkg-config build-essential cmake make
       
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
