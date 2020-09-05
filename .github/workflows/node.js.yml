@@ -1,0 +1,60 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: TenCha CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version: [14.x]
+        os: [windows-latest, ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Install pakages(linux)
+      if: ${{ runner.os == "Linux" }}
+      run: sudo apt install -y pkg-config build-essential mesa-common-dev libglu1-mesa-dev
+      
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+ 
+    - name: Install deps
+      run: npm ci
+    
+    - name: Build
+      run: npm run build --if-present
+
+    - name: packer init
+      run: npx nodegui-packer --init TenCha
+      
+    - name: Pack TenCha
+      run: npx nodegui-packer --pack ./dist
+      
+    - name: Clean(Linux)
+      if: ${{ runner.os == "Linux" }}
+      run: rm ${{ github.workspace }}/deploy/linux/build/TenCha/Application-x86_64.AppImage
+    
+    - name: Upload Linux package
+      uses: actions/upload-artifact@v2
+      if: ${{ runner.os == "Linux" }}
+      with:
+        name: Linux Package
+        path: ${{ github.workspace }}/deploy/linux/build/TenCha/
+    
+    - name: Upload Windows package
+      uses: actions/upload-artifact@v2
+      if: ${{ runner.os == "Windows" }}
+      with:
+        name: Windows package
+        path: ${{ github.workspace }}/deploy/win32/build/TenCha/
