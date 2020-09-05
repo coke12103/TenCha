@@ -5,9 +5,8 @@ name: TenCha CI
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags:
+      - v*
 
 jobs:
   build:
@@ -49,12 +48,88 @@ jobs:
       uses: actions/upload-artifact@v2
       if: ${{ runner.os == 'Linux' }}
       with:
-        name: Linux Package
+        name: LinuxPackage
         path: ${{ github.workspace }}/deploy/linux/build/TenCha/
 
     - name: Upload Windows package
       uses: actions/upload-artifact@v2
       if: ${{ runner.os == 'Windows' }}
       with:
-        name: Windows package
+        name: WindowsPackage
         path: ${{ github.workspace }}/deploy/win32/build/TenCha/
+
+  setup-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+
+      - name: Info create
+        env:
+          url: ${{ steps.create_release.outputs.upload_url }}
+        run: mkdir artifact && echo $url > artifact/url.txt
+
+      - name: Upload info
+        uses: actions/upload-artifact@v1
+        with:
+          name: artifact
+          path: artifact/url.txt
+
+  release:
+    needs: setup-release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download info
+        uses: actions/download-artifact@v1
+        with:
+          name: artifact
+
+      - name: Download linux package
+        uses: actions/download-artifact@v1
+        with:
+          name: LinuxPackage
+
+      - name: Download windows package
+        uses: actions/download-artifact@v1
+        with:
+          name: WindowsPackage
+
+      - name: Read info
+        id: get_url
+        run: url=$(cat artifact/url.txt) && echo "##[set-output name=upload_url;]$url"
+
+      - name: zip(linux)
+        run: zip -j -r tencha_linux LinuxPackage
+
+      - name: zip(win)
+        run: zip -j -r tencha_windows WindowsPackage
+
+      - name: Upload release asset(linux)
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_url.outputs.upload_url }}
+          asset_path: tencha_linux.zip
+          asset_name: tencha_linux_${{ github.ref }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload release asset(win)
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_url.outputs.upload_url }}
+          asset_path: tencha_windows.zip
+          asset_name: tencha_windows_${{ github.ref }}.zip
+          asset_content_type: application/zip
