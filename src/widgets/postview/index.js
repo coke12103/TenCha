@@ -256,12 +256,8 @@ class PostView extends QWidget{
 
     // date
     var date = dateformat(note.createdAt, 'yyyy/mm/dd HH:MM:ss');
-    var date_url;
-    if(note.uri){
-      date_url = note.uri;
-    }else{
-      date_url = 'https://' + this.host + '/notes/' + note.id;
-    }
+    var date_url = `https://${this.host}/notes/${note.id}`;
+
     this.date.setText(`<html><a style="text-decoration: none;" href="${date_url}">${date}</a>`);
 
     // content
