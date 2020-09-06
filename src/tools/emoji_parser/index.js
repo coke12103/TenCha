@@ -10,7 +10,7 @@ class EmojiParser{
   }
 
   async parse(text, mk_emojis){
-    if(!App.settings.use_emojis) return text;
+    if(!App.settings.get("use_emojis")) return text;
 
     var emojis = [];
 
@@ -32,7 +32,7 @@ class EmojiParser{
 
   // 廃止したい
   async parse_note(note){
-    if(!App.settings.use_emojis) return note;
+    if(!App.settings.get("use_emojis")) return note;
 
     var e_user = this.parse_user(note.user);
     if(note.text) var e_text = this.parse(note.text, note.emojis);
@@ -45,7 +45,7 @@ class EmojiParser{
   }
 
   async parse_user(user){
-    if(!App.settings.use_emojis) return user;
+    if(!App.settings.get("use_emojis")) return user;
 
     if(user.name) user.name = await this.parse(user.name, user.emojis);
   }

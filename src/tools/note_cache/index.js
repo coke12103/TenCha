@@ -50,12 +50,12 @@ class NoteCache{
   remove_cache(){
     if(this.isRemoveRun) return;
 
-    var limit = App.settings.post_cache_limit;
+    var limit = App.settings.get("post_cache_limit");
     if(Object.keys(this.notes).length < limit) return;
 
     this.isRemoveRun = true;
 
-    var clear_count = App.settings.post_cache_clear_count;
+    var clear_count = App.settings.get("post_cache_clear_count");
 
     for(var i = 0; i < clear_count; i++){
       var noteid = Object.keys(this.notes)[i];
