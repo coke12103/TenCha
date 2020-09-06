@@ -213,7 +213,7 @@ class PostView extends QWidget{
         _t = encodeURIComponent(_t);
         text = text.replace(/ (\[search\]|検索)$/i, '');
         text = text.replace(/:/gi, "<%3A>");
-        _t = `search://${App.settings.search_engine}${_t} [${text} 検索]`;
+        _t = `search://${App.settings.get("search_engine")}${_t} [${text} 検索]`;
       }else{
         _t = from_em_arr[i];
       }

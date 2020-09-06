@@ -63,12 +63,12 @@ class Timelines extends QWidget{
 
     for(var tab of tabs) this.setTimeline(tab);
 
-    this.tab_widget.setFont(new QFont(App.settings.font, 9));
-    this.auto_select_check.setFont(new QFont(App.settings.font, 9));
+    this.tab_widget.setFont(new QFont(App.settings.get("font"), 9));
+    this.auto_select_check.setFont(new QFont(App.settings.get("font"), 9));
   }
 
   setTimeline(tab){
-    if(!tab.limit) tab.limit = App.settings.default_timeline_limit;
+    if(!tab.limit) tab.limit = App.settings.get("default_timeline_limit");
     if(!tab.skin_name) tab.skin_name = 'default_skin';
 
     var data = {
@@ -103,7 +103,7 @@ class Timelines extends QWidget{
   }
 
   async start_load_tl(){
-    var data = { limit: App.settings.start_load_limit };
+    var data = { limit: App.settings.get("start_load_limit") };
 
     var calls = [
       { source: 'global',       call: 'notes/global-timeline' },
@@ -148,7 +148,7 @@ class Timelines extends QWidget{
 
         // 通知音
         try{
-          player.play(App.settings.notification_sound);
+          player.play(App.settings.get("notification_sound"));
         }catch(err){
           console.log(err);
         }
@@ -170,7 +170,7 @@ class Timelines extends QWidget{
 
         if(is_add_selected){
           try{
-            player.play(App.settings.post_sound);
+            player.play(App.settings.get("post_sound"));
           }catch(err){
             console.log(err);
           }

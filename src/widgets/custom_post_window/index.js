@@ -77,7 +77,7 @@ class CustomPostWindow extends QWidget{
   }
 
   setup(){
-    this.font = new QFont(App.settings.font, 9);
+    this.font = new QFont(App.settings.get("font"), 9);
 
     this.post_text_area.setFont(this.font);
     this.cw_text_area.setFont(this.font);

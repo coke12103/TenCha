@@ -87,7 +87,7 @@ class PostTextArea extends QWidget{
     this.is_local_check.setFont(font);
     this.is_mobile_check.setFont(font);
 
-    this.setVisibility(App.settings.start_visibility);
+    this.setVisibility(App.settings.get("start_visibility"));
   }
 
   setVisibility(vis){
@@ -127,7 +127,7 @@ class PostTextArea extends QWidget{
 
   clear(){
     this.text_input.setPlainText('');
-    if(!App.settings.memory_visibility) this.setVisibility(App.settings.start_visibility);
+    if(!App.settings.get("memory_visibility")) this.setVisibility(App.settings.get("start_visibility"));
     this.is_local_check.setChecked(false);
     this.is_mobile_check.setChecked(false);
   }

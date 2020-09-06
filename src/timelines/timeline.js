@@ -28,7 +28,7 @@ class Timeline extends QListWidget{
 
   addNote(note){
     var skin = this.skin.get(this.skin_name);
-    var item = new skin(note, App.settings.font, this.exe);
+    var item = new skin(note, App.settings.get("font"), this.exe);
     var data = {
       item: item,
       id: note.id,
@@ -40,7 +40,7 @@ class Timeline extends QListWidget{
   }
 
   addNotification(notification){
-    var item = new NotificationItem(notification, App.settings.font);
+    var item = new NotificationItem(notification, App.settings.get("font"));
     var data = {
       item: item,
       id: notification.id,

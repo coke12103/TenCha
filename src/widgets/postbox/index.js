@@ -155,7 +155,7 @@ class PostBox extends QWidget{
 
   clear(){
     this.text_input.setPlainText('');
-    if(!App.settings.memory_visibility) this.setVisibility(App.settings.start_visibility);
+    if(!App.settings.get("memory_visibility")) this.setVisibility(App.settings.get("start_visibility"));
   }
 
   update_placeholder(){
@@ -172,7 +172,7 @@ class PostBox extends QWidget{
     this.visibility_select.setFont(font);
     this.is_local_check.setFont(font);
 
-    this.setVisibility(App.settings.start_visibility);
+    this.setVisibility(App.settings.get("start_visibility"));
   }
 
   add_post_filter(callback){
