@@ -3,74 +3,110 @@
     {
       "id": "use_emojis",
       "name": "絵文字を表示",
-      "description": "不安定な絵文字実装を利用して絵文字を表示するか",
-      "default_value": true
+      "description": "絵文字実装を利用して絵文字を表示するか",
+      "default_value": true,
+      "type": "Bool"
     },
     {
       "id": "use_desktop_notification",
       "name": "デスクトップ通知を使用",
       "description": "デスクトップ通知を使用するか",
-      "default_value": true
+      "default_value": true,
+      "type": "Bool"
     },
     {
       "id": "post_cache_limit",
       "name": "投稿キャッシュの上限",
       "description": "上限に到達すると開放処理を1回分実行し、開放できる範囲で投稿キャッシュを削除します。",
-      "default_value": 5000
+      "default_value": 5000,
+      "type": "Num"
     },
     {
       "id": "post_cache_clear_count",
       "name": "投稿キャッシュ開放処理の1回の処理数",
       "description": "開放処理1回につき何件処理するか。",
-      "default_value": 1000
+      "default_value": 1000,
+      "type": "Num"
     },
     {
       "id": "start_load_limit",
       "name": "起動直後の読み込み数上限",
       "description": "1~100の間で指定",
-      "default_value": 40
+      "default_value": 40,
+      "type": "Num",
+      "min": 1,
+      "max": 100
     },
     {
       "id": "font",
       "name": "フォント",
-      "description": "フォント名を指定します。サイズは固定です。",
-      "default_value": "sans"
+      "description": "フォント名を指定します。サイズは固定です。(再起動必須)",
+      "default_value": "sans",
+      "type": "String"
     },
     {
       "id": "notification_sound",
       "name": "通知音",
       "description": "ファイルを指定します。",
-      "default_value": "./notify.mp3"
+      "default_value": "./notify.mp3",
+      "type": "Path"
     },
     {
       "id": "post_sound",
       "name": "投稿が来た時の音",
       "description": "ファイルを指定します。",
-      "default_value": "./post.mp3"
+      "default_value": "./post.mp3",
+      "type": "Path"
     },
     {
       "id": "start_visibility",
       "name": "初期公開範囲",
       "description": "初期の公開範囲を指定します",
-      "default_value": "public"
+      "default_value": "public",
+      "type": "Select",
+      "select_values": [
+        {
+          "id": "public",
+          "text": "公開"
+        },
+        {
+          "id": "home",
+          "text": "ホーム"
+        },
+        {
+          "id": "followers",
+          "text": "フォロワー"
+        },
+        {
+          "id": "specified",
+          "text": "ダイレクト"
+        },
+        {
+          "id": "random",
+          "text": "ランダム"
+        }
+      ]
     },
     {
       "id": "memory_visibility",
       "name": "公開範囲を記憶",
       "description": "有効にすると投稿後に公開範囲をリセットしません",
-      "default_value": true
+      "default_value": true,
+      "type": "Bool"
     },
     {
       "id": "search_engine",
       "name": "検索エンジン",
       "description": "なになに 検索の形式のリンクの検索エンジン(`https://`や%sはなしで指定)",
-      "default_value": "duckduckgo.com/?q="
+      "default_value": "duckduckgo.com/?q=",
+      "type": "String"
     },
     {
       "id": "default_timeline_limit",
       "name": "デフォルトのタイムラインの表示上限",
-      "description": "タイムラインに個別に上限指定がない場合何件まで表示するか",
-      "default_value": 200
+      "description": "タイムラインに個別に上限指定がない場合何件まで表示するか(再起動必須)",
+      "default_value": 200,
+      "type": "Num"
     }
   ]
 }
