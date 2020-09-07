@@ -44,7 +44,7 @@ class SettingWindow extends QWidget{
     this.confirm_button.addEventListener('clicked', this.write.bind(this));
 
     this.cancel_button.setText('キャンセル');
-    this.cancel_button.addEventListener('clicked', super.close);
+    this.cancel_button.addEventListener('clicked', super.close.bind(this));
 
     this.button_area_layout.addStretch(1);
     this.button_area_layout.addWidget(this.confirm_button);
