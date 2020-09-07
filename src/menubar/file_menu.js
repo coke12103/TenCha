@@ -3,25 +3,28 @@ const {
   QAction
 } = require('@nodegui/nodegui');
 
-class FileMenu{
+const App = require('../index.js');
+
+class FileMenu extends QMenu{
   constructor(){
-    const menu = new QMenu();
-    menu.setTitle('ファイル');
+    super();
 
-    const exit_action = new QAction();
-    exit_action.setText('終了');
-    exit_action.addEventListener('triggered', () => {
-        process.exit(0);
-    })
+    this.setting_action = new QAction();
+    this.exit_action = new QAction();
 
-    menu.addAction(exit_action);
+    this.setTitle('ファイル');
 
-    this.menu = menu;
-    this.exit_action = exit_action;
-  }
+    this.setting_action.setText('設定');
+    this.setting_action.addEventListener('triggered', () => {
+        App.setting_window.exec();
+    });
 
-  get_widget(){
-    return this.menu;
+    this.exit_action.setText('終了');
+    this.exit_action.addEventListener('triggered', () => process.exit(0));
+
+    this.addAction(this.setting_action);
+    this.addSeparator(this.exit_action);
+    this.addAction(this.exit_action);
   }
 }
 
