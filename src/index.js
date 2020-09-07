@@ -88,8 +88,6 @@ async function init_cha(){
 
   custom_post_window.setup();
 
-  desktop_notification.set_is_enable(settings.get("use_desktop_notification"));
-
   postViewArea.set_font(settings.get("font"));
 
   menu_bar.set_font(settings.get("font"));
