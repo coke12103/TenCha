@@ -14,7 +14,7 @@ class MenuBar{
     const post_menu = new PostMenu();
     const timeline_menu = new TimelineMenu();
 
-    bar.addMenu(file_menu.get_widget());
+    bar.addMenu(file_menu);
     bar.addMenu(post_menu.get_widget());
     bar.addMenu(timeline_menu.get_widget());
 
