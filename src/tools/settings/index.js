@@ -56,10 +56,10 @@ class Settings{
     var list = [];
 
     for(var setting of this.assets.settings_template){
-      var s = Object.assign({}, settings);
+      var s = Object.assign({}, setting);
       s.value = s.default_value;
 
-      if(settings.id in this.values) s.value = this.values[s.id];
+      if(setting.id in this.values) s.value = this.values[s.id];
 
       list.push(s);
     }
