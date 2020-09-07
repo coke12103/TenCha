@@ -24,6 +24,7 @@ const client = new Client();
 const UserCache = require('./tools/user_cache/index.js');
 const NoteCache = require('./tools/note_cache/index.js');
 const NotificationCache = require('./tools/notification_cache/index.js');
+const SettingWindow = require('./widgets/setting_window/index.js');
 
 const win = new QMainWindow();
 win.setWindowTitle('TenCha');
@@ -83,6 +84,9 @@ async function init_cha(){
   // 設定読み込み後にやるやつ
   await _setting_init;
 
+  var setting_window = new SettingWindow();
+  exports.setting_window = setting_window;
+
   default_font = new QFont(settings.get("font"), 9);
   statusLabel.setFont(default_font);
 
@@ -126,3 +130,4 @@ exports.user_cache = user_cache;
 exports.note_cache = note_cache;
 exports.notification_cache = notification_cache;
 exports.post_action = post_action;
+
