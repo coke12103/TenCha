@@ -62,6 +62,8 @@ class PollArea extends QWidget{
     this.expires_at_input.setObjectName('expiresAtInput');
 
     this.expired_after_input.setObjectName('expiredAfterInput')
+    this.expired_after_input.setMinimum(1);
+    this.expired_after_input.setMaximum(99999999999);
 
     this.right_layout.addWidget(this.is_multiple_check);
     this.right_layout.addWidget(this.exp_radio_unlimited);
