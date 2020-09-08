@@ -4,6 +4,8 @@ const { QPixmap } = require('@nodegui/nodegui');
 const no_image_image = require('../../assets/no_image.png');
 const post_parser = require('../tools/post_parser/index.js');
 const App = require('../index.js');
+const Assets = require('../assets.js');
+const UserAgent = new Assets('UserAgent');
 
 class User{
   constructor(json){
@@ -100,10 +102,14 @@ class User{
 
   load_avater(){
     return new Promise((resolve, reject) => {
+        var headers = {};
+        if(App.settings.get('fake_useragent')) headers['User-Agent'] = UserAgent.fake;
+
         var opt = {
           url: this.avatarUrl,
           encoding: null,
           method: 'GET',
+          headers: headers,
           resolveWithFullResponse: true
         };
 

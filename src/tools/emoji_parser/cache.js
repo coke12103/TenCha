@@ -1,10 +1,14 @@
 const file = require('../../file.js');
+const Assets = require('../../assets.js');
+const App = require('../../index.js');
+
 const request = require('request-promise');
 const uuid = require('uuid');
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 class EmojiCache{
   constructor(){
+    this.assets = new Assets('UserAgent');
     // 必須のファイル郡の作成
     try{
       if(!file.exist_check('./tmp')) file.mkdir('./tmp');
@@ -75,10 +79,14 @@ class EmojiCache{
 
     data.filename = '';
 
+    var headers = {};
+    if(App.settings.get('fake_useragent')) headers['User-Agent'] = this.assets.fake;
+
     var opt = {
       url: data.url,
       encoding: null,
       method: 'GET',
+      headers: headers,
       resolveWithFullResponse: true
     };
 

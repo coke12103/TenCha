@@ -1,11 +1,15 @@
 const file = require('../../file.js');
+const Assets = require('../../assets.js');
+const App = require('../../index.js');
 
 const mime = require('mime-types');
 const request = require('request-promise');
 const child_process = require('child_process');
 
 class ImageViewer{
-  constructor(){}
+  constructor(){
+    this.assets = new Assets('UserAgent');
+  }
 
   async init(){
     if(!file.exist_check('./user_contents')) file.mkdir('./user_contents')
@@ -81,13 +85,14 @@ class ImageViewer{
   }
 
   async _download(f){
+    var headers = {};
+    if(App.settings.get('fake_useragent')) headers['User-Agent'] = this.assets.fake;
+
     var opt = {
       url: f.url,
       encoding: null,
       method: 'GET',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.72 Safari/537.36'
-      }
+      headers: headers
     };
 
     try{
