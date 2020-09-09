@@ -13,7 +13,7 @@ const Icons = new Assets('Icons');
 
 const IconsSize = 14;
 
-class FragWidget extends QWidget{
+class FlagWidget extends QWidget{
   constructor(){
     super();
 
@@ -70,13 +70,13 @@ class FragWidget extends QWidget{
     );
 
     this.layout.addStretch(1);
-    this.layout.addWidget(this.clip);
     this.layout.addWidget(this.direct);
     this.layout.addWidget(this.home);
     this.layout.addWidget(this.lock);
     this.layout.addWidget(this.home);
     this.layout.addWidget(this._public);
     this.layout.addWidget(this.renote);
+    this.layout.addWidget(this.clip);
     this.layout.addStretch(1);
   }
 
@@ -115,12 +115,4 @@ class FragWidget extends QWidget{
   }
 }
 
-module.exports = FragWidget;
-
-
-
-
-
-
-
-
+module.exports = FlagWidget;

@@ -15,7 +15,7 @@ const NotificationParser = require('../../tools/notification_parser/index.js');
 const IconLabel = require('../icon_label/index.js');
 const ContentBox = require('./content_box.js');
 const App = require("../../index.js");
-const FragWidget = require('./frag_widget.js');
+const FlagWidget = require('./flag_widget.js');
 
 class PostView extends QWidget{
   constructor(){
@@ -39,7 +39,7 @@ class PostView extends QWidget{
     this.name = new QLabel();
     this.date = new QLabel();
     this.content = new ContentBox();
-    this.post_flag = new FragWidget();
+    this.post_flag = new FlagWidget();
 
     this.post_parser = new PostParser();
 
