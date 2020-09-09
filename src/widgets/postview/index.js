@@ -15,6 +15,7 @@ const NotificationParser = require('../../tools/notification_parser/index.js');
 const IconLabel = require('../icon_label/index.js');
 const ContentBox = require('./content_box.js');
 const App = require("../../index.js");
+const FragWidget = require('./frag_widget.js');
 
 class PostView extends QWidget{
   constructor(){
@@ -34,10 +35,11 @@ class PostView extends QWidget{
 
     this.avater = new IconLabel(52);
     this.flag = new QLabel();
-    this.post_flag = new QLabel();
+
     this.name = new QLabel();
     this.date = new QLabel();
     this.content = new ContentBox();
+    this.post_flag = new FragWidget();
 
     this.post_parser = new PostParser();
 
@@ -74,7 +76,6 @@ class PostView extends QWidget{
     this.flag.setAlignment(AlignmentFlag.AlignCenter);
 
     this.post_flag.setObjectName('postViewPostFlagLabel');
-    this.post_flag.setAlignment(AlignmentFlag.AlignCenter);
 
     this.name.setObjectName('postViewUserNameLabel');
     //this.name.setWordWrap(true);
@@ -88,7 +89,6 @@ class PostView extends QWidget{
     this.date.setOpenExternalLinks(true);
 
     this.flag.setFixedSize(52, 12);
-    this.post_flag.setFixedSize(52, 12);
     this.date.setFixedSize(126, 16);
 
     this.left_layout.addWidget(this.avater);
@@ -114,33 +114,6 @@ class PostView extends QWidget{
     if(user.isCat) flag += '猫';
 
     if(!flag || flag == "鍵") flag += '人';
-
-    return flag;
-  }
-
-  _parse_note_flag(note){
-    var flag = '';
-
-    if(note.renote) flag += "RN";
-    if(note.files[0] || (note.renote && note.renote.files[0])) flag += "画";
-
-    switch(note.visibility){
-      case 'public':
-        flag += "開";
-        break;
-      case 'home':
-        flag += "家";
-        break;
-      case 'followers':
-        flag += "鍵";
-        break;
-      case 'specified':
-        flag += "宛";
-        break;
-      default:
-        flag += "他";
-        break
-    }
 
     return flag;
   }
@@ -243,7 +216,7 @@ class PostView extends QWidget{
 
     // flags
     this.flag.setText(this._parse_user_flag(note.user));
-    this.post_flag.setText(this._parse_note_flag(note));
+    this.post_flag.setNoteFlag(note);
 
     // name
     var name;
@@ -271,6 +244,7 @@ class PostView extends QWidget{
 
     // flags
     this.flag.setText(this._parse_user_flag(notification.user));
+    this.post_flag.clear();
 
     // name
     var name;
