@@ -28,6 +28,14 @@ class Asset{
       case "UserAgent":
         this.fake = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36";
         break;
+      case "Icons":
+        this.clip = require('../assets/icons/clip.png').default;
+        this.direct = require('../assets/icons/direct.png').default;
+        this.home = require('../assets/icons/home.png').default;
+        this.lock = require('../assets/icons/lock.png').default;
+        this._public = require('../assets/icons/public.png').default;
+        this.renote = require('../assets/icons/renote.png').default;
+        break;
     }
 
     return;
