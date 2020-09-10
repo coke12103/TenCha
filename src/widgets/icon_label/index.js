@@ -1,5 +1,7 @@
 const {
-  QLabel
+  QLabel,
+  AspectRatioMode,
+  TransformationMode
 } = require('@nodegui/nodegui');
 
 class IconLabel extends QLabel{
@@ -30,7 +32,7 @@ class IconLabel extends QLabel{
     width = Math.ceil(width);
     height = Math.ceil(height);
 
-    var icon = pix.scaled(width, height);
+    var icon = pix.scaled(width, height, AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation);
 
     super.setPixmap(icon);
   }
