@@ -158,6 +158,9 @@ class NoteItem extends QWidget{
     this.close();
 
     this.list_item = undefined;
+    this.widget = undefined;
+    this.font = undefined;
+    this.item_height = undefined;
     this.layout = undefined;
     this.flag = undefined;
     this.icon = undefined;
