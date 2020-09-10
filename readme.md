@@ -19,7 +19,7 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
 ## 要件
 これらはソースコードを動かす場合のみに必要でバイナリ版では不要です。
 ### Node.js
-`v12.13.0`で開発しているのでそれ以降推奨。
+`v14.2.0`で開発しているのでそれ以降推奨。
 ### Npm
 ### CMake
 3.1以上
@@ -60,20 +60,11 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
 上記ファイルをすべて削除してください
 
 ## 設定
-- `use_emojis`
-  - 不安定な絵文字の実装を使うか
-- `use_desktop_notification`
-  - デスクトップ通知を利用するか
-- `post_cache_limit`
-  - 投稿キャッシュの上限
-- `post_cache_clear_count`
-  - キャッシュ開放処理1回につき何件処理するか
-- `font`
-  - フォント変更機能。フォント名を指定する。
+See assets/settings.json
 
 ## 連絡先
 - Twitter: [coke12103](https://twitter.com/@coke12103)
-- Misskey: [c0_ke@misskey.dev](https://misskey.dev/@c0_ke)
+- Misskey: [c0_ke@mk.iaia.moe](https://mk.iaia.moe/@c0_ke)
 
 
 ## License
