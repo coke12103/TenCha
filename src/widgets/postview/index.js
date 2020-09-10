@@ -273,7 +273,6 @@ class PostView extends QWidget{
     const NameFont = new QFont(_font, 9, QFontWeight.Bold);
 
     this.flag.setFont(font);
-    this.post_flag.setFont(font);
     this.name.setFont(NameFont);
     this.date.setFont(font);
     this.content.setFont(font);
