@@ -3,196 +3,68 @@ const {
   QListWidgetItem,
   QSize,
   QWidget,
-  FlexLayout,
+  QBoxLayout,
+  Direction,
   QFont,
   ContextMenuPolicy
 } = require('@nodegui/nodegui');
 
-function parse_flag(note){
-  var result = '';
+const App = require('../../index.js');
+const FlagWidget = require('./flag_widget.js');
+const IconLabel = require('../../widgets/icon_label/index.js');
 
-  if(note.renote){
-    result = result + '♻';
-  }else if(note.files[0]){
-    result = result + '🖼';
-  }else{
-    result = result + '　';
+class NoteItem extends QWidget{
+  constructor(note, a, exe){
+    super();
+
+    this.item_height = 14;
+    this.widget = this;
+
+    this.list_item = new QListWidgetItem();
+    this.font = new QFont(App.settings.get("font"), 9);
+
+    this.layout = new QBoxLayout(Direction.LeftToRight);
+
+    this.flag = new FlagWidget();
+    this.icon = new IconLabel(this.item_height);
+    this.name = new QLabel();
+    this.text = new QLabel();
+
+    this.setLayout(this.layout);
+    this.setContextMenuPolicy(ContextMenuPolicy.CustomContextMenu);
+    this.addEventListener('customContextMenuRequested', exe);
+
+    this.layout.setContentsMargins(2,0,0,1);
+    this.layout.setSpacing(5);
+
+    this.list_item.setSizeHint(new QSize(1200, this.item_height + 1));
+
+    this.name.setFixedSize(120, this.item_height);
+    this.name.setFont(this.font);
+
+    this.text.setFont(this.font);
+
+    this.layout.addWidget(this.flag);
+    this.layout.addWidget(this.icon);
+    this.layout.addWidget(this.name);
+    this.layout.addWidget(this.text, 1);
+
+    this.setNote(note);
   }
 
-  switch(note.visibility){
-    case 'public':
-      break;
-    case 'home':
-      result = result + '⌂';
-      break;
-    case 'followers':
-      result = result + '🔒';
-      break;
-    case 'specified':
-      result = result + '✉';
-      break;
-  }
+  setNote(note){
+    // flags
+    this.flag.setNoteFlag(note);
 
-  return result;
-}
+    // name
+    this.name.setText(note.user.acct);
 
-class NoteItem{
-  constructor(note, font, exe){
-    const list_item = new QListWidgetItem();
-    const widget = new QWidget();
-    const widget_layout = new FlexLayout();
-    widget.setLayout(widget_layout);
-    widget.setFlexNodeSizeControlled(false);
-    widget.setContextMenuPolicy(ContextMenuPolicy.CustomContextMenu);
-    widget.addEventListener('customContextMenuRequested', exe);
+    // avater
+    this.icon.setPixmap(note.user.avater);
 
-    const flag_label = new QLabel();
-    const icon_label = new QLabel();
-    const name_label = new QLabel();
-    const text_label = new QLabel();
-    name_label.setFlexNodeSizeControlled(false);
-    text_label.setFlexNodeSizeControlled(false);
+    // text
+    this._parse_content_text(note);
 
-    const item_height = 14;
-
-    flag_label.setInlineStyle(`
-      flex-grow: 1;
-      width: 32px;
-      margin-right: 2px;
-    `);
-    icon_label.setInlineStyle(`
-      flex-grow: 1;
-      width: ${item_height - 1}px;
-    `);
-    name_label.setInlineStyle(`
-      flex-grow: 1;
-      margin-right: 5px;
-      width: 120px;
-    `);
-
-    text_label.setInlineStyle(`flex-grow: 3;`);
-
-    list_item.setSizeHint(new QSize(1200, 15));
-    flag_label.setFixedSize(32, item_height);
-    icon_label.setFixedSize(item_height -1, item_height -1);
-    name_label.setFixedSize(120, item_height);
-
-    var f = new QFont(font, 9);
-    text_label.setFont(f);
-    name_label.setFont(f);
-    flag_label.setText(f);
-
-    widget_layout.addWidget(flag_label);
-    widget_layout.addWidget(icon_label);
-    widget_layout.addWidget(name_label);
-    widget_layout.addWidget(text_label);
-
-    flag_label.setText(parse_flag(note));
-    name_label.setText(note.user.acct);
-
-    var note_color = '#000';
-    var note_back = 'transparent';
-
-    var m_text = '';
-
-    if(note.renote){
-      note_back = 'rgba(119, 221, 117, 0.3)';
-      m_text = this._parse_renote(note);
-    }else if(note.reply){
-      // color
-      note_back = 'rgba(112, 116, 255, 0.3)';
-      m_text = this._parse_reply(note);
-    }else{
-      m_text = this._parse_note_text(note);
-    }
-
-    // 1階層でしか色付かないのは後で直す
-    if(note.cw){
-      note_color = '#555753';
-    }
-
-    text_label.setText(m_text);
-
-    widget.setInlineStyle(`
-      height: ${item_height}px;
-      justify-content: flex-start;
-      flex-direction: row;
-      background-color: ${note_back};
-    `);
-
-    text_label.setInlineStyle(`
-      flex-grow: 3;
-      color: ${note_color};
-    `);
-
-    if(note.user.avater){
-      var s = icon_label.size();
-      var w = s.width();
-      var h = s.height();
-      var icon = note.user.avater.scaled(w, h);
-      icon_label.setPixmap(icon);
-    }else{
-      icon_label.setText("  ");
-    }
-
-    this.list_item = list_item;
-    this.widget = widget;
-    this.widget_layout = widget_layout;
-    this.flag_label = flag_label;
-    this.icon_label = icon_label;
-    this.name_label = name_label;
-    this.text_label = text_label;
-  }
-
-  _parse_renote(note){
-    var result = this._parse_note_text(note);
-    var _note = note;
-    var c = 0;
-    while(true){
-      var renote = _note.renote;
-      if(!renote || c > 2) break;
-
-      var r_text = `RN @${renote.user.acct} `;
-      if(result) result += " ";
-
-      if(renote.reply){
-        r_text += this._parse_reply(renote);
-      }else if(renote.renote){
-        r_text += this._parse_renote(renote);
-      }else{
-        r_text += this._parse_note_text(renote);
-      }
-
-      result += r_text;
-      _note = renote;
-      c++;
-    }
-
-    return result;
-  }
-
-  _parse_reply(note){
-    var result = this._parse_note_text(note);
-    var _note = note;
-    var c = 0;
-    while(true){
-      var reply = _note.reply;
-      if(!reply || c > 2) break;
-
-      if(reply.renote){
-        var re_text = this._parse_renote(reply);
-      }else if(reply.reply){
-        var re_text = this._parse_reply(reply);
-      }else{
-        var re_text = this._parse_note_text(reply);
-      }
-
-      result += ` RE: ${re_text}`;
-      _note = reply;
-      c++;
-    }
-
-    return result;
   }
 
   _parse_note_text(note){
@@ -200,33 +72,100 @@ class NoteItem{
     if(note.cw){
       result = note.cw.replace(/(\r\n|\n|\r)/gm," ");
     }else{
-      if(!note.text) note.text = '';
-      result = note.text.replace(/(\r\n|\n|\r)/gm," ");
+      if(!note.text) result = '';
+      else result = note.text.replace(/(\r\n|\n|\r)/gm," ");
     }
 
     return result;
   }
 
+  _parse_renote(note){
+    var result = this._parse_note_text(note);
+
+    var renote = note.renote;
+
+    var r_text = `RN @${renote.user.acct} `;
+    if(result) result += " ";
+
+    if(renote.reply){
+      r_text += this._parse_reply(renote);
+    }else if(renote.renote){
+      r_text += this._parse_renote(renote);
+    }else{
+      r_text += this._parse_note_text(renote);
+    }
+
+    result += r_text;
+
+    return result;
+  }
+
+  _parse_reply(note){
+    var result = this._parse_note_text(note);
+    var reply = note.reply;
+    if(!reply) return result;
+
+    if(reply.renote){
+      var re_text = this._parse_renote(reply);
+    }else if(reply.reply){
+      var re_text = this._parse_reply(reply);
+    }else{
+      var re_text = this._parse_note_text(reply);
+    }
+
+    result += ` RE: ${re_text}`;
+
+    return result;
+  }
+
+  _parse_content_text(note){
+    var note_color = '#000';
+    var note_back = 'transparent';
+
+    var text = '';
+
+    if(note.renote){
+      note_back = 'rgba(119, 221, 117, 0.3)';
+      text = this._parse_renote(note);
+    }else if(note.reply){
+      note_back = 'rgba(112, 116, 255, 0.3)';
+      text = this._parse_reply(note);
+    }else{
+      text = this._parse_note_text(note);
+    }
+
+    if(note.cw){
+      note_color = '#555753';
+    }
+
+    this.setInlineStyle(`background-color: ${note_back};`);
+    this.text.setInlineStyle(`color: ${note_color};`);
+
+    this.text.setText(text);
+  }
+
   destroy(){
-    this.widget_layout.removeWidget(this.text_label);
-    this.widget_layout.removeWidget(this.name_label);
-    this.widget_layout.removeWidget(this.icon_label);
-    this.widget_layout.removeWidget(this.flag_label);
+    this.layout.removeWidget(this.text);
+    this.layout.removeWidget(this.name);
+    this.layout.removeWidget(this.icon);
+    this.layout.removeWidget(this.flag);
 
-    this.text_label.close();
-    this.name_label.close();
-    this.icon_label.close();
-    this.flag_label.close();
+    this.text.close();
+    this.name.close();
+    this.icon.close();
+    this.flag.close();
 
-    this.widget.close();
+    this.close();
 
     this.list_item = undefined;
     this.widget = undefined;
-    this.widget_layout = undefined;
-    this.flag_label = undefined;
-    this.icon_label = undefined;
-    this.name_label = undefined;
-    this.text_label = undefined;
+    this.font = undefined;
+    this.item_height = undefined;
+    this.layout = undefined;
+    this.flag = undefined;
+    this.icon = undefined;
+    this.name = undefined;
+    this.text = undefined;
   }
 }
 

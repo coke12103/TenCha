@@ -114,6 +114,13 @@
       "description": "アイコンや絵文字、添付ファイルなどの取得時にUserAgentをブラウザに偽装します。サードパーティのクライアントを弾いているインスタンスなどに有効です。",
       "default_value": false,
       "type": "Bool"
+    },
+    {
+      "id": "full_timeline_flag_view",
+      "name": "投稿のフラグ表示を3行にする",
+      "description": "OFFにすると表示し切れない情報が出た場合投稿の種別のフラグが切り捨てられます。",
+      "default_value": false,
+      "type": "Bool"
     }
   ]
 }
