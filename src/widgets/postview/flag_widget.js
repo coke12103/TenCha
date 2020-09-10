@@ -70,13 +70,14 @@ class FlagWidget extends QWidget{
     );
 
     this.layout.addStretch(1);
+    this.layout.addWidget(this.renote);
+    this.layout.addWidget(this.clip);
+
     this.layout.addWidget(this.direct);
-    this.layout.addWidget(this.home);
     this.layout.addWidget(this.lock);
     this.layout.addWidget(this.home);
     this.layout.addWidget(this._public);
-    this.layout.addWidget(this.renote);
-    this.layout.addWidget(this.clip);
+
     this.layout.addStretch(1);
   }
 
@@ -85,7 +86,6 @@ class FlagWidget extends QWidget{
     this.direct.hide();
     this.home.hide();
     this.lock.hide();
-    this.home.hide();
     this._public.hide();
     this.renote.hide();
   }
