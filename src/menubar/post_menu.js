@@ -25,14 +25,10 @@ class PostMenu extends QMenu{
 
     this.emoji_picker.addEventListener('triggered', () => {
         App.emoji_picker.exec();
-        function close_func(close_func){
+        App.emoji_picker.setCloseEvent(function(){
           var result = App.emoji_picker.get_result();
-          this.postbox.filter((input) => {
-              input.insertPlainText(result);
-          });
-          App.emoji_picker.removeEventListener('Close', close_func);
-        }
-        App.emoji_picker.addEventListener('Close', close_func.bind(this, close_func));
+          this.postbox.filter((input) => input.insertPlainText(result));
+        }.bind(this));
       }
     );
   }
