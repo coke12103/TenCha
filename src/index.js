@@ -25,6 +25,7 @@ const UserCache = require('./tools/user_cache/index.js');
 const NoteCache = require('./tools/note_cache/index.js');
 const NotificationCache = require('./tools/notification_cache/index.js');
 const SettingWindow = require('./widgets/setting_window/index.js');
+const EmojiPicker = require('./widgets/emoji_picker/index.js');
 
 const win = new QMainWindow();
 win.setWindowTitle('TenCha');
@@ -86,6 +87,10 @@ async function init_cha(){
 
   var setting_window = new SettingWindow();
   exports.setting_window = setting_window;
+
+  var emoji_picker = new EmojiPicker();
+  await emoji_picker.init();
+  exports.emoji_picker = emoji_picker;
 
   default_font = new QFont(settings.get("font"), 9);
   statusLabel.setFont(default_font);
