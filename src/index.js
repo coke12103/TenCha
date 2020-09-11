@@ -88,9 +88,11 @@ async function init_cha(){
   var setting_window = new SettingWindow();
   exports.setting_window = setting_window;
 
+  statusLabel.setText('絵文字ピッカーの設定中...');
   var emoji_picker = new EmojiPicker();
   await emoji_picker.init();
   exports.emoji_picker = emoji_picker;
+  statusLabel.setText('絵文字ピッカーの設定完了');
 
   default_font = new QFont(settings.get("font"), 9);
   statusLabel.setFont(default_font);
