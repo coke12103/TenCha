@@ -39,6 +39,9 @@ class Asset{
       case "EmojiList":
         this.emoji_list = require('../assets/emojilist.json');
         break;
+      case "FileList":
+        this.files = require('../assets/file_list.json').files;
+        break;
     }
 
     return;
