@@ -4,7 +4,7 @@ const {
   Direction,
   QPlainTextEdit,
   QComboBox,
-  // QPushButton,
+   QPushButton,
   QCheckBox
 } = require('@nodegui/nodegui');
 
@@ -32,8 +32,8 @@ class PostTextArea extends QWidget{
     this.right_layout = new QBoxLayout(Direction.TopToBottom);
 
     this.text_input = new QPlainTextEdit();
-    //this.emoji_pick_button = new QPushButton();
-    //this.random_emoji_button = new QPushButton();
+    this.emoji_pick_button = new QPushButton();
+    this.random_emoji_button = new QPushButton();
     this.visibility_select = new QComboBox();
     this.is_local_check = new QCheckBox();
     this.is_mobile_check = new QCheckBox();
@@ -54,11 +54,13 @@ class PostTextArea extends QWidget{
     this.text_input.setReadOnly(false);
     this.text_input.setWordWrapMode(3);
 
-//    this.emoji_pick_button.setText('絵文字');
-//    this.emoji_pick_button.setObjectName('emojiPickerButton');
+    this.emoji_pick_button.setText('絵文字');
+    this.emoji_pick_button.setObjectName('emojiPickerButton');
+    this.emoji_pick_button.addEventListener('clicked', this.exec_emoji_picker.bind(this));
 
-//    this.random_emoji_button.setText('ランダム絵文字');
-//    this.random_emoji_button.setObjectName('randomEmojiButton');
+    this.random_emoji_button.setText('ランダム絵文字');
+    this.random_emoji_button.setObjectName('randomEmojiButton');
+    this.random_emoji_button.addEventListener('clicked', this.random_emoji.bind(this));
 
     this.visibility_select.setObjectName('visibility_select');
     for(var vis of this.visibilitys){
@@ -74,8 +76,8 @@ class PostTextArea extends QWidget{
     this.right_layout.addWidget(this.visibility_select);
     this.right_layout.addWidget(this.is_local_check);
     this.right_layout.addWidget(this.is_mobile_check);
-//    this.right_layout.addWidget(this.emoji_pick_button);
-//    this.right_layout.addWidget(this.random_emoji_button);
+    this.right_layout.addWidget(this.emoji_pick_button);
+    this.right_layout.addWidget(this.random_emoji_button);
 
     this.layout.addWidget(this.text_input, 1);
     this.layout.addWidget(this.right);
@@ -86,6 +88,8 @@ class PostTextArea extends QWidget{
     this.visibility_select.setFont(font);
     this.is_local_check.setFont(font);
     this.is_mobile_check.setFont(font);
+    this.emoji_pick_button.setFont(font);
+    this.random_emoji_button.setFont(font);
 
     this.setVisibility(App.settings.get("start_visibility"));
   }
@@ -123,6 +127,19 @@ class PostTextArea extends QWidget{
     }
 
     return result;
+  }
+
+  random_emoji(){
+    var emoji = App.random_emoji.exec();
+    this.text_input.insertPlainText(emoji);
+  }
+
+  exec_emoji_picker(){
+    App.emoji_picker.exec();
+    App.emoji_picker.setCloseEvent(function(){
+      var result = App.emoji_picker.get_result();
+      this.text_input.insertPlainText(result);
+    }.bind(this));
   }
 
   clear(){
