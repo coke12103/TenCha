@@ -19,6 +19,7 @@ class EmojiPicker extends QWidget{
     super();
 
     this.result = '';
+    this.close_event = null;
 
     this.assets = new Assets('EmojiList');
 
@@ -90,7 +91,21 @@ class EmojiPicker extends QWidget{
   get_result(){
     var result = this.result;
     this.result = '';
+    // 消す
+    this.removeEventListener('Close', this.close_event);
+    // 使い終わったら忘れる
+    this.close_event = null;
+
     return result;
+  }
+
+  setCloseEvent(callback){
+    // もし既に設定されているなら拒否
+    if(this.close_event) return;
+
+    // 設定する
+    this.close_event = callback;
+    this.addEventListener('Close', callback);
   }
 }
 
