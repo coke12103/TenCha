@@ -72,7 +72,6 @@ class EmojiCache{
   async _cache_emoji(data){
     var isWork = this.worked.some((v) => v.url == data.url);
     if(isWork) return false;
-    if(this.lock) return false;
 
     this.lock = true;
     this.worked.push(data);
@@ -106,7 +105,6 @@ class EmojiCache{
           break;
         }
       }
-      this.lock = false;
       return true;
     }catch(err){
       console.log(err);
@@ -116,7 +114,6 @@ class EmojiCache{
           break;
         }
       }
-      this.lock = false;
       throw err;
     }
   }
