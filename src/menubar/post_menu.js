@@ -3,37 +3,45 @@ const {
   QAction
 } = require('@nodegui/nodegui');
 
-class PostMenu{
+const App = require('../index.js');
+
+class PostMenu extends QMenu{
   constructor(){
-    const menu = new QMenu();
-    menu.setTitle('投稿');
+    super();
 
-    const random_emoji_action = new QAction();
-    random_emoji_action.setText('ランダム絵文字');
+    this.random_emoji = new QAction();
+    this.emoji_picker = new QAction();
+    this.custom_post = new QAction();
 
-    const custom_post_action = new QAction();
-    custom_post_action.setText('カスタム投稿');
+    this.setTitle('投稿');
 
-    menu.addAction(random_emoji_action);
-    menu.addAction(custom_post_action);
+    this.random_emoji.setText('ランダム絵文字');
+    this.emoji_picker.setText('絵文字ピッカー');
+    this.custom_post.setText('カスタム投稿');
 
-    this.menu = menu;
-    this.random_emoji_action = random_emoji_action;
-    this.custom_post_action = custom_post_action;
-  }
+    this.addAction(this.random_emoji);
+    this.addAction(this.emoji_picker);
+    this.addAction(this.custom_post);
 
-  get_widget(){
-    return this.menu;
+    this.emoji_picker.addEventListener('triggered', () => {
+        App.emoji_picker.exec();
+        App.emoji_picker.setCloseEvent(function(){
+          var result = App.emoji_picker.get_result();
+          this.postbox.filter((input) => input.insertPlainText(result));
+        }.bind(this));
+      }
+    );
   }
 
   set_postbox(postbox){
-    this.random_emoji_action.addEventListener('triggered', () => {
+    this.postbox = postbox;
+    this.random_emoji.addEventListener('triggered', () => {
         postbox.random_emoji();
-    })
+    });
   }
 
   set_custom_post(custom_post){
-    this.custom_post_action.addEventListener('triggered', () => {
+    this.custom_post.addEventListener('triggered', () => {
         custom_post.exec({});
     })
   }

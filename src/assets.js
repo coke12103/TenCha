@@ -36,6 +36,9 @@ class Asset{
         this._public = require('../assets/icons/public.png').default;
         this.renote = require('../assets/icons/renote.png').default;
         break;
+      case "EmojiList":
+        this.emoji_list = require('../assets/emojilist.json');
+        break;
     }
 
     return;
