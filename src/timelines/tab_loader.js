@@ -1,11 +1,12 @@
 const file = require('../file.js');
+const App = require('../index.js');
 
 class TabLoader{
   constructor(){
-    if(!file.exist_check('./tabs.json')) this.create_default_tab();
+    if(!file.exist_check(`${App.data_directory.get('settings')}tabs.json`)) this.create_default_tab();
 
     try{
-      var f = file.load('./tabs.json');
+      var f = file.load(`${App.data_directory.get('settings')}tabs.json`);
       f = JSON.parse(f);
     }catch{
       throw 'LoadErr';
@@ -56,7 +57,7 @@ class TabLoader{
       ]
     }
 
-    file.json_write_sync('./tabs.json', default_tabs);
+    file.json_write_sync(`${App.data_directory.get('settings')}tabs.json`, default_tabs);
   }
 }
 
