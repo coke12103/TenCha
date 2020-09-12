@@ -36,28 +36,7 @@ Misskey v11、Misskey v12だけではなくMisskey v10(m544)に対応。
 4. `npx nodegui-packer --pack ./dist`
 
 ## 初期化
-- `config.json`
-  - ログインすると生成されるログイン情報
-- `tabs.json`
-  - 現在のタブ情報
-- `tmp/`
-  - 絵文字キャッシュ
-- `settings.json`
-  - 設定ファイル
-- `domain_blocks.json`
-  - ミュートするドメインの一覧
-- `word_blocks.json`
-  - ミュートする単語の一覧
-- `user_id_blocks.json`
-  - ミュートするユーザーの一覧
-- `replace_blocks.json`
-  - 置換ミュートの設定
-- `user_contents/`
-  - 閲覧した添付ファイルのキャッシュ
-- `content_settings.json`
-  - 各種添付ファイルの種類ごとに呼び出されるアプリケーションの設定
-
-上記ファイルをすべて削除してください
+`data`ディレクトリを削除してください。
 
 ## 設定
 See assets/settings.json
