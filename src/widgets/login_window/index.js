@@ -118,7 +118,7 @@ class LoginWindow extends QWidget{
     }
 
     try{
-      await file.json_write('./config.json', auth_info);
+      await file.json_write(`${App.data_directory.get('settings')}config.json`, auth_info);
     }catch(err){
       console.log(err);
       this.login_url_widget.status_label.setText('認証情報の書き出しに失敗しました!');
