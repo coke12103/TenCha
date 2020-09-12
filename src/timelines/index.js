@@ -79,6 +79,7 @@ class Timelines extends QWidget{
 
     this.tab_widget.setFont(new QFont(App.settings.get("font"), 9));
     this.auto_select_check.setFont(new QFont(App.settings.get("font"), 9));
+    this.note_counter.setFont(new QFont(App.settings.get("font"), 9));
   }
 
   setTimeline(tab){
