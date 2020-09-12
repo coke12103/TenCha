@@ -11,14 +11,13 @@ class ImageViewer{
     this.assets = new Assets('UserAgent');
   }
 
-  async init(){
-    if(!file.exist_check('./user_contents')) file.mkdir('./user_contents')
-    if(!file.exist_check('./content_settings.json')){
-      await this.create_default_file();
+  init(){
+    if(!file.exist_check(`${App.data_directory.get('settings')}content_settings.json`)){
+      this.create_default_file();
     }
 
     try{
-      var f = file.load('./content_settings.json');
+      var f = file.load(`${App.data_directory.get('settings')}content_settings.json`);
       f = JSON.parse(f);
       this.file_type_match = f.file_type_match;
     }catch(err){
@@ -27,7 +26,8 @@ class ImageViewer{
     }
   }
 
-  async create_default_file(){
+  create_default_file(){
+    // TODO: OS別の初期設定
     var default_file = {
       file_type_match: [
         {
@@ -49,7 +49,7 @@ class ImageViewer{
       ]
     }
 
-    await file.json_write('./content_settings.json', default_file);
+    file.json_write_sync(`${App.data_directory.get('settings')}content_settings.json`, default_file);
   }
 
   async show(note){
@@ -75,13 +75,11 @@ class ImageViewer{
     if(!files.length) return;
 
     var q = [];
-    for(var f of files){
-      q.push(this._download(f));
-    }
+    for(var f of files) q.push(this._download(f));
 
     await Promise.all(q);
 
-    child_process.exec(`${files[0].exec} ${'./user_contents/' + files[0].filename}`);
+    child_process.exec(`${files[0].exec} ${App.data_directory.get('user_contents')}${files[0].filename}`);
   }
 
   async _download(f){
@@ -97,7 +95,7 @@ class ImageViewer{
 
     try{
       var res = await request(opt);
-      await file.bin_write("./user_contents/" + f.filename, res);
+      await file.bin_write(`${App.data_directory.get('user_contents')}${f.filename}`, res);
     }catch(err){
       console.log(err);
     }
