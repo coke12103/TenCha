@@ -42,6 +42,7 @@ statusLabel.setWordWrap(true);
 statusLabel.setText('ログインチェック中...');
 statusLabel.setObjectName('statusLabel');
 
+
 var menu_bar = new MenuBar();
 var timeline = new _timeline();
 var postViewArea = new _post_view_area();
@@ -59,13 +60,17 @@ var blocker = new Blocker();
 var user_cache = new UserCache();
 var note_cache = new NoteCache();
 var notification_cache = new NotificationCache();
-var data_directory = new DataDirectory();
 
 async function init_cha(){
+  // ディレクトリは最初に読み込みする
+  var data_directory = new DataDirectory();
+  exports.data_directory = data_directory;
+
   // 設定読み込みはFont指定もあるので先に
   var _setting_init = settings.init();
   var _blocker_init = blocker.init();
-  var _image_viewer_init = image_viewer.init();
+
+  image_viewer.init();
 
   timeline.set_post_view(postViewArea);
   timeline.set_desktop_notification(desktop_notification);
@@ -112,8 +117,6 @@ async function init_cha(){
 
   timeline.add_timeline_filter(blocker.is_block.bind(blocker));
 
-  await _image_viewer_init;
-
   // 始めにウインドウを出しておくと何故かプロセスが死なない
   win.show();
 
@@ -139,4 +142,4 @@ exports.user_cache = user_cache;
 exports.note_cache = note_cache;
 exports.notification_cache = notification_cache;
 exports.post_action = post_action;
-exports.data_directory = data_directory;
+
