@@ -42,6 +42,9 @@ statusLabel.setWordWrap(true);
 statusLabel.setText('ログインチェック中...');
 statusLabel.setObjectName('statusLabel');
 
+// ディレクトリは最初に読み込みする
+var data_directory = new DataDirectory();
+exports.data_directory = data_directory;
 
 var menu_bar = new MenuBar();
 var timeline = new _timeline();
@@ -62,10 +65,6 @@ var note_cache = new NoteCache();
 var notification_cache = new NotificationCache();
 
 async function init_cha(){
-  // ディレクトリは最初に読み込みする
-  var data_directory = new DataDirectory();
-  exports.data_directory = data_directory;
-
   // 設定読み込みはFont指定もあるので先に
   var _setting_init = settings.init();
   var _blocker_init = blocker.init();
