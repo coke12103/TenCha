@@ -16,9 +16,7 @@ class Blocker{
 
     var _word_blocker_init = word_blocker.init();
     var _replace_blocker_init = replace_blocker.init();
-    var _user_id_blocker_init = user_id_blocker.init();
 
-    await _user_id_blocker_init;
     await _word_blocker_init;
     await _replace_blocker_init;
 
