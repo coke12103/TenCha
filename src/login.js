@@ -13,7 +13,7 @@ class Login{
     var result = false;
 
     try{
-      this.config_file = file.load('./config.json');
+      this.config_file = file.load(`${App.data_directory.get('settings')}config.json`);
       var config = JSON.parse(this.config_file);
 
       if(!config || !(config.host && config.token && config.secret)) throw "要素が満されていません!";
