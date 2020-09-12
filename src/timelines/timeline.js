@@ -117,6 +117,10 @@ class Timeline extends QListWidget{
   select_top_item(){
     this.setCurrentRow(0);
   }
+
+  count(){
+    return this.tl.length;
+  }
 }
 
 module.exports = Timeline;

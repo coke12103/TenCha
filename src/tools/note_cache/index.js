@@ -47,6 +47,10 @@ class NoteCache{
     if(this.notes[id]) delete this.notes[id].use_tl[tl];
   }
 
+  count(){
+    return Object.keys(this.notes).length;
+  }
+
   remove_cache(){
     if(this.isRemoveRun) return;
 

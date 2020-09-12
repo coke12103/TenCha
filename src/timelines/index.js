@@ -10,6 +10,7 @@ const {
 } = require('@nodegui/nodegui');
 const player = require('play-sound')(opts = {});
 
+const NoteCounter = require('./note_counter.js');
 const TabLoader = require('./tab_loader.js');
 const Timeline = require('./timeline.js');
 const NotificationParser = require('../tools/notification_parser/index.js');
@@ -28,8 +29,13 @@ class Timelines extends QWidget{
 
     this.layout = new QBoxLayout(Direction.TopToBottom);
 
+    this.bottom = new QWidget();
+
+    this.bottom_layout = new QBoxLayout(Direction.LeftToRight);
+
     this.tab_widget = new QTabWidget();
     this.auto_select_check = new QCheckBox();
+    this.note_counter = new NoteCounter();
 
     this.setLayout(this.layout);
 
@@ -38,13 +44,21 @@ class Timelines extends QWidget{
     this.layout.setContentsMargins(0,0,0,0);
     this.layout.setSpacing(5);
 
+    this.bottom.setLayout(this.bottom_layout);
+
+    this.bottom_layout.setContentsMargins(0,0,0,0);
+    this.bottom_layout.setSpacing(5);
+
     this.tab_widget.setObjectName('timelines');
 
     this.auto_select_check.setObjectName('timelineAutoSelect');
     this.auto_select_check.setText('最新の投稿を追う');
 
+    this.bottom_layout.addWidget(this.auto_select_check, 1);
+    this.bottom_layout.addWidget(this.note_counter);
+
     this.layout.addWidget(this.tab_widget, 1);
-    this.layout.addWidget(this.auto_select_check);
+    this.layout.addWidget(this.bottom);
 
     this.auto_select_check.addEventListener('toggled', () => {
         this.tabs[this.tab_widget.currentIndex()].is_auto_select = this.auto_select_check.isChecked();
@@ -245,6 +259,7 @@ class Timelines extends QWidget{
         if(tab.is_auto_select) tab.item.select_top_item();
       }
     }
+    this._update_note_counter();
 
     return result;
   }
@@ -363,6 +378,13 @@ class Timelines extends QWidget{
         tab.post_view = false;
       }
     }
+    this._update_note_counter();
+  }
+
+  _update_note_counter(){
+    var current_count = this.tabs[this.tab_widget.currentIndex()].item.count();
+    this.note_counter.setCurrentCount(current_count);
+    this.note_counter.setAllCount(App.note_cache.count());
   }
 
   _update_post_view_all(){
