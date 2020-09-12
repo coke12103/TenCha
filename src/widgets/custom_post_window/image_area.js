@@ -126,15 +126,15 @@ class ImageArea extends QWidget{
 
         var name = dateformat(new Date(), 'yyyy-mm-dd-HH-MM-ss.png');
 
-        image.save(`./tmp/${name}`, 'PNG');
+        image.save(`${App.data_directory.get('tmp')}${name}`, 'PNG');
 
-        var file = fs.createReadStream(`./tmp/${name}`);
+        var file = fs.createReadStream(`${App.data_directory.get('tmp')}${name}`);
 
         if(!file) return;
 
         await this._insert_file(name, file);
 
-        fs.unlinkSync(`./tmp/${name}`);
+        fs.unlinkSync(`${App.data_directory.get('tmp')}${name}`);
 
         return;
       case 'file':

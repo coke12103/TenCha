@@ -1,13 +1,14 @@
 const file = require('../../file.js');
 const Assets = require('../../assets.js');
 const message_box = require('../../message_box.js');
+const App = require('../../index.js');
 
 class Settings{
   constructor(){
     this.assets = new Assets('SettingsLoader');
     this.values = {};
 
-    if(!file.exist_check('./settings.json')) this.create_default_settings();
+    if(!file.exist_check(`${App.data_directory.get('settings')}settings.json`)) this.create_default_settings();
   }
 
   create_default_settings(){
@@ -17,7 +18,7 @@ class Settings{
       default_settings[setting.id] = setting.default_value;
     }
 
-    file.json_write_sync('./settings.json', default_settings);
+    file.json_write_sync(`${App.data_directory.get('settings')}settings.json`, default_settings);
   }
 
   async init(){
@@ -31,7 +32,7 @@ class Settings{
   }
 
   load_settings(){
-    var f = file.load('./settings.json');
+    var f = file.load(`${App.data_directory.get('settings')}settings.json`);
     f = JSON.parse(f);
 
     for(var setting of this.assets.settings_template){
@@ -68,7 +69,7 @@ class Settings{
   }
 
   sync(){
-    file.json_write_sync('./settings.json', this.values);
+    file.json_write_sync(`${App.data_directory.get('settings')}settings.json`, this.values);
     try{
       this.load_settings();
     }catch(err){

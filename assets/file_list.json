@@ -1,0 +1,24 @@
+{
+  "files":[
+    {
+      "id": "tmp",
+      "path": "/tmp",
+      "type": "dir"
+    },
+    {
+      "id": "user_contents",
+      "path": "/user_contents",
+      "type": "dir"
+    },
+    {
+      "id": "settings",
+      "path": "/settings",
+      "type": "dir"
+    },
+    {
+      "id": "ng_settings",
+      "path": "/ng_settings",
+      "type": "dir"
+    }
+  ]
+}

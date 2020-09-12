@@ -11,9 +11,8 @@ class EmojiCache{
     this.assets = new Assets('UserAgent');
     // 必須のファイル郡の作成
     try{
-      if(!file.exist_check('./tmp')) file.mkdir('./tmp');
-      if(!file.exist_check('./tmp/tmplist.json')) file.json_write_sync('./tmp/tmplist.json', {tmp: []});
-      this.tmplist = JSON.parse(file.load('./tmp/tmplist.json'));
+      if(!file.exist_check(`${App.data_directory.get('tmp')}tmplist.json`)) file.json_write_sync(`${App.data_directory.get('tmp')}tmplist.json`, {tmp: []});
+      this.tmplist = JSON.parse(file.load(`${App.data_directory.get('tmp')}tmplist.json`));
       this.worked = [];
       this.lock = false;
       console.log(this.tmplist.tmp.length + ' Emojis loaded!');
@@ -92,12 +91,12 @@ class EmojiCache{
     try{
       var res = await request(opt);
 
-      data.filename = `./tmp/${uuid.v4().split('-').join('')}`;
+      data.filename = `${App.data_directory.get('tmp')}${uuid.v4().split('-').join('')}`;
       file.bin_write_sync(data.filename, res.body);
 
       this.tmplist.tmp.push(data);
 
-      file.json_write_sync('./tmp/tmplist.json', this.tmplist);
+      file.json_write_sync(`${App.data_directory.get('tmp')}tmplist.json`, this.tmplist);
 
       for(var i = 0; i < this.worked.length; i++){
         if(this.worked[i].url == data.url){

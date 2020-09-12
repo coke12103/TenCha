@@ -26,6 +26,7 @@ const NoteCache = require('./tools/note_cache/index.js');
 const NotificationCache = require('./tools/notification_cache/index.js');
 const SettingWindow = require('./widgets/setting_window/index.js');
 const EmojiPicker = require('./widgets/emoji_picker/index.js');
+const DataDirectory = require('./tools/data_directory/index.js');
 
 const win = new QMainWindow();
 win.setWindowTitle('TenCha');
@@ -40,6 +41,10 @@ const statusLabel = new QLabel();
 statusLabel.setWordWrap(true);
 statusLabel.setText('ログインチェック中...');
 statusLabel.setObjectName('statusLabel');
+
+// ディレクトリは最初に読み込みする
+var data_directory = new DataDirectory();
+exports.data_directory = data_directory;
 
 var menu_bar = new MenuBar();
 var timeline = new _timeline();
@@ -63,7 +68,8 @@ async function init_cha(){
   // 設定読み込みはFont指定もあるので先に
   var _setting_init = settings.init();
   var _blocker_init = blocker.init();
-  var _image_viewer_init = image_viewer.init();
+
+  image_viewer.init();
 
   timeline.set_post_view(postViewArea);
   timeline.set_desktop_notification(desktop_notification);
@@ -109,8 +115,6 @@ async function init_cha(){
   await _blocker_init;
 
   timeline.add_timeline_filter(blocker.is_block.bind(blocker));
-
-  await _image_viewer_init;
 
   // 始めにウインドウを出しておくと何故かプロセスが死なない
   win.show();

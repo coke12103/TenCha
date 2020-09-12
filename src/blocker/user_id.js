@@ -1,16 +1,14 @@
 const file = require('../file.js');
+const App = require('../index.js');
 
 class UserIdBlocker{
   constructor(){
-  }
-
-  async init(){
-    if(!file.exist_check('./user_id_blocks.json')){
-      await this.create_default_file();
+    if(!file.exist_check(`${App.data_directory.get('ng_settings')}user_id_blocks.json`)){
+      this.create_default_file();
     }
 
     try{
-      var f = file.load('./user_id_blocks.json');
+      var f = file.load(`${App.data_directory.get('ng_settings')}user_id_blocks.json`);
       f = JSON.parse(f);
       this.block_user_ids = f.block_user_ids;
     }catch(err){
@@ -19,12 +17,12 @@ class UserIdBlocker{
     }
   }
 
-  async create_default_file(){
+  create_default_file(){
     var default_file = {
       block_user_ids: []
     };
 
-    await file.json_write('./user_id_blocks.json', default_file);
+    file.json_write_sync(`${App.data_directory.get('ng_settings')}user_id_blocks.json`, default_file);
   }
 
   is_block(note){

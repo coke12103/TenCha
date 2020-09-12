@@ -1,16 +1,14 @@
 const file = require('../file.js');
+const App = require('../index.js');
 
 class ReplaceBlocker{
   constructor(){
-  }
-
-  async init(){
-    if(!file.exist_check('./replace_blocks.json')){
-      await this.create_default_file();
+    if(!file.exist_check(`${App.data_directory.get('ng_settings')}replace_blocks.json`)){
+      this.create_default_file();
     }
 
     try{
-      var f = file.load('./replace_blocks.json');
+      var f = file.load(`${App.data_directory.get('ng_settings')}replace_blocks.json`);
       f = JSON.parse(f);
       this.replace_words = f.replace_words;
     }catch(err){
@@ -19,12 +17,12 @@ class ReplaceBlocker{
     }
   }
 
-  async create_default_file(){
+  create_default_file(){
     var default_file = {
       replace_words: []
     };
 
-    await file.json_write('./replace_blocks.json', default_file);
+    file.json_write_sync(`${App.data_directory.get('ng_settings')}replace_blocks.json`, default_file);
   }
 
   is_block(note){
