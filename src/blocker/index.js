@@ -14,10 +14,8 @@ class Blocker{
     const user_id_blocker = new UserIdBlocker();
     const replace_blocker = new ReplaceBlocker();
 
-    var _word_blocker_init = word_blocker.init();
     var _replace_blocker_init = replace_blocker.init();
 
-    await _word_blocker_init;
     await _replace_blocker_init;
 
     this.blocker.push(domain_blocker);
