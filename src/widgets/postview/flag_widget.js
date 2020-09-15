@@ -107,7 +107,7 @@ class FlagWidget extends QWidget{
         this.lock.show();
         break;
       case 'specified':
-        this.drect.show();
+        this.direct.show();
         break;
       default:
         break
