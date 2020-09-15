@@ -47,7 +47,9 @@ TenChaのタイムラインのファイルは`tabs.json`です。
 | `local`        | ローカル |
 | `social`       | ソーシャル |
 | `global`       | グローバル |
-| `notification` | 通知|
+| `notification` | 通知 |
+| `all`          | 通知を含む受信したすべての投稿 |
+| `post`         | 通知を除く受信したすべての投稿 |
 
 ## フィルターの種類
 | 項目 | 説明 |
