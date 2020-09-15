@@ -203,7 +203,12 @@ class Timelines extends QWidget{
     if(source_id == 'notification') result.is_notification = true;
 
     // 現在存在するタブのどれかにこのソースを利用するタブがあるか(なければ追加する投稿がないのでreturn)
-    if(!this.sources.some((v) => v == source_id)) return result;
+    // 特殊フラグがあればreturnしない
+    if(
+      !this.sources.some((v) => v == 'all')
+      && !this.sources.some((v) => v == 'post')
+      && !this.sources.some((v) => v == source_id)
+    ) return result;
 
     // アイテムを先に作る
     var item;
@@ -229,36 +234,53 @@ class Timelines extends QWidget{
 
     // タブの数だけループ
     for(var tab of this.tabs){
-      for(var from of tab.source.from){
-        if(from != source_id) continue;
-        if(tab.item.check_exist_item(item.id)) continue;
+      var sources = tab.source.from;
+      // 特殊フラグがあるか
+      var all_flag_exist = sources.some((v) => v == 'all');
+      var post_frag_exist = sources.some((v) => v == 'post');
 
-        if(source_id == 'notification'){
-          tab.item.addNotification(item);
-          tab.item.fix_items();
-        }else{
-          // Timeline単位での表示チェック
-          if(!this._check_timeline_show(item, tab.source.filter)) continue;
-          // Globalのフィルター単位での表示チェック
-          var is_display = true;
+      var is_add = sources.some((v) => v == source_id);
 
-          if(!tab.disable_global_filter){
-            for(var filter of this.filters){
-              var filter_result = filter(item);
-              if(!filter_result) is_display = false;
-            }
+      // 特殊フラグもなくソースにもなければcontinue
+      if(
+        !all_flag_exist
+        && !post_frag_exist
+        && !is_add
+      ) continue;
+      // 通知だけどpostで抜けてきた場合もcontinue
+      if(
+        source_id == 'notification'
+        && !all_flag_exist
+        && !is_add
+      ) continue;
+      // 既にある場合もcontinue
+      if(tab.item.check_exist_item(item.id)) continue;
+
+      if(source_id == 'notification'){
+        tab.item.addNotification(item);
+        tab.item.fix_items();
+      }else{
+        // Timeline単位での表示チェック
+        if(!this._check_timeline_show(item, tab.source.filter)) continue;
+        // Globalのフィルター単位での表示チェック
+        var is_display = true;
+
+        if(!tab.disable_global_filter){
+          for(var filter of this.filters){
+            var filter_result = filter(item);
+            if(!filter_result) is_display = false;
           }
-
-          if(!is_display) continue;
-
-          App.note_cache.use(item.id, tab.id);
-          tab.item.addNote(item);
         }
 
-        // 追加後に処理する諸々
-        result.added_tab_ids.push(tab.id);
-        if(tab.is_auto_select) tab.item.select_top_item();
+        if(!is_display) continue;
+
+        App.note_cache.use(item.id, tab.id);
+        tab.item.addNote(item);
       }
+
+      // 追加後に処理する諸々
+      result.added_tab_ids.push(tab.id);
+      if(tab.is_auto_select) tab.item.select_top_item();
     }
     this._update_note_counter();
 
