@@ -27,40 +27,38 @@ class Client{
   }
 
   async call(path, data, is_ano = false, override_host = null){
-    return new Promise((resolve, reject) => {
-        var host = this.host;
+    var host = this.host;
+    if(override_host) host = override_host;
 
-        if(override_host) host = override_host;
-        var req = {
-          url: "https://" + host + "/api/" + path,
-          method: "POST",
-          json: data
-        }
-        if(!is_ano) data.i = this.api_token;
+    var req = {
+      url: "https://" + host + "/api/" + path,
+      method: "POST",
+      json: data
+    }
+    if(!is_ano) data.i = this.api_token;
 
-        request(req).then(async (body) => {
-            resolve(body)
-        }).catch((err) => {
-            reject(err);
-        })
-    })
+    try{
+      var body = await request(req);
+      return body;
+    }catch(err){
+      throw err;
+    }
   }
 
   async call_multipart(path, data){
-    return new Promise((resolve, reject) => {
-        var req = {
-          url: "https://" + this.host + "/api/" + path,
-          method: "POST",
-          formData: data
-        }
-        data.i = this.api_token;
+    var req = {
+      url: "https://" + this.host + "/api/" + path,
+      method: "POST",
+      formData: data
+    }
+    data.i = this.api_token;
 
-        request(req).then(async (body) => {
-            resolve(body)
-        }).catch((err) => {
-            reject(err);
-        })
-    })
+    try{
+      var body = await request(req);
+      return body;
+    }catch(err){
+      throw err;
+    }
   }
 
   connect_ws(timeline){
