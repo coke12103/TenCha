@@ -1,4 +1,5 @@
 const App = require('./index.js');
+const DeleteConfirmWindow = require('./widgets/delete_confirm_window/index.js');
 
 class PostAction{
   constructor(){
@@ -141,24 +142,36 @@ class PostAction{
 
   note_remove(){
     this.timelines.filter((item) => {
-        if((!item) || (item.el_type == 'Notification')){
-          return;
-        }
-
-        var _item = item;
-
-        if(
-          item.renote &&
-          !(item.user.username == App.client.username && !item.user.host)
-        ) _item = item.renote;
-
-        if(!(_item.user.username == App.client.username && !_item.user.host)) return;
-
-        var data = {
-          noteId: _item.id
-        };
-        App.client.call('notes/delete',data);
+        const delete_confirm_window = new DeleteConfirmWindow(item);
+        delete_confirm_window.show();
     })
+  }
+
+  async _note_remove(item){
+    if((!item) || (item.el_type == 'Notification')){
+      return;
+    }
+
+    var _item = item;
+
+    if(
+      item.renote &&
+      !(item.user.username == App.client.username && !item.user.host)
+    ) _item = item.renote;
+
+    if(!(_item.user.username == App.client.username && !_item.user.host)) return;
+
+    var data = {
+      noteId: _item.id
+    };
+    try{
+      await App.client.call('notes/delete',data);
+      App.status_label.setText("削除しました!");
+    }catch(err){
+      console.log(err);
+      App.status_label.setText("消せなかったかも...");
+    }
+
 
   }
 }
