@@ -42,7 +42,9 @@ class Login{
         if(this.is_login_done){
           try{
             var s = await App.client.call('i', { i: this.api_token }, true, this.host);
+            var ver = await App.client.call('version', {}, true, this.host);
             this.username = s.username;
+            this.version = ver.version;
           }catch(err){
             throw(err);
           }
