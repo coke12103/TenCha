@@ -24,6 +24,7 @@ class Client{
     this.api_token = login.api_token;
 
     this.username = login.username;
+    this.version = login.version;
   }
 
   async call(path, data, is_ano = false, override_host = null){
