@@ -38,13 +38,19 @@ class Login{
         // とりあえず読み込もうとする
         this.is_login_done = this.load_info();
 
+        // バージョンデータはあらゆる場所で使うので読み込み関係なく読み込む
+        try{
+          var ver = await App.client.call('version', {}, true, this.host);
+          this.version = ver.version;
+        }catch(err){
+          throw err;
+        }
+
         // 読み込めたなら疎通テストしてエラーだったら投げる
         if(this.is_login_done){
           try{
             var s = await App.client.call('i', { i: this.api_token }, true, this.host);
-            var ver = await App.client.call('version', {}, true, this.host);
             this.username = s.username;
-            this.version = ver.version;
           }catch(err){
             throw(err);
           }
