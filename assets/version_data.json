@@ -1,0 +1,62 @@
+{
+  "version_data": {
+    "v11":{
+      "match": "^11\..*",
+      "diffs": [
+        {
+          "path": "notes/reactions/create",
+          "type": "body",
+          "target": "reaction",
+          "replace": [
+            {
+              "from": "👍",
+              "to": "like"
+            },
+            {
+              "from": "❤",
+              "to": "love"
+            },
+            {
+              "from": "😆",
+              "to": "laugh"
+            },
+            {
+              "from": "🤔",
+              "to": "hmm"
+            },
+            {
+              "from": "😮",
+              "to": "surprise"
+            },
+            {
+              "from": "🎉",
+              "to": "congrats"
+            },
+            {
+              "from": "💢",
+              "to": "angry"
+            },
+            {
+              "from": "😥",
+              "to": "confused"
+            },
+            {
+              "from": "😇",
+              "to": "rip"
+            },
+            {
+              "from": "🍮",
+              "to": "pudding"
+            }
+          ]
+        }
+      ]
+    },
+    "v12":{
+      "match": "^12\..*",
+      "diffs": [
+
+      ]
+    }
+  }
+}
