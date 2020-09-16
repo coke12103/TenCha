@@ -1,7 +1,13 @@
 {
   "version_data": {
+    "v10-m544":{
+      "match_data": "^10\..*m544$",
+      "diffs": [
+
+      ]
+    },
     "v11":{
-      "match": "^11\..*",
+      "match_data": "^11\..*$",
       "diffs": [
         {
           "path": "notes/reactions/create",
@@ -53,7 +59,7 @@
       ]
     },
     "v12":{
-      "match": "^12\..*",
+      "match_data": "^12\..*$",
       "diffs": [
 
       ]
