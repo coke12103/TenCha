@@ -42,8 +42,8 @@ class Asset{
       case "FileList":
         this.files = require('../assets/file_list.json').files;
         break;
-      case "VersionList":
-        this.version_list = require('../assets/version_list.json').version_list;
+      case "VersionData":
+        this.version_data = require('../assets/version_data.json').version_data;
         break;
     }
 
