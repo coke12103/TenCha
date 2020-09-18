@@ -2,23 +2,34 @@ const {
   QMenu,
   QAction
 } = require('@nodegui/nodegui');
+
 const App = require('../index.js');
+const ReactionMenu = require('../widgets/reaction_menu/index.js');
 
 class PostMenu extends QMenu{
   constructor(){
     super();
 
+    this.reaction_menu = new ReactionMenu();
+
+    this.reaction_action = new QAction();
     this.renote_action = new QAction();
     this.quote_action = new QAction();
     this.reply_action = new QAction();
     this.image_view_action = new QAction();
     this.note_remove_action = new QAction();
 
+    this.reaction_action.setText('リアクション');
+    this.reaction_action.setMenu(this.reaction_menu);
+
     this.renote_action.setText('Renote');
     this.quote_action.setText('引用Renote');
     this.reply_action.setText('リプライ');
     this.image_view_action.setText('画像を表示');
     this.note_remove_action.setText('削除');
+
+    this.addAction(this.reaction_action);
+    this.addSeparator(this.reply_action);
 
     this.addAction(this.reply_action);
     this.addSeparator(this.renote_action);
@@ -47,6 +58,10 @@ class PostMenu extends QMenu{
     this.note_remove_action.addEventListener('triggered', () => {
         App.post_action.note_remove();
     });
+  }
+
+  init(){
+    this.reaction_menu.init();
   }
 
   exec(pos){
