@@ -66,6 +66,16 @@ class Note{
 
       this.user = await App.user_cache.use(json.user);
 
+      this.is_renote = (
+        this.renote
+        && !this.text
+        && !this.cw
+        && (!this.poll || (this.poll && !this.poll.choices))
+        && !this.files[0]
+      );
+
+      this.is_quote = (!this.is_renote && this.renote);
+
       // 将来切りたい
       await App.emoji_parser.parse_note(this);
 
