@@ -37,6 +37,11 @@ class ReactionMenu extends QMenu{
     this.removeAction(this.code_input_action);
   }
 
+  _parse_mk_emojis(shortcode){
+    shortcode = shortcode.replace(/:/g, '');
+    return App.client.emojis.find((v) => v.name == shortcode);
+  }
+
   async reload(){
     this.clear();
 
@@ -50,11 +55,9 @@ class ReactionMenu extends QMenu{
       if(emoji == ":"){
         if(!is_code){
           is_code = true;
-          shortcode += emoji;
         }else{
           is_code = false;
-          shortcode += emoji;
-          emojis.push(shortcode);
+          emojis.push(`:${shortcode}:`);
           shortcode = '';
         }
       }else if(is_code){
@@ -66,6 +69,7 @@ class ReactionMenu extends QMenu{
 
     for(var emoji of emojis){
       var twemojis = parse(`text ${emoji} text`);
+      var mk_emojis = this._parse_mk_emojis(emoji);
 
       var reaction_func = function(emoji){
         App.post_action.reaction(emoji);
@@ -74,14 +78,18 @@ class ReactionMenu extends QMenu{
       var action = new QAction();
       this.addAction(action);
 
-      if(!twemojis.length){
-        action.setText(emoji);
-      }else{
-        console.log(twemojis);
+      if(twemojis.length > 0){
         var _emoji = await App.emoji_parser.cache.get(twemojis[0]);
         var icon = new QIcon(_emoji.filename);
 
         action.setIcon(icon);
+      }else if(mk_emojis){
+        var _emoji = await App.emoji_parser.cache.get(mk_emojis);
+        var icon = new QIcon(_emoji.filename);
+
+        action.setIcon(icon);
+      }else{
+        action.setText(emoji);
       }
 
       action.addEventListener('triggered', reaction_func);
