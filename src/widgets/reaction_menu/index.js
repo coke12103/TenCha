@@ -25,8 +25,7 @@ class ReactionMenu extends QMenu{
 
     this.code_input_action.setText('絵文字を入力...');
 
-    this.addSeparator(this.code_input_action);
-    this.addAction(this.code_input_action);
+
   }
 
   init(){
@@ -34,28 +33,63 @@ class ReactionMenu extends QMenu{
   }
 
   clear(){
+    for(var action of this.reactions) this.removeAction(action);
+    this.removeAction(this.code_input_action);
   }
 
   async reload(){
+    this.clear();
+
     var reactions = Array.from(App.settings.get('reaction_picker_emojis'));
 
-    for(var i = 0; i < 10; i++){
-      var twemojis = parse(`text ${reactions[i]} text`);
+    var emojis = [];
+    var is_code = false;
+    var shortcode = "";
 
-      var reaction_func = function(reactions, i){
-        App.post_action.reaction(reactions[i]);
-      }.bind(this, reactions, i);
-
-      if(!twemojis){
-        this.reactions[i].setText(reactions[i]);
+    for(var emoji of reactions){
+      if(emoji == ":"){
+        if(!is_code){
+          is_code = true;
+          shortcode += emoji;
+        }else{
+          is_code = false;
+          shortcode += emoji;
+          emojis.push(shortcode);
+          shortcode = '';
+        }
+      }else if(is_code){
+        shortcode += emoji;
       }else{
-        var emoji = await App.emoji_parser.cache.get(twemojis[0]);
-        var icon = new QIcon(emoji.filename);
-        this.reactions[i].setIcon(icon);
+        emojis.push(emoji);
+      }
+    }
+
+    for(var emoji of emojis){
+      var twemojis = parse(`text ${emoji} text`);
+
+      var reaction_func = function(emoji){
+        App.post_action.reaction(emoji);
+      }.bind(this, emoji);
+
+      var action = new QAction();
+      this.addAction(action);
+
+      if(!twemojis.length){
+        action.setText(emoji);
+      }else{
+        console.log(twemojis);
+        var _emoji = await App.emoji_parser.cache.get(twemojis[0]);
+        var icon = new QIcon(_emoji.filename);
+
+        action.setIcon(icon);
       }
 
-      this.reactions[i].addEventListener('triggered', reaction_func);
+      action.addEventListener('triggered', reaction_func);
+      this.reactions.push(action);
     }
+
+    this.addSeparator(this.code_input_action);
+    this.addAction(this.code_input_action);
   }
 
   exec(pos){
