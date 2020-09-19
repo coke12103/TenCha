@@ -38,17 +38,15 @@ class Login{
         // とりあえず読み込もうとする
         this.is_login_done = this.load_info();
 
-        // バージョンデータはあらゆる場所で使うので読み込み関係なく読み込む
-        try{
-          var ver = await App.client.call('version', {}, true, this.host);
-          this.version = ver.version;
-        }catch(err){
-          throw err;
-        }
-
         // 読み込めたなら疎通テストしてエラーだったら投げる
         if(this.is_login_done){
           try{
+            var ver = await App.client.call('version', {}, true, this.host);
+            this.version = ver.version;
+
+            var emojis = await App.client.call('emojis', {}, true, this.host);
+            this.emojis = emojis;
+
             var s = await App.client.call('i', { i: this.api_token }, true, this.host);
             this.username = s.username;
           }catch(err){
