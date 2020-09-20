@@ -24,8 +24,6 @@ class ReactionMenu extends QMenu{
     this.code_input_action = new QAction();
 
     this.code_input_action.setText('絵文字を入力...');
-
-
   }
 
   init(){
