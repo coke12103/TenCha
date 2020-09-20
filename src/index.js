@@ -78,7 +78,6 @@ async function init_cha(){
 
   menu_bar.post_menu.set_postbox(postbox);
   menu_bar.post_menu.set_custom_post(custom_post_window);
-  menu_bar.timeline_menu.set_post_action(post_action);
 
   rootViewLayout.addWidget(postViewArea);
   rootViewLayout.addWidget(timeline);
@@ -124,6 +123,7 @@ async function init_cha(){
   client.login().then(async () => {
       await version_parser.init();
       postViewArea.set_host(client.host);
+      menu_bar.init();
       await timeline.init();
       timeline.start_streaming();
       post_action.init(timeline, image_viewer, custom_post_window);
