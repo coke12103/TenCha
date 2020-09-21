@@ -2,11 +2,13 @@ const {
   QMenu,
   QAction,
   QIcon,
-  QSize
+  QSize,
+  QFont
 } = require('@nodegui/nodegui');
 const { parse } = require('twemoji-parser');
 
 const App = require('../../index.js');
+const ReactionEmojiInputWindow = require('../reaction_emoji_input_window');
 
 class ReactionMenu extends QMenu{
   constructor(){
@@ -14,20 +16,26 @@ class ReactionMenu extends QMenu{
 
     this.reactions = [];
 
-    for(var i = 0; i < 10; i++){
-      var action = new QAction();
-      this.addAction(action);
-
-      this.reactions.push(action);
-    }
+    this.emoji_input_window = new ReactionEmojiInputWindow();
 
     this.code_input_action = new QAction();
 
     this.code_input_action.setText('絵文字を入力...');
+    this.code_input_action.addEventListener('triggered', function(){
+        this.emoji_input_window.exec();
+      }.bind(this)
+    );
+
+    this.emoji_input_window.addEventListener('Close', function(){
+        var result = this.emoji_input_window.getResult();
+        if(!result) return;
+        App.post_action.reaction(result);
+    }.bind(this));
   }
 
   init(){
     this.reload();
+    this.emoji_input_window.setFont(new QFont(App.settings.get('font'), 9));
   }
 
   clear(){
