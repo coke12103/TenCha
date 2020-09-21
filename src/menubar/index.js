@@ -5,7 +5,7 @@ const {
 
 const FileMenu = require('./file_menu.js');
 const PostMenu = require('./post_menu.js');
-const TimelineMenu = require('./timeline_menu.js');
+const TimelineMenu = require('../widgets/timeline_menu/index.js');
 
 class MenuBar{
   constructor(){
@@ -16,12 +16,16 @@ class MenuBar{
 
     bar.addMenu(file_menu);
     bar.addMenu(post_menu);
-    bar.addMenu(timeline_menu.get_widget());
+    bar.addMenu(timeline_menu);
 
     this.bar = bar;
     this.file_menu = file_menu;
     this.post_menu = post_menu;
     this.timeline_menu = timeline_menu;
+  }
+
+  init(){
+    this.timeline_menu.init();
   }
 
   get_widget(){

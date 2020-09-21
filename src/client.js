@@ -24,6 +24,8 @@ class Client{
     this.api_token = login.api_token;
 
     this.username = login.username;
+    this.version = login.version;
+    this.emojis = login.emojis;
   }
 
   async call(path, data, is_ano = false, override_host = null){

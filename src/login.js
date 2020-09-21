@@ -41,10 +41,14 @@ class Login{
         // 読み込めたなら疎通テストしてエラーだったら投げる
         if(this.is_login_done){
           try{
+            var meta = await App.client.call('meta', {}, true, this.host);
+            this.version = meta.version;
+            this.emojis = meta.emojis;
+
             var s = await App.client.call('i', { i: this.api_token }, true, this.host);
             this.username = s.username;
           }catch(err){
-            throw(err);
+            reject(err);
           }
 
           resolve(0);

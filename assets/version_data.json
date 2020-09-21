@@ -1,0 +1,71 @@
+{
+  "version_data": {
+    "v10-m544":{
+      "id": "v10-m544",
+      "match_data": "^10\\..*m544$",
+      "diffs": [
+
+      ]
+    },
+    "v11":{
+      "id": "v11",
+      "match_data": "^11\\..*$",
+      "diffs": [
+        {
+          "path": "notes/reactions/create",
+          "type": "body",
+          "target": "reaction",
+          "replace": [
+            {
+              "from": "👍",
+              "to": "like"
+            },
+            {
+              "from": "❤",
+              "to": "love"
+            },
+            {
+              "from": "😆",
+              "to": "laugh"
+            },
+            {
+              "from": "🤔",
+              "to": "hmm"
+            },
+            {
+              "from": "😮",
+              "to": "surprise"
+            },
+            {
+              "from": "🎉",
+              "to": "congrats"
+            },
+            {
+              "from": "💢",
+              "to": "angry"
+            },
+            {
+              "from": "😥",
+              "to": "confused"
+            },
+            {
+              "from": "😇",
+              "to": "rip"
+            },
+            {
+              "from": "🍮",
+              "to": "pudding"
+            }
+          ]
+        }
+      ]
+    },
+    "v12":{
+      "id": "v12",
+      "match_data": "^12\\..*$",
+      "diffs": [
+
+      ]
+    }
+  }
+}

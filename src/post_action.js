@@ -12,42 +12,40 @@ class PostAction{
   }
 
   renote(){
-    this.timelines.filter((item) => {
-        if(!item) return;
-        if(item.el_type == 'Notification') return;
+    this.timelines.filter(async (item) => {
+        if((!item) || (item.el_type == 'Notification')) return;
 
-        var item_id = item.id;
+        var _item = item;
 
-        if(item.renote && (!item.no_emoji_text && !item.no_emoji_cw)) item_id = item.renote.id;
-        if(!(item.visibility === 'public' || item.visibility === 'home')) return;
+        if(item.is_renote) _item = item.renote;
+        if(!(_item.visibility === 'public' || _item.visibility === 'home')) return;
 
-        var data = {
-          renoteId: item_id
-        };
-        App.client.call('notes/create',data);
+        var data = { renoteId: _item.id };
+        await App.client.call('notes/create',data);
+        App.status_label.setText("Renoteしました!");
     })
   }
 
   quote(){
     this.timelines.filter((item) => {
-        if(!item) return;
-        if(item.el_type == 'Notification') return;
-
-        var item_id = item.id;
-
-        if(item.renote && (!item.no_emoji_text && !item.no_emoji_cw)) item_id = item.renote.id;
-        if(!(item.visibility === 'public' || item.visibility === 'home')) return;
-
-        this.custom_post_window.exec({ renoteId: item_id });
-    })
-  }
-  reply(){
-    this.timelines.filter((item) => {
-        if(!item) return;
-        if(item.el_type == 'Notification') return;
+        if((!item) || (item.el_type == 'Notification')) return;
 
         var _item = item;
-        if(item.renote && (!item.no_emoji_text && !item.no_emoji_cw)) _item = item.renote;
+
+        if(item.is_renote) _item = item.renote;
+        if(!(_item.visibility === 'public' || _item.visibility === 'home')) return;
+
+        this.custom_post_window.exec({ renoteId: _item.id });
+    })
+  }
+
+  reply(){
+    this.timelines.filter((item) => {
+        if((!item) || (item.el_type == 'Notification')) return;
+
+        var _item = item;
+
+        if(item.is_renote) _item = item.renote;
 
         var opt = {
           replyId: _item.id,
@@ -59,21 +57,19 @@ class PostAction{
         this.custom_post_window.exec(opt);
     })
   }
+
   uni_renote(){
     this.timelines.filter((item) => {
-        if(!item) return;
-        if(item.el_type == 'Notification') return;
+        if((!item) || (item.el_type == 'Notification')) return;
 
-        var item_id = item.id;
+        var _item = item;
 
-        if(item.renote && (!item.no_emoji_text && !item.no_emoji_cw)) item_id = item.renote.id;
-        if(!(item.visibility === 'public' || item.visibility === 'home')) return;
+        if(item.is_renote) _item = item.renote;
+        if(!(_item.visibility === 'public' || _item.visibility === 'home')) return;
 
-        var data = {
-          renoteId: item_id
-        };
+        var data = { renoteId: _item.id };
         App.client.call('notes/create',data);
-        this.custom_post_window.exec({ renoteId: item_id });
+        this.custom_post_window.exec({ renoteId: _item.id });
     })
   }
 
@@ -81,22 +77,12 @@ class PostAction{
     var result = true;
 
     this.timelines.filter((item) => {
-        if((!item) || (item.el_type == 'Notification')){
-          result = false
-        }
+        if((!item) || (item.el_type == 'Notification')) result = false
 
         var _item = item;
+        if(item.is_renote) _item = item.renote;
 
-        if(
-          item.renote &&
-          !item.no_emoji_text &&
-          !item.no_emoji_cw &&
-          !Object.keys(item.files).length
-        ) _item = item.renote;
-
-        if(!Object.keys(_item.files).length){
-          result = false;
-        }
+        if(!Object.keys(_item.files).length) result = false;
     })
 
     return result;
@@ -104,12 +90,11 @@ class PostAction{
 
   image_view(){
     this.timelines.filter((item) => {
-        if(!item) return;
-        if(item.el_type == 'Notification') return;
+        if((!item) || (item.el_type == 'Notification')) return;
 
         var _item = item;
 
-        if(item.renote && !item.no_emoji_text && !item.no_emoji_cw && !Object.keys(item.files).length) _item = item.renote;
+        if(item.is_renote) _item = item.renote;
 
         if(!Object.keys(_item.files).length) return;
 
@@ -121,14 +106,12 @@ class PostAction{
     var result = true;
 
     this.timelines.filter((item) => {
-        if((!item) || (item.el_type == 'Notification')){
-          result = false
-        }
+        if((!item) || (item.el_type == 'Notification')) result = false
 
         var _item = item;
 
         if(
-          item.renote &&
+          item.is_renote &&
           !(item.user.username == App.client.username && !item.user.host)
         ) _item = item.renote;
 
@@ -148,12 +131,11 @@ class PostAction{
   }
 
   async _note_remove(item){
-    if((!item) || (item.el_type == 'Notification')){
-      return;
-    }
+    if((!item) || (item.el_type == 'Notification')) return;
 
     var _item = item;
 
+    // 自分の投稿であるかの分岐、自分のでなかった場合Renote先の処理に移る(RenoteかQuoteかは関係ない)
     if(
       item.renote &&
       !(item.user.username == App.client.username && !item.user.host)
@@ -161,9 +143,8 @@ class PostAction{
 
     if(!(_item.user.username == App.client.username && !_item.user.host)) return;
 
-    var data = {
-      noteId: _item.id
-    };
+    var data = { noteId: _item.id };
+
     try{
       await App.client.call('notes/delete',data);
       App.status_label.setText("削除しました!");
@@ -171,8 +152,34 @@ class PostAction{
       console.log(err);
       App.status_label.setText("消せなかったかも...");
     }
+  }
 
+  reaction(emoji){
+    this.timelines.filter(async (item) => {
+        if((!item) || (item.el_type == 'Notification')) return;
 
+        var _item = item;
+
+        if(item.is_renote) _item = item.renote;
+
+        var path = 'notes/reactions/create';
+        var data = {
+          noteId: item.id,
+          reaction: emoji
+        };
+
+        try{
+          var parse_data = App.version_parser.parse(path, data);
+          path = parse_data.path;
+          data = parse_data.data;
+
+          await App.client.call(path, data);
+          App.status_label.setText("リアクションしました!");
+        }catch(err){
+          console.log(err);
+          App.status_label.setText("できなかったかも...");
+        }
+    })
   }
 }
 

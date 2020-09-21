@@ -14,14 +14,14 @@ const NoteCounter = require('./note_counter.js');
 const TabLoader = require('./tab_loader.js');
 const Timeline = require('./timeline.js');
 const NotificationParser = require('../tools/notification_parser/index.js');
-const PostMenu = require('./post_menu.js');
+const TimelineMenu = require('../widgets/timeline_menu/index.js');
 const App = require('../index.js');
 
 class Timelines extends QWidget{
   constructor(){
     super();
 
-    this.post_menu = new PostMenu();
+    this.timeline_menu = new TimelineMenu();
 
     this.tabs = [];
     this.sources = [];
@@ -80,6 +80,8 @@ class Timelines extends QWidget{
     this.tab_widget.setFont(new QFont(App.settings.get("font"), 9));
     this.auto_select_check.setFont(new QFont(App.settings.get("font"), 9));
     this.note_counter.setFont(new QFont(App.settings.get("font"), 9));
+
+    this.timeline_menu.init();
   }
 
   setTimeline(tab){
@@ -486,7 +488,7 @@ class Timelines extends QWidget{
       return;
     }
 
-    this.post_menu.exec(selected_widget.mapToGlobal(new QPoint(pos.x, pos.y)));
+    this.timeline_menu.exec(selected_widget.mapToGlobal(new QPoint(pos.x, pos.y)));
   }
 }
 

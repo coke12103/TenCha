@@ -27,6 +27,7 @@ const NotificationCache = require('./tools/notification_cache/index.js');
 const SettingWindow = require('./widgets/setting_window/index.js');
 const EmojiPicker = require('./widgets/emoji_picker/index.js');
 const DataDirectory = require('./tools/data_directory/index.js');
+const VersionParser = require('./tools/version_parser/index.js');
 
 const win = new QMainWindow();
 win.setWindowTitle('TenCha');
@@ -63,6 +64,7 @@ var blocker = new Blocker();
 var user_cache = new UserCache();
 var note_cache = new NoteCache();
 var notification_cache = new NotificationCache();
+var version_parser = new VersionParser();
 
 async function init_cha(){
   // 設定読み込みはFont指定もあるので先に
@@ -76,7 +78,6 @@ async function init_cha(){
 
   menu_bar.post_menu.set_postbox(postbox);
   menu_bar.post_menu.set_custom_post(custom_post_window);
-  menu_bar.timeline_menu.set_post_action(post_action);
 
   rootViewLayout.addWidget(postViewArea);
   rootViewLayout.addWidget(timeline);
@@ -120,7 +121,9 @@ async function init_cha(){
   win.show();
 
   client.login().then(async () => {
+      await version_parser.init();
       postViewArea.set_host(client.host);
+      menu_bar.init();
       await timeline.init();
       timeline.start_streaming();
       post_action.init(timeline, image_viewer, custom_post_window);
@@ -141,4 +144,4 @@ exports.user_cache = user_cache;
 exports.note_cache = note_cache;
 exports.notification_cache = notification_cache;
 exports.post_action = post_action;
-
+exports.version_parser = version_parser;
