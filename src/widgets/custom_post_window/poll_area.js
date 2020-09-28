@@ -87,7 +87,6 @@ class PollArea extends QWidget{
   }
 
   setPoll(poll){
-    console.log(poll);
     var choices = [];
     for(var c of poll.choices) choices.push(c.text);
     choices = choices.join('\n');
