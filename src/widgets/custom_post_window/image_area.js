@@ -209,7 +209,6 @@ class ImageArea extends QWidget{
         else file.item.nsfw_button.setText("普通");
       }.bind(this, i);
 
-      console.log(data.isSensitive);
       if(data.isSensitive) file.item.nsfw_button.setText("普通");
       else file.item.nsfw_button.setText("NSFW");
 
