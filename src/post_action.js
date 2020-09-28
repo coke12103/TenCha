@@ -181,6 +181,26 @@ class PostAction{
         }
     })
   }
+
+  favorite(){
+    this.timelines.filter(async (item) => {
+        if((!item) || (item.el_type == 'Notification')) return;
+
+        var _item = item;
+
+        if(item.is_renote) _item = item.renote;
+
+        var data = { noteId: _item.id }
+
+        try{
+          await App.client.call('notes/favorites/create', data);
+          App.status_label.setText("お気に入りました!");
+        }catch(err){
+          console.log(err);
+          App.status_label.setText("お気に入れなかった...");
+        }
+    })
+  }
 }
 
 module.exports = PostAction;

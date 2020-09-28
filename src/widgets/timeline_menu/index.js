@@ -17,6 +17,7 @@ class TimelineMenu extends QMenu{
     this.quote_action = new QAction();
     this.reply_action = new QAction();
     this.image_view_action = new QAction();
+    this.favorite_action = new QAction();
     this.note_remove_action = new QAction();
 
     this.setTitle('タイムライン');
@@ -28,6 +29,7 @@ class TimelineMenu extends QMenu{
     this.quote_action.setText('引用Renote');
     this.reply_action.setText('リプライ');
     this.image_view_action.setText('画像を表示');
+    this.favorite_action.setText('お気に入り');
     this.note_remove_action.setText('削除');
 
     this.addAction(this.reaction_action);
@@ -38,6 +40,9 @@ class TimelineMenu extends QMenu{
 
     this.addAction(this.renote_action);
     this.addAction(this.quote_action);
+    this.addSeparator(this.favorite_action);
+
+    this.addAction(this.favorite_action);
     this.addSeparator(this.image_view_action);
 
     this.addAction(this.image_view_action);
@@ -60,6 +65,7 @@ class TimelineMenu extends QMenu{
     this.note_remove_action.addEventListener('triggered', () => {
         App.post_action.note_remove();
     });
+    this.favorite_action.addEventListener('triggered', () => App.post_action.favorite());
 
     this.addEventListener('Show', function(){
         this.image_view_action.setEnabled(App.post_action.is_image_view_ready());
