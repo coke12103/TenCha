@@ -88,26 +88,26 @@ class CustomPostWindow extends QWidget{
     this.buttons_area.setFont(this.font);
   }
 
-  exec( { replyId = "", renoteId = "", visibility = "", visible_user_ids = [] } ){
+  exec(data){
+    this.clear();
+
     if(!this.isVisible()) this.show();
 
-    if(!replyId){
-      this.reply_id_input.clear();
-    }else{
-      this.reply_id_input.setText(replyId);
-    }
+    if(data.text) this.post_text_area.setText(data.text);
+    if(data.cw) this.cw_text_area.setText(data.cw);
+    if(data.viaMobile) this.post_text_area.setViaMobile(data.viaMobile);
+    if(data.files) for(var f of data.files) this.image_area.insertFile(f);
+    if(data.poll) this.poll_area.setPoll(data.poll);
 
-    if(!renoteId){
-      this.renote_id_input.clear();
-    }else{
-      this.renote_id_input.setText(renoteId);
-    }
+    if(data.replyId) this.reply_id_input.setText(data.replyId);
+    if(data.renoteId) this.renote_id_input.setText(data.renoteId);
 
-    if(visibility){
-      this.post_text_area.setVisibility(visibility);
-      if(visibility == "specified"){
-        this.cw_text_area.setVisbleUserIds(visible_user_ids);
-      }
+    if(data.visibility){
+      this.post_text_area.setVisibility(data.visibility);
+      if(
+        data.visibility == "specified"
+        && data.visible_user_ids
+      ) this.cw_text_area.setVisbleUserIds(data.visible_user_ids);
     }
   }
 
