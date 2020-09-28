@@ -1,8 +1,14 @@
 const App = require('./index.js');
 const DeleteConfirmWindow = require('./widgets/delete_confirm_window/index.js');
 
+const {
+  QApplication,
+  QClipboardMode
+} = require('@nodegui/nodegui');
+
 class PostAction{
   constructor(){
+    this.clipboard = QApplication.clipboard();
   }
 
   init(timelines, image_viewer, custom_post_window){
@@ -205,6 +211,26 @@ class PostAction{
         }catch(err){
           console.log(err);
           App.status_label.setText("お気に入れなかった...");
+        }
+    })
+  }
+
+  copy_link(){
+    this.timelines.filter(async (item) => {
+        if((!item) || (item.el_type == 'Notification')) return;
+
+        var _item = item;
+
+        if(item.is_renote) _item = item.renote;
+
+        var url = `https://${App.client.host}/notes/${_item.id}`;
+
+        try{
+          this.clipboard.setText(url, QClipboardMode.Clipboard);
+          App.status_label.setText("Done!");
+        }catch(err){
+          console.log(err);
+          App.status_label.setText("Error...");
         }
     })
   }
