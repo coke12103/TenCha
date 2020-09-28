@@ -176,6 +176,10 @@ class ImageArea extends QWidget{
       return;
     }
 
+    this.insertFile(data);
+  }
+
+  insertFile(data){
     for(var i = 0; i < this.file_max; i++){
       var file = this.files[i];
       if(file.isUse) continue;
@@ -188,7 +192,7 @@ class ImageArea extends QWidget{
         file.data = {};
         file.isUse = false;
         file.item.remove_button.removeEventListener('clicked', remove_func);
-      }
+      }.bind(this, i, remove_func);
 
       var toggle_nsfw = async function(i){
         var file = this.files[i];
@@ -201,15 +205,16 @@ class ImageArea extends QWidget{
 
         file.data = await App.client.call("drive/files/update", data);
 
-        if(is_sensitive){
-          file.item.nsfw_button.setText("NSFW");
-        }else{
-          file.item.nsfw_button.setText("普通");
-        }
-      }
+        if(is_sensitive) file.item.nsfw_button.setText("NSFW");
+        else file.item.nsfw_button.setText("普通");
+      }.bind(this, i);
 
-      file.item.remove_button.addEventListener('clicked', remove_func.bind(this, i, remove_func));
-      file.item.nsfw_button.addEventListener('clicked', toggle_nsfw.bind(this, i));
+      console.log(data.isSensitive);
+      if(data.isSensitive) file.item.nsfw_button.setText("普通");
+      else file.item.nsfw_button.setText("NSFW");
+
+      file.item.remove_button.addEventListener('clicked', remove_func);
+      file.item.nsfw_button.addEventListener('clicked', toggle_nsfw);
 
       file.item.setFilename(data.name);
       file.data = data;
