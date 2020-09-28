@@ -45,6 +45,10 @@ class CwTextArea extends QWidget{
     this.visible_user_ids_input.setPlainText(visible_user_ids.join('\n'));
   }
 
+  setText(text){
+    this.text_input.setPlainText(text);
+  }
+
   getInfo(){
     var visible_user_ids = this.visible_user_ids_input.toPlainText().split('\n').filter((val, i, self) => {
         return !(!(val) || !(self.indexOf(val) === i));

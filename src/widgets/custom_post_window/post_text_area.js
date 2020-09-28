@@ -102,6 +102,14 @@ class PostTextArea extends QWidget{
     }
   }
 
+  setText(text){
+    this.text_input.setPlainText(text);
+  }
+
+  setViaMobile(is_mobile){
+    this.is_mobile_check.setChecked(is_mobile);
+  }
+
   updatePlaceholder(){
     var _placeholder = this.assets.placeholder;
     var placeholder = _placeholder[Math.floor(Math.random() * _placeholder.length)];

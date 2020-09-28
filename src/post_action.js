@@ -130,6 +130,13 @@ class PostAction{
     })
   }
 
+  repost(){
+    this.timelines.filter((item) => {
+        const delete_confirm_window = new DeleteConfirmWindow(item, true);
+        delete_confirm_window.show();
+    })
+  }
+
   async _note_remove(item){
     if((!item) || (item.el_type == 'Notification')) return;
 

@@ -145,3 +145,4 @@ exports.note_cache = note_cache;
 exports.notification_cache = notification_cache;
 exports.post_action = post_action;
 exports.version_parser = version_parser;
+exports.custom_post_window = custom_post_window;

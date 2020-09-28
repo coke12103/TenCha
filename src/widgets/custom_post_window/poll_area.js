@@ -86,6 +86,17 @@ class PollArea extends QWidget{
     this.expired_after_input.setFont(font);
   }
 
+  setPoll(poll){
+    var choices = [];
+    for(var c of poll.choices) choices.push(c.text);
+    choices = choices.join('\n');
+    var is_multiple = poll.multiple;
+
+    this.choices_input.setPlainText(choices);
+    this.is_multiple_check.setChecked(is_multiple);
+    this.exp_radio_unlimited.setChecked(true);
+  }
+
   get_poll(){
     var data = {};
     var choices = this.choices_input.toPlainText().split('\n').filter((val, i, self) => {
