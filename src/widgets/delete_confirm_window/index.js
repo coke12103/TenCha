@@ -8,7 +8,7 @@ const {
 const App = require('../../index.js');
 
 class DeleteConfirmWindow extends QMessageBox{
-  constructor(note){
+  constructor(note, is_repost = false){
     super();
 
     this.accept = new QPushButton();
@@ -29,6 +29,23 @@ class DeleteConfirmWindow extends QMessageBox{
     this.accept.addEventListener('clicked', () => {
         App.post_action._note_remove(note);
         App.status_label.setText("削除しました!");
+
+        if(is_repost){
+          var data = {};
+
+          // TODO: isLocal
+          if(note.no_emoji_text) data.text = note.no_emoji_text;
+          if(note.no_emoji_cw) data.cw = note.no_emoji_cw;
+          if(note.viaMobile) data.viaMobile = note.viaMobile;
+          if(note.files) data.files = note.files;
+          if(note.poll) data.poll = note.poll;
+          if(note.replyId) data.replyId = note.replyId;
+          if(note.renoteId) data.renoteId = note.renoteId;
+          data.visibility = note.visibility;
+          if(note.visibleUserIds) data.visible_user_ids = note.visibleUserIds;
+
+          App.custom_post_window.exec(data);
+        }
         this.close();
     });
     this.reject.addEventListener('clicked', () => {
