@@ -28,7 +28,7 @@ class PostParser{
       text = _r;
     }
 
-    text = text.replace(break_regexp, '<br>');
+    text = text.replace(/\n+$/,"").replace(break_regexp, '<br>');
 
     text = '<html>' + text + '</html>';
 
