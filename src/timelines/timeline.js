@@ -90,7 +90,7 @@ class Timeline extends QListWidget{
 
   fix_items(){
     var limit = this.limit;
-    if(this.tl.length > limit){
+    while(this.tl.length > limit){
       for(var i = 0; i < 10; i++){
         if(this.tl[i].item.list_item.isSelected()) return;
       }
