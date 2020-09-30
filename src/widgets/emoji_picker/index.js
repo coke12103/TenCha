@@ -40,7 +40,7 @@ class EmojiPicker extends QWidget{
     this.layout.addWidget(this.tab_widget, 1);
   }
 
-  init(){
+  async init(){
     this.tab_widget.setFont(new QFont(App.settings.get("font"), 9));
 
     for(var category of this.assets.emoji_list.categorys){
@@ -52,12 +52,12 @@ class EmojiPicker extends QWidget{
         emojis.push(this._set_emoji(_emoji, widget));
       }
 
-      Promise.all(emojis).then((result) => {
-          for(var emoji of result){
-            if(!emoji) continue;
-            emoji.widget.addWidget(emoji.item);
-          }
-      }).catch((err) => console.log(err));
+      var result = await Promise.all(emojis);
+
+      for(var emoji of result){
+        if(!emoji) continue;
+        emoji.widget.addWidget(emoji.item);
+      }
 
       this.tab_widget.addTab(widget, new QIcon(), category.text);
     }
