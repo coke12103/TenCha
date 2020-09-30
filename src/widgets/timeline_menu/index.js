@@ -77,8 +77,16 @@ class TimelineMenu extends QMenu{
     this.copy_link_action.addEventListener('triggered', () => App.post_action.copy_link());
 
     this.addEventListener('Show', function(){
+        var is_renote_ready = App.post_action.is_renote_ready();
+        var is_remove_ready = App.post_action.is_remove_ready();
+
+        this.renote_action.setEnabled(is_renote_ready);
+        this.quote_action.setEnabled(is_renote_ready);
+
         this.image_view_action.setEnabled(App.post_action.is_image_view_ready());
-        this.note_remove_action.setEnabled(App.post_action.is_remove_ready());
+
+        this.note_remove_action.setEnabled(is_remove_ready);
+        this.repost_action.setEnabled(is_remove_ready);
     }.bind(this));
   }
 
