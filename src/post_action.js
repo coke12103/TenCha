@@ -94,6 +94,21 @@ class PostAction{
     return result;
   }
 
+  is_renote_ready(){
+    var result = true;
+
+    this.timelines.filter((item) => {
+        if((!item) || (item.el_type == 'Notification')) result = false
+
+        var _item = item;
+        if(item.is_renote) _item = item.renote;
+
+        if(!(_item.visibility === 'public' || _item.visibility === 'home')) result = false;
+    })
+
+    return result;
+  }
+
   image_view(){
     this.timelines.filter((item) => {
         if((!item) || (item.el_type == 'Notification')) return;
