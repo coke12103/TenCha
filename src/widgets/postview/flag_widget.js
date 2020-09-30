@@ -31,6 +31,9 @@ class FlagWidget extends QWidget{
     this.local_public = new QLabel()
     this.local_direct = new QLabel();
 
+    // TODO: アイコン
+    this.reply = new QLabel();
+
     this.setLayout(this.layout);
 
     this.layout.setContentsMargins(0,0,0,0);
@@ -42,6 +45,8 @@ class FlagWidget extends QWidget{
     var lock_pix = new QPixmap(Icons.lock);
     var public_pix = new QPixmap(Icons._public);
     var renote_pix = new QPixmap(Icons.renote);
+
+    // reply_pix = new QPixmap(Icons.reply);
 
     direct_pix = direct_pix.scaled(
       IconsSize, IconsSize,
@@ -76,6 +81,14 @@ class FlagWidget extends QWidget{
       )
     );
 
+    // this.reply.setPixmap(reply_pix.scaled(
+    //     IconsSize, IconsSize,
+    //     AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+    //   )
+    // );
+
+    this.reply.setText('←');
+
     this.direct.setPixmap(direct_pix);
 
     this.local_direct.setPixmap(direct_pix);
@@ -100,6 +113,7 @@ class FlagWidget extends QWidget{
 
     this.layout.addWidget(this.clip);
     this.layout.addWidget(this.renote);
+    this.layout.addWidget(this.reply);
 
     this.layout.addWidget(this._public);
     this.layout.addWidget(this.home);
@@ -117,6 +131,7 @@ class FlagWidget extends QWidget{
   clear(){
     this.clip.hide();
     this.renote.hide();
+    this.reply.hide();
 
     this._public.hide();
     this.home.hide();
@@ -132,6 +147,7 @@ class FlagWidget extends QWidget{
   setNoteFlag(note){
     this.clear();
 
+    if(note.reply) this.reply.show();
     if(note.renote) this.renote.show();
     if(note.files[0] || (note.renote && note.renote.files[0])) this.clip.show();
 
