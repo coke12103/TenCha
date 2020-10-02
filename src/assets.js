@@ -37,7 +37,7 @@ class Asset{
         this.renote = require('../assets/icons/renote.png').default;
         this.reply = require('../assets/icons/reply.png').default;
         this.quote = require('../assets/icons/quote.png').default;
-        this.reaction = require('../assets/icons/quote.png').default;
+        this.reaction = require('../assets/icons/reaction.png').default;
         this.local_public = require('../assets/icons/local_public.png').default;
         this.local_home = require('../assets/icons/local_home.png').default;
         this.local_lock = require('../assets/icons/local_lock.png').default;
