@@ -45,6 +45,7 @@ class Asset{
         this.follow = require('../assets/icons/follow.png').default;
         this.follow_request = require('../assets/icons/follow_request.png').default;
         this.follow_accept = require('../assets/icons/follow_accept.png').default;
+        this.poll = require('../assets/icons/poll.png').default;
         break;
       case "EmojiList":
         this.emoji_list = require('../assets/emojilist.json');
