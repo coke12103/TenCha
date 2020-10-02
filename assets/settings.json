@@ -123,6 +123,13 @@
       "type": "Bool"
     },
     {
+      "id": "self_post_color",
+      "name": "自分の投稿に色",
+      "description": "タイムライン上の自分の投稿に色を付けます。",
+      "default_value": false,
+      "type": "Bool"
+    },
+    {
       "id": "reaction_picker_emojis",
       "name": "リアクションの絵文字",
       "description": "Misskey(v10-m544)のピッカーの設定をそのまま貼り付け可能",

@@ -63,10 +63,7 @@ class NotificationParser{
   }
 
   static _gen_notification_item_desc_text(notification){
-    var result = {
-      type_text: '',
-      desc_text: ''
-    };
+    var result = '';
 
     var text = '';
 
@@ -78,13 +75,11 @@ class NotificationParser{
 
     switch(notification.type){
       case 'follow':
-        result.type_text = '＋'
-        result.desc_text = `フォローされています!`;
+        result = `フォローされています!`;
         break;
       case 'mention':
       case 'reply':
-        result.type_text = '言';
-        result.desc_text = `言及: ${text}`;
+        result = `言及: ${text}`;
         break;
       case 'renote':
         var text = '';
@@ -93,28 +88,22 @@ class NotificationParser{
         }else{
           text = notification.note.renote.text;
         }
-        result.type_text = '♻';
-        result.desc_text = `Renoteされました!: ${text}`;
+        result = `Renoteされました!: ${text}`;
         break;
       case 'quote':
-        result.type_text = '引';
-        result.desc_text = `引用Renoteされました!: ${text}`;
+        result = `引用Renoteされました!: ${text}`;
         break;
       case 'reaction':
-        result.type_text = '！';
-        result.desc_text = `${notification.display_reaction}でリアクションされました!: ${text}`;
+        result = `${notification.display_reaction}でリアクションされました!: ${text}`;
         break;
       case 'pollVote':
-        result.type_text = '投';
-        result.desc_text = `投票しました!: ${text}`;
+        result = `投票しました!: ${text}`;
         break;
       case 'receiveFollowRequest':
-        result.type_text = '求';
-        result.desc_text = `フォローリクエストされています!`;
+        result = `フォローリクエストされています!`;
         break;
       case 'followRequestAccepted':
-        result.type_text = '可';
-        result.desc_text = `フォローリクエストが許可されました!`;
+        result = `フォローリクエストが許可されました!`;
         break;
     }
 

@@ -138,6 +138,11 @@ class NoteItem extends QWidget{
       note_color = '#555753';
     }
 
+    if(
+      App.settings.get('self_post_color')
+      && (note.user.username == App.client.username && !note.user.host)
+    ) note_back = 'rgba(237, 146, 18, 0.3)';
+
     this.setInlineStyle(`background-color: ${note_back};`);
     this.text.setInlineStyle(`color: ${note_color};`);
 

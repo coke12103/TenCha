@@ -21,6 +21,7 @@ class Note{
       this.replyId = json.replyId;
       this.renoteId = json.renoteId;
       this.viaMobile = json.viaMobile;
+      this.localOnly = json.localOnly;
       this.isHidden = json.isHidden;
       this.visibility = json.visibility;
       // this.mentions = if あとで
