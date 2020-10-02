@@ -20,19 +20,19 @@ class FlagWidget extends QWidget{
     this.layout = new QBoxLayout(Direction.LeftToRight);
 
     this.clip = new QLabel();
-    this.direct = new QLabel();
+
+    this.renote = new QLabel();
+    this.reply = new QLabel();
+
+    this._public = new QLabel()
     this.home = new QLabel();
     this.lock = new QLabel();
-    this._public = new QLabel()
-    this.renote = new QLabel();
-    // TODO: アイコンを用意する。とりあえず色の差分で代用はするけど。
+    this.direct = new QLabel();
+
     this.local_home = new QLabel();
     this.local_lock = new QLabel();
     this.local_public = new QLabel()
     this.local_direct = new QLabel();
-
-    // TODO: アイコン
-    this.reply = new QLabel();
 
     this.setLayout(this.layout);
 
@@ -40,36 +40,57 @@ class FlagWidget extends QWidget{
     this.layout.setSpacing(4);
 
     var clip_pix = new QPixmap(Icons.clip);
-    var direct_pix = new QPixmap(Icons.direct);
+
+    var renote_pix = new QPixmap(Icons.renote);
+    var reply_pix = new QPixmap(Icons.reply);
+
+    var public_pix = new QPixmap(Icons._public);
     var home_pix = new QPixmap(Icons.home);
     var lock_pix = new QPixmap(Icons.lock);
-    var public_pix = new QPixmap(Icons._public);
-    var renote_pix = new QPixmap(Icons.renote);
+    var direct_pix = new QPixmap(Icons.direct);
 
-    // reply_pix = new QPixmap(Icons.reply);
+    var local_public_pix = new QPixmap(Icons.local_public);
+    var local_home_pix = new QPixmap(Icons.local_home);
+    var local_lock_pix = new QPixmap(Icons.local_lock);
+    var local_direct_pix = new QPixmap(Icons.local_direct);
 
-    direct_pix = direct_pix.scaled(
-      IconsSize, IconsSize,
-      AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+    this._public.setPixmap(public_pix.scaled(
+        IconsSize, IconsSize,
+        AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+      )
+    );
+    this.home.setPixmap(home_pix.scaled(
+        IconsSize, IconsSize,
+        AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+      )
+    );
+    this.lock.setPixmap(lock_pix.scaled(
+        IconsSize, IconsSize,
+        AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+      )
+    );
+    this.direct.setPixmap(direct_pix.scaled(
+        IconsSize, IconsSize,
+        AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+      )
     );
 
-    home_pix = home_pix.scaled(
-      IconsSize, IconsSize,
-      AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+    this.local_public.setPixmap(local_public_pix.scaled(
+        IconsSize, IconsSize,
+        AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+      )
     );
-
-    lock_pix = lock_pix.scaled(
-      IconsSize, IconsSize,
-      AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+    this.local_home.setPixmap(local_home_pix.scaled(
+        IconsSize, IconsSize,
+        AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+      )
     );
-
-    public_pix = public_pix.scaled(
-      IconsSize, IconsSize,
-      AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+    this.local_lock.setPixmap(local_lock_pix.scaled(
+        IconsSize, IconsSize,
+        AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+      )
     );
-
-
-    this.clip.setPixmap(clip_pix.scaled(
+    this.local_direct.setPixmap(local_direct_pix.scaled(
         IconsSize, IconsSize,
         AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
       )
@@ -80,38 +101,22 @@ class FlagWidget extends QWidget{
         AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
       )
     );
+    this.reply.setPixmap(reply_pix.scaled(
+        IconsSize, IconsSize,
+        AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+      )
+    );
 
-    // this.reply.setPixmap(reply_pix.scaled(
-    //     IconsSize, IconsSize,
-    //     AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
-    //   )
-    // );
-
-    this.reply.setText('←');
-
-    this.direct.setPixmap(direct_pix);
-
-    this.local_direct.setPixmap(direct_pix);
-    this.local_direct.setEnabled(false);
-
-    this.home.setPixmap(home_pix);
-
-    this.local_home.setPixmap(home_pix);
-    this.local_home.setEnabled(false);
-
-    this.lock.setPixmap(lock_pix);
-
-    this.local_lock.setPixmap(lock_pix);
-    this.local_lock.setEnabled(false);
-
-    this._public.setPixmap(public_pix);
-
-    this.local_public.setPixmap(public_pix);
-    this.local_public.setEnabled(false);
+    this.clip.setPixmap(clip_pix.scaled(
+        IconsSize, IconsSize,
+        AspectRatioMode.KeepAspectRatio, TransformationMode.SmoothTransformation
+      )
+    );
 
     this.layout.addStretch(1);
 
     this.layout.addWidget(this.clip);
+
     this.layout.addWidget(this.renote);
     this.layout.addWidget(this.reply);
 
@@ -130,6 +135,7 @@ class FlagWidget extends QWidget{
 
   clear(){
     this.clip.hide();
+
     this.renote.hide();
     this.reply.hide();
 
