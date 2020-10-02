@@ -35,6 +35,16 @@ class Asset{
         this.lock = require('../assets/icons/lock.png').default;
         this._public = require('../assets/icons/public.png').default;
         this.renote = require('../assets/icons/renote.png').default;
+        this.reply = require('../assets/icons/reply.png').default;
+        this.quote = require('../assets/icons/quote.png').default;
+        this.reaction = require('../assets/icons/quote.png').default;
+        this.local_public = require('../assets/icons/local_public.png').default;
+        this.local_home = require('../assets/icons/local_home.png').default;
+        this.local_lock = require('../assets/icons/local_lock.png').default;
+        this.local_direct = require('../assets/icons/local_direct.png').default;
+        this.follow = require('../assets/icons/follow.png').default;
+        this.follow_request = require('../assets/icons/follow_request.png').default;
+        this.follow_accept = require('../assets/icons/follow_accept.png').default;
         break;
       case "EmojiList":
         this.emoji_list = require('../assets/emojilist.json');
