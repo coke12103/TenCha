@@ -19,12 +19,18 @@ class ReactionMenu extends QMenu{
     this.emoji_input_window = new ReactionEmojiInputWindow();
 
     this.code_input_action = new QAction();
+    this.unreaction_action = new QAction();
 
     this.code_input_action.setText('絵文字を入力...');
     this.code_input_action.addEventListener('triggered', function(){
         this.emoji_input_window.exec();
       }.bind(this)
     );
+
+    this.unreaction_action.setText('外す');
+    this.unreaction_action.addEventListener('triggered', function(){
+        App.post_action.unreaction();
+    });
 
     this.emoji_input_window.addEventListener('Close', function(){
         var result = this.emoji_input_window.getResult();
@@ -41,6 +47,7 @@ class ReactionMenu extends QMenu{
   clear(){
     for(var action of this.reactions) this.removeAction(action);
     this.removeAction(this.code_input_action);
+    this.removeAction(this.unreaction_action);
   }
 
   _parse_mk_emojis(shortcode){
@@ -104,6 +111,9 @@ class ReactionMenu extends QMenu{
 
     this.addSeparator(this.code_input_action);
     this.addAction(this.code_input_action);
+
+    this.addSeparator(this.unreaction_action);
+    this.addAction(this.unreaction_action);
   }
 
   exec(pos){
