@@ -183,7 +183,7 @@ class PostAction{
   }
 
   reaction(emoji){
-    this.timelines.filter(async (item) => {
+    this.timelines.filter(async function(item){
         if((!item) || (item.el_type == 'Notification')) return;
 
         var _item = item;
@@ -192,11 +192,12 @@ class PostAction{
 
         var path = 'notes/reactions/create';
         var data = {
-          noteId: item.id,
+          noteId: _item.id,
           reaction: emoji
         };
 
         try{
+          await this._unreaction(_item.id);
           var parse_data = App.version_parser.parse(path, data);
           path = parse_data.path;
           data = parse_data.data;
@@ -207,7 +208,34 @@ class PostAction{
           console.log(err);
           App.status_label.setText("できなかったかも...");
         }
-    })
+    }.bind(this))
+  }
+
+  unreaction(){
+    this.timelines.filter(async function(item){
+        if((!item) || (item.el_type == 'Notification')) return;
+
+        var _item = item;
+
+        if(item.is_renote) _item = item.renote;
+
+        await this._unreaction(_item.id);
+    }.bind(this))
+  }
+
+  async _unreaction(id){
+    var path = 'notes/reactions/delete';
+    var data = {
+      noteId: id
+    };
+
+    try{
+      await App.client.call(path, data);
+      App.status_label.setText("リアクション外しました!");
+    }catch(err){
+      console.log(err);
+      App.status_label.setText("できなかったかも...");
+    }
   }
 
   favorite(){
