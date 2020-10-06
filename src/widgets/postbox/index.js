@@ -42,6 +42,8 @@ class PostBox extends QWidget{
 
     this.setObjectName('postArea');
     this.setLayout(this.layout);
+    this.setMinimumSize(120, 86);
+    this.setMaximumSize(65535, 86);
 
     this.layout.setContentsMargins(0,5,0,5);
     this.layout.setSpacing(5);
@@ -164,9 +166,7 @@ class PostBox extends QWidget{
     this.text_input.setPlaceholderText(placeholder);
   }
 
-  setup(_font){
-    const font = new QFont(_font, 9);
-
+  setup(font){
     this.text_input.setFont(font);
     this.post_button.setFont(font);
     this.visibility_select.setFont(font);

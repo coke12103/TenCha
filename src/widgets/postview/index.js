@@ -45,6 +45,8 @@ class PostView extends QWidget{
 
     this.setObjectName("postViewArea");
     this.setLayout(this.layout);
+    this.setMinimumSize(120, 120);
+    this.setMaximumSize(65535, 120);
 
     this.layout.setContentsMargins(0,0,0,0);
     this.layout.setSpacing(5);
@@ -229,7 +231,7 @@ class PostView extends QWidget{
 
     // date
     var date = dateformat(note.createdAt, 'yyyy/mm/dd HH:MM:ss');
-    var date_url = `https://${this.host}/notes/${note.id}`;
+    var date_url = `https://${App.client.host}/notes/${note.id}`;
 
     this.date.setText(`<html><a style="text-decoration: none;" href="${date_url}">${date}</a>`);
 
@@ -264,13 +266,9 @@ class PostView extends QWidget{
     this.content.setText(text);
   }
 
-  set_host(host){
-    this.host = host;
-  }
-
-  set_font(_font){
-    const font = new QFont(_font, 9);
-    const NameFont = new QFont(_font, 9, QFontWeight.Bold);
+  setFont(fontname){
+    const font = new QFont(fontname, 9);
+    const NameFont = new QFont(fontname, 9, QFontWeight.Bold);
 
     this.flag.setFont(font);
     this.name.setFont(NameFont);
