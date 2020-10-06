@@ -73,9 +73,10 @@ async function init_cha(){
   menu_bar.post_menu.set_postbox(main_window.post_box);
   menu_bar.post_menu.set_custom_post(custom_post_window);
 
-  main_window.setMenuBar(menu_bar.get_widget());
+  main_window.setMenuBar(menu_bar);
 
   main_window.setFont(settings.get('font'));
+  menu_bar.setFont(settings.get('font'));
 
   var setting_window = new SettingWindow();
   exports.setting_window = setting_window;
@@ -87,9 +88,6 @@ async function init_cha(){
   statusLabel.setText('絵文字ピッカーの設定完了');
 
   custom_post_window.setup();
-
-  menu_bar.set_font(settings.get("font"));
-
 
   main_window.timeline.add_timeline_filter(blocker.is_block.bind(blocker));
 
