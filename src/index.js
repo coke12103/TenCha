@@ -93,7 +93,7 @@ async function init_cha(){
       await version_parser.init();
       menu_bar.init();
       await main_window.timeline.init();
-      post_action.init(main_window.timeline, image_viewer, custom_post_window);
+      post_action.init(main_window.timeline, image_viewer);
       statusLabel.setText('ログイン成功!');
   });
 

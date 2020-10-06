@@ -11,10 +11,9 @@ class PostAction{
     this.clipboard = QApplication.clipboard();
   }
 
-  init(timelines, image_viewer, custom_post_window){
+  init(timelines, image_viewer){
     this.timelines = timelines;
     this.image_viewer = image_viewer;
-    this.custom_post_window = custom_post_window;
   }
 
   renote(){
@@ -41,7 +40,7 @@ class PostAction{
         if(item.is_renote) _item = item.renote;
         if(!(_item.visibility === 'public' || _item.visibility === 'home')) return;
 
-        this.custom_post_window.exec({ renoteId: _item.id });
+        App.custom_post_window.exec({ renoteId: _item.id });
     })
   }
 
@@ -60,7 +59,7 @@ class PostAction{
 
         if(_item.visibility === 'specified') opt.visibleUserIds = _item.visibleUserIds;
 
-        this.custom_post_window.exec(opt);
+        App.custom_post_window.exec(opt);
     })
   }
 
@@ -75,7 +74,7 @@ class PostAction{
 
         var data = { renoteId: _item.id };
         App.client.call('notes/create',data);
-        this.custom_post_window.exec({ renoteId: _item.id });
+        App.custom_post_window.exec({ renoteId: _item.id });
     })
   }
 
