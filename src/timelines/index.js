@@ -16,12 +16,14 @@ const Timeline = require('./timeline.js');
 const NotificationParser = require('../tools/notification_parser/index.js');
 const TimelineMenu = require('../widgets/timeline_menu/index.js');
 const App = require('../index.js');
+const DesktopNotification = require('../tools/desktop_notification/index.js');
 
 class Timelines extends QWidget{
   constructor(){
     super();
 
     this.timeline_menu = new TimelineMenu();
+    this.desktop_notification = new DesktopNotification();
 
     this.tabs = [];
     this.sources = [];
@@ -438,10 +440,6 @@ class Timelines extends QWidget{
     }else{
       this.post_view.setNotification(notification);
     }
-  }
-
-  set_desktop_notification(desktop_notification){
-    this.desktop_notification = desktop_notification;
   }
 
   _show_mes_dialog(mes_str){

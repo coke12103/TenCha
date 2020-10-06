@@ -4,7 +4,7 @@ const RandomEmoji = require('./tools/random_emoji/index.js');
 const EmojiParser = require('./tools/emoji_parser/index.js');
 const PostAction = require('./post_action.js');
 const Settings = require('./tools/settings/index.js');
-const DesktopNotification = require('./tools/desktop_notification/index.js');
+
 const ImageViewer = require('./tools/image_viewer/index.js');
 const CustomPostWindow = require('./widgets/custom_post_window/index.js');
 const Blocker = require('./blocker/index.js');
@@ -41,7 +41,6 @@ exports.emoji_parser = emoji_parser;
 var settings = new Settings();
 exports.settings = settings;
 
-var desktop_notification = new DesktopNotification();
 var image_viewer = new ImageViewer();
 
 var custom_post_window = new CustomPostWindow();
@@ -67,8 +66,6 @@ async function init_cha(){
   settings.init();
   blocker.init();
   image_viewer.init();
-
-  main_window.timeline.set_desktop_notification(desktop_notification);
 
   menu_bar.post_menu.set_postbox(main_window.post_box);
   menu_bar.post_menu.set_custom_post(custom_post_window);
