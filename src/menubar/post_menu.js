@@ -31,6 +31,10 @@ class PostMenu extends QMenu{
         }.bind(this));
       }
     );
+
+    this.custom_post.addEventListener('triggered', () => {
+        App.custom_post_window.exec({});
+    })
   }
 
   set_postbox(postbox){
@@ -38,12 +42,6 @@ class PostMenu extends QMenu{
     this.random_emoji.addEventListener('triggered', () => {
         postbox.random_emoji();
     });
-  }
-
-  set_custom_post(custom_post){
-    this.custom_post.addEventListener('triggered', () => {
-        custom_post.exec({});
-    })
   }
 }
 

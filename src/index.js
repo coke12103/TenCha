@@ -68,7 +68,6 @@ async function init_cha(){
   image_viewer.init();
 
   menu_bar.post_menu.set_postbox(main_window.post_box);
-  menu_bar.post_menu.set_custom_post(custom_post_window);
 
   main_window.setMenuBar(menu_bar);
 
