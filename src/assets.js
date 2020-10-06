@@ -4,9 +4,6 @@ class Asset{
       case "PostView":
         this.no_image = require('../assets/no_image.png').default;
         break;
-      case "LoginWindow":
-        this.css = require('!!raw-loader!../assets/css/login.css').default;
-        break;
       case "Postbox":
         this.placeholder = require('../assets/placeholder.json').placeholder;
         break;
