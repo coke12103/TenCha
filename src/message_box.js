@@ -1,26 +1,28 @@
 const { QMessageBox, QPushButton, ButtonRole } = require('@nodegui/nodegui');
 
-class MessageBox{
+class MessageBox extends QMessageBox{
   constructor(display_message, button_message){
-    var box = new QMessageBox();
-    var accept = new QPushButton();
+    super();
 
-    box.setText(display_message);
-    accept.setText(button_message);
+    this.accept = new QPushButton();
 
-    box.addButton(accept, ButtonRole.NoRole);
+    this.setText(display_message);
+    this.setModal(true);
 
-    this.box = box;
-    this.accept = accept;
+    this.accept.setText(button_message);
+
+    this.addButton(this.accept, ButtonRole.NoRole);
   }
+
   onPush(callback){
-    this.accept.addEventListener('clicked', callback);
+    this.accept.addEventListener('clicked', function(){
+        callback();
+        this.close();
+    }.bind(this));
   }
-  exec(){
-    this.box.show();
-  }
+
   close(){
-    this.box.close();
+    super.close();
   }
 }
 
