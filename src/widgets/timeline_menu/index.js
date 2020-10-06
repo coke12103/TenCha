@@ -1,6 +1,7 @@
 const {
   QMenu,
-  QAction
+  QAction,
+  QFont
 } = require('@nodegui/nodegui');
 
 const App = require('../../index.js');
@@ -92,6 +93,11 @@ class TimelineMenu extends QMenu{
 
   init(){
     this.reaction_menu.init();
+  }
+
+  setFont(font){
+    super.setFont(font);
+    this.reaction_menu.setFont(font);
   }
 }
 
