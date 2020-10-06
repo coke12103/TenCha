@@ -84,6 +84,10 @@ class Timelines extends QWidget{
     this.note_counter.setFont(new QFont(App.settings.get("font"), 9));
 
     this.timeline_menu.init();
+
+    this.start_load_tl();
+    App.client.connect_ws(this);
+    this.change_tab();
   }
 
   setTimeline(tab){
@@ -113,12 +117,6 @@ class Timelines extends QWidget{
     // 利用されているソースの一覧を記憶
     Array.prototype.push.apply(this.sources, data.source.from);
     this.source = this.sources.filter((x, i, self) => { return self.indexOf(x) === i; } );
-  }
-
-  start_streaming(){
-    this.start_load_tl();
-    App.client.connect_ws(this);
-    this.change_tab();
   }
 
   async start_load_tl(){
