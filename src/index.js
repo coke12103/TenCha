@@ -65,9 +65,7 @@ exports.version_parser = version_parser;
 async function init_cha(){
   // 設定読み込み後にやるやつ
   settings.init();
-
-  var _blocker_init = blocker.init();
-
+  blocker.init();
   image_viewer.init();
 
   main_window.timeline.set_desktop_notification(desktop_notification);
@@ -76,8 +74,6 @@ async function init_cha(){
   menu_bar.post_menu.set_custom_post(custom_post_window);
 
   main_window.setMenuBar(menu_bar.get_widget());
-
-
 
   main_window.setFont(settings.get('font'));
 
@@ -94,8 +90,6 @@ async function init_cha(){
 
   menu_bar.set_font(settings.get("font"));
 
-  // ブロッカーの読み込み後にやるやつ
-  await _blocker_init;
 
   main_window.timeline.add_timeline_filter(blocker.is_block.bind(blocker));
 

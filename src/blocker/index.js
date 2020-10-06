@@ -8,7 +8,7 @@ class Blocker{
     this.blocker = [];
   }
 
-  async init(){
+  init(){
     const domain_blocker = new DomainBlocker();
     const word_blocker = new WordBlocker();
     const user_id_blocker = new UserIdBlocker();
