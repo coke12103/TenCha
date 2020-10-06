@@ -33,6 +33,19 @@ class Login{
     return result;
   }
 
+  async _load_meta_info(){
+    try{
+      var meta = await App.client.call('meta', {}, true, this.host);
+      this.version = meta.version;
+      this.emojis = meta.emojis;
+
+      var s = await App.client.call('i', { i: this.api_token }, true, this.host);
+      this.username = s.username;
+    }catch(err){
+      throw err;
+    }
+  }
+
   start(){
     return new Promise(async (resolve, reject) =>{
         // とりあえず読み込もうとする
@@ -41,12 +54,7 @@ class Login{
         // 読み込めたなら疎通テストしてエラーだったら投げる
         if(this.is_login_done){
           try{
-            var meta = await App.client.call('meta', {}, true, this.host);
-            this.version = meta.version;
-            this.emojis = meta.emojis;
-
-            var s = await App.client.call('i', { i: this.api_token }, true, this.host);
-            this.username = s.username;
+            await this._load_meta_info();
           }catch(err){
             reject(err);
           }
@@ -57,11 +65,13 @@ class Login{
         }else{
           const login_window = new Window();
 
-          var done_func = function(){
+          var done_func = async function(){
             var result = login_window.getResult();
             if(result) reject(1);
 
             this.is_login_done = this.load_info();
+            await this._load_meta_info();
+
             resolve(0);
           };
 
