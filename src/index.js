@@ -9,8 +9,11 @@ const ImageViewer = require('./tools/image_viewer/index.js');
 const CustomPostWindow = require('./widgets/custom_post_window/index.js');
 const Blocker = require('./blocker/index.js');
 const MenuBar = require('./menubar/index.js');
+
 const Client = require('./client.js');
 const client = new Client();
+exports.client = client;
+
 const UserCache = require('./tools/user_cache/index.js');
 const NoteCache = require('./tools/note_cache/index.js');
 const NotificationCache = require('./tools/notification_cache/index.js');
@@ -25,25 +28,44 @@ exports.data_directory = data_directory;
 
 var main_window = new MainWindow();
 var statusLabel = main_window.status_label;
+exports.status_label = statusLabel;
+
+var random_emoji = new RandomEmoji();
+exports.random_emoji = random_emoji;
 
 var menu_bar = new MenuBar();
 
-var random_emoji = new RandomEmoji();
 var emoji_parser = new EmojiParser();
+exports.emoji_parser = emoji_parser;
+
 var settings = new Settings();
+exports.settings = settings;
+
 var desktop_notification = new DesktopNotification();
 var image_viewer = new ImageViewer();
+
 var custom_post_window = new CustomPostWindow();
+exports.custom_post_window = custom_post_window;
+
 var post_action = new PostAction();
+exports.post_action = post_action;
+
 var blocker = new Blocker();
+
 var user_cache = new UserCache();
 var note_cache = new NoteCache();
 var notification_cache = new NotificationCache();
+exports.user_cache = user_cache;
+exports.note_cache = note_cache;
+exports.notification_cache = notification_cache;
+
 var version_parser = new VersionParser();
+exports.version_parser = version_parser;
 
 async function init_cha(){
-  // 設定読み込みはFont指定もあるので先に
-  var _setting_init = settings.init();
+  // 設定読み込み後にやるやつ
+  settings.init();
+
   var _blocker_init = blocker.init();
 
   image_viewer.init();
@@ -55,8 +77,7 @@ async function init_cha(){
 
   main_window.setMenuBar(menu_bar.get_widget());
 
-  // 設定読み込み後にやるやつ
-  await _setting_init;
+
 
   main_window.setFont(settings.get('font'));
 
@@ -93,15 +114,3 @@ async function init_cha(){
 }
 
 init_cha();
-
-exports.status_label = statusLabel;
-exports.client = client;
-exports.random_emoji = random_emoji;
-exports.settings = settings;
-exports.emoji_parser = emoji_parser;
-exports.user_cache = user_cache;
-exports.note_cache = note_cache;
-exports.notification_cache = notification_cache;
-exports.post_action = post_action;
-exports.version_parser = version_parser;
-exports.custom_post_window = custom_post_window;
