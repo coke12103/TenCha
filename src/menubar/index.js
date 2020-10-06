@@ -7,34 +7,31 @@ const FileMenu = require('./file_menu.js');
 const PostMenu = require('./post_menu.js');
 const TimelineMenu = require('../widgets/timeline_menu/index.js');
 
-class MenuBar{
+class MenuBar extends QMenuBar{
   constructor(){
-    const bar = new QMenuBar();
-    const file_menu = new FileMenu();
-    const post_menu = new PostMenu();
-    const timeline_menu = new TimelineMenu();
+    super();
 
-    bar.addMenu(file_menu);
-    bar.addMenu(post_menu);
-    bar.addMenu(timeline_menu);
+    this.file_menu = new FileMenu();
+    this.post_menu = new PostMenu();
+    this.timeline_menu = new TimelineMenu();
 
-    this.bar = bar;
-    this.file_menu = file_menu;
-    this.post_menu = post_menu;
-    this.timeline_menu = timeline_menu;
+    this.addMenu(this.file_menu);
+    this.addMenu(this.post_menu);
+    this.addMenu(this.timeline_menu);
   }
 
   init(){
     this.timeline_menu.init();
   }
 
-  get_widget(){
-    return this.bar;
-  }
+  setFont(fontname){
+    this.font = new QFont(fontname, 9);
 
-  set_font(_font){
-    const font = new QFont(_font, 9);
-    this.bar.setFont(font);
+    super.setFont(this.font);
+
+    this.file_menu.setFont(this.font);
+    this.post_menu.setFont(this.font);
+    this.timeline_menu.setFont(this.font);
   }
 }
 
