@@ -6,7 +6,6 @@ const {
   QKeyEvent,
   KeyboardModifier,
   Key,
-  QFont,
   QComboBox,
   QCheckBox,
   Direction
@@ -22,11 +21,11 @@ class PostBox extends QWidget{
     this.assets = new Assets("Postbox");
     this.filters = new Array();
     this.visibilitys = [
-     { name: "public", text: "公開" },
-     { name: "home", text: "ホーム" },
-     { name: "followers", text: "フォロワー" },
-     { name: "specified", text: "ダイレクト" },
-     { name: "random", text: "ランダム" }
+      { name: "public", text: "公開" },
+      { name: "home", text: "ホーム" },
+      { name: "followers", text: "フォロワー" },
+      { name: "specified", text: "ダイレクト" },
+      { name: "random", text: "ランダム" }
     ];
 
     this.layout = new QBoxLayout(Direction.LeftToRight);

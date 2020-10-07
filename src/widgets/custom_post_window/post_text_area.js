@@ -4,7 +4,7 @@ const {
   Direction,
   QPlainTextEdit,
   QComboBox,
-   QPushButton,
+  QPushButton,
   QCheckBox
 } = require('@nodegui/nodegui');
 
@@ -18,11 +18,11 @@ class PostTextArea extends QWidget{
     this.assets = new Assets("CustomPostWindow");
 
     this.visibilitys = [
-     { name: "public", text: "公開" },
-     { name: "home", text: "ホーム" },
-     { name: "followers", text: "フォロワー" },
-     { name: "specified", text: "ダイレクト" },
-     { name: "random", text: "ランダム" }
+      { name: "public", text: "公開" },
+      { name: "home", text: "ホーム" },
+      { name: "followers", text: "フォロワー" },
+      { name: "specified", text: "ダイレクト" },
+      { name: "random", text: "ランダム" }
     ];
 
     this.layout = new QBoxLayout(Direction.LeftToRight);

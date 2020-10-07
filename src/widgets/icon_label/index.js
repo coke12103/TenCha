@@ -17,13 +17,15 @@ class IconLabel extends QLabel{
     var width = pix.width();
     var height = pix.height();
 
+    var ratio;
+
     if(width > height){
-      var ratio = width / this.maxSize;
+      ratio = width / this.maxSize;
 
       width = this.maxSize;
       height = height / ratio;
     }else{
-      var ratio = height / this.maxSize;
+      ratio = height / this.maxSize;
 
       width = width / ratio;
       height = this.maxSize;

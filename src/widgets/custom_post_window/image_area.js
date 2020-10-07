@@ -137,7 +137,7 @@ class ImageArea extends QWidget{
         fs.unlinkSync(`${App.data_directory.get('tmp')}${name}`);
 
         return;
-      case 'file':
+      case 'file': {
         const file_dialog = new QFileDialog();
         file_dialog.setFileMode(FileMode.AnyFile);
         file_dialog.exec();
@@ -147,6 +147,8 @@ class ImageArea extends QWidget{
         var file = fs.createReadStream(file_dialog.selectedFiles()[0]);
         this._insert_file("", file);
         return;
+      }
+
       case 'drive':
         return;
     }

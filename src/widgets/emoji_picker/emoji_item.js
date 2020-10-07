@@ -4,8 +4,6 @@ const {
   QSize
 } = require('@nodegui/nodegui');
 
-const App = require('../../index.js');
-
 class EmojiItem extends QPushButton{
   constructor(emoji){
     super();
