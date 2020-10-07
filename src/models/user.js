@@ -80,7 +80,7 @@ class User{
     })();
   }
 
-  async update(json, parser){
+  async update(json){
     if(this.name && (this.name != json.name)) this.name = json.name;
     if(this.emojis && (this.emojis != json.emojis)) this.emojis = json.emojis;
     if(this.avatarUrl && (this.avatarUrl != json.avatarUrl)){
@@ -121,7 +121,7 @@ class User{
           try{
             pix.loadFromData(res.body, ext);
             console.log('set done');
-          }catch(err){
+          }catch{
             try{
               pix.load(no_image_image.default);
             }catch(err){
@@ -129,7 +129,7 @@ class User{
             }
           }
           resolve(pix);
-      }).catch((err) => {
+      }).catch(() => {
           try{
             pix.load(no_image_image.default);
             resolve(pix);

@@ -105,12 +105,13 @@ class NoteItem extends QWidget{
     var reply = note.reply;
     if(!reply) return result;
 
+    var re_text;
     if(reply.renote){
-      var re_text = this._parse_renote(reply);
+      re_text = this._parse_renote(reply);
     }else if(reply.reply){
-      var re_text = this._parse_reply(reply);
+      re_text = this._parse_reply(reply);
     }else{
-      var re_text = this._parse_note_text(reply);
+      re_text = this._parse_note_text(reply);
     }
 
     result += ` RE: ${re_text}`;

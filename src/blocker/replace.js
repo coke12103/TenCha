@@ -26,7 +26,6 @@ class ReplaceBlocker{
   }
 
   is_block(note){
-    var result = false;
     for(var word of this.replace_words){
       var replace_word = word.from;
       var replace_regexp;
