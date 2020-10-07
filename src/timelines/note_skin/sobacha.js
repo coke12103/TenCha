@@ -118,21 +118,17 @@ class SobachaSkin{
         `);
 
       if(note.user.avater){
-        var s = this.sub_icon_label.size();
-        var w = s.width();
-        var h = s.height();
-        var icon = note.user.avater.scaled(w, h);
+        var sub_avater_size = this.sub_icon_label.size();
+        var sub_avater = note.user.avater.scaled(sub_avater_size.width(), sub_avater_size.height());
 
-        this.sub_icon_label.setPixmap(icon);
+        this.sub_icon_label.setPixmap(sub_avater);
       }else{
         this.icon_label.setText("  ");
       }
       if(note.renote.user.avater){
-        var s = icon_label.size();
-        var w = s.width();
-        var h = s.height();
-        var icon = note.renote.user.avater.scaled(w, h);
-        icon_label.setPixmap(icon);
+        var avater_size = icon_label.size();
+        var avater = note.renote.user.avater.scaled(avater_size.width(), avater_size.height());
+        icon_label.setPixmap(avater);
       }else{
         icon_label.setText("  ");
       }
@@ -145,11 +141,9 @@ class SobachaSkin{
         border-bottom: 1px solid #d6d6d6;
       `);
       if(note.user.avater){
-        var s = icon_label.size();
-        var w = s.width();
-        var h = s.height();
-        var icon = note.user.avater.scaled(w, h);
-        icon_label.setPixmap(icon);
+        var avater_size = icon_label.size();
+        var avater = note.user.avater.scaled(avater_size.width(), avater_size.height());
+        icon_label.setPixmap(avater);
       }else{
         icon_label.setText("  ");
       }
