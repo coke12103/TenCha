@@ -16,6 +16,7 @@ const Timeline = require('./timeline.js');
 const NotificationParser = require('../tools/notification_parser/index.js');
 const TimelineMenu = require('../widgets/timeline_menu/index.js');
 const App = require('../index.js');
+const MessageBox = require('../message_box.js');
 const DesktopNotification = require('../tools/desktop_notification/index.js');
 
 class Timelines extends QWidget{
@@ -67,13 +68,14 @@ class Timelines extends QWidget{
     })
   }
 
-  async init(){
+  init(){
     try{
       var loader = new TabLoader();
       var tabs = loader.tabs;
     }catch(err){
       console.log(err);
-      await this._show_mes_dialog('タブのロードに失敗しました!\ntabs.jsonを削除するか自力で直してください!');
+      var message = new MessageBox('タブのロードに失敗しました!\ntabs.jsonを削除するか自力で直してください!', 'わかった');
+      message.exec();
       process.exit(1);
     }
 
@@ -438,17 +440,6 @@ class Timelines extends QWidget{
     }else{
       this.post_view.setNotification(notification);
     }
-  }
-
-  _show_mes_dialog(mes_str){
-    return new Promise((resolve, reject) => {
-        var mes = new message_box(mes_str, 'わかった');
-        mes.onPush(() =>{
-            mes.close();
-            resolve(0);
-        });
-        mes.exec();
-    })
   }
 
   add_timeline_filter(callback){
