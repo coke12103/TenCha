@@ -23,7 +23,14 @@ const DataDirectory = require('./tools/data_directory/index.js');
 const VersionParser = require('./tools/version_parser/index.js');
 
 // ディレクトリは最初に読み込みする
-var data_directory = new DataDirectory();
+// もしオプションでディレクトリが指定されているならそれを利用する
+var data_directory;
+if(process.argv[2] && process.argv[3] && process.argv[2] == "data-dir"){
+  data_directory = new DataDirectory(process.argv[3]);
+}else{
+  data_directory = new DataDirectory();
+}
+
 exports.data_directory = data_directory;
 
 var main_window = new MainWindow();
