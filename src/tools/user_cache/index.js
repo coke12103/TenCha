@@ -1,5 +1,4 @@
 const User = require('../../models/user.js');
-const App = require('../../index.js');
 
 class UserCache{
   constructor(){

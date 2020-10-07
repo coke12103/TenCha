@@ -7,7 +7,6 @@ const {
 
 const Assets = require("../assets.js");
 const Icons = new Assets('Icons');
-const App = require("../index.js");
 
 const IconsSize = 14;
 

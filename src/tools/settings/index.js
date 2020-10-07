@@ -53,7 +53,7 @@ class Settings{
     this.values[id] = val;
     try{
       this.sync();
-    }catch{
+    }catch(err){
       throw err;
     }
   }

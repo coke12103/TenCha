@@ -2,7 +2,7 @@ const NotificationItem = require('./notification_item.js');
 const Assets = require("../assets.js");
 const Skin = require("./skin.js");
 const App = require("../index.js");
-const sleep = time => new Promise(resolve => setTimeout(resolve, time));
+// const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 const {
   QListWidget
@@ -81,7 +81,7 @@ class Timeline extends QListWidget{
   }
 
   check_exist_item(id){
-    var exist = this.tl.some((el, index, array) => {
+    var exist = this.tl.some((el) => {
         return (el.id == id);
     });
 

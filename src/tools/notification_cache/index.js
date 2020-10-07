@@ -1,5 +1,4 @@
 const Notification = require('../../models/notification.js');
-const App = require('../../index.js');
 
 class NotificationCache{
   constructor(){
