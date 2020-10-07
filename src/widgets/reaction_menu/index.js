@@ -2,7 +2,6 @@ const {
   QMenu,
   QAction,
   QIcon,
-  QSize,
   QFont
 } = require('@nodegui/nodegui');
 const { parse } = require('twemoji-parser');

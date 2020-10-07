@@ -8,8 +8,6 @@ const {
   QLineEdit
 } = require('@nodegui/nodegui');
 
-const App = require('../../index.js');
-
 class ReactionEmojiInputWindow extends QDialog{
   constructor(){
     super();

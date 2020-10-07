@@ -1,7 +1,6 @@
 const {
   QMenu,
-  QAction,
-  QFont
+  QAction
 } = require('@nodegui/nodegui');
 
 const App = require('../../index.js');
