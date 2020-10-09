@@ -3,6 +3,7 @@ const request = require("request-promise");
 const WebSocket = require("ws");
 
 const App = require('./index.js');
+const MessageBox = require('./message_box.js');
 
 class Client{
   constructor(){
@@ -14,7 +15,8 @@ class Client{
       await login.start();
     }catch(err){
       console.log(err);
-      // TODO: dialog
+      var mes = new MessageBox('ログインエラー', 'わかった');
+      mes.exec();
       process.exit(1);
     }
 
