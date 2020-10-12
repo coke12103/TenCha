@@ -3,171 +3,107 @@ const {
   QListWidgetItem,
   QSize,
   QWidget,
-  FlexLayout,
+  QBoxLayout,
+  Direction,
   QFont,
   AlignmentFlag,
   ContextMenuPolicy
 } = require('@nodegui/nodegui');
 
-class SobachaSkin{
-  constructor(note, font, exe){
-    const list_item = new QListWidgetItem();
-    const widget = new QWidget();
-    const widget_layout = new FlexLayout();
-    widget.setLayout(widget_layout);
-    widget.setFlexNodeSizeControlled(false);
-    widget.setContextMenuPolicy(ContextMenuPolicy.CustomContextMenu);
-    widget.addEventListener('customContextMenuRequested', exe);
+const App = require('../../index.js');
+const IconLabel = require('../../widgets/icon_label/index.js');
 
-    const line_one = new QWidget();
-    const line_one_layout = new FlexLayout();
-    line_one.setLayout(line_one_layout);
+class SobachaSkin extends QWidget{
+  constructor(note, a, exe){
+    super();
 
-    const icon_label = new QLabel();
-    const text_label = new QLabel();
-    text_label.setFlexNodeSizeControlled(false);
-    text_label.setAlignment(AlignmentFlag.AlignLeft);
+    this.item_height = 14;
+    this.widget = this;
 
-    // RN or RE 28px
-    const item_height = 14;
+    this.list_item = new QListWidgetItem();
+    this.font = new QFont(App.settings.get("font"), 9);
 
-    icon_label.setInlineStyle(`
-      flex-grow: 1;
-      width: ${item_height - 1}px;
-    `);
+    this.layout = new QBoxLayout(Direction.TopToBottom);
 
-    list_item.setSizeHint(new QSize(1200, 15 + 1));
-    icon_label.setFixedSize(item_height -1, item_height -1);
+    this.line_one = new QWidget();
+    this.line_two = new QWidget();
 
-    var f = new QFont(font, 9);
-    text_label.setFont(f);
+    this.line_one_layout = new QBoxLayout(Direction.LeftToRight);
+    this.line_two_layout = new QBoxLayout(Direction.LeftToRight);
 
-    line_one_layout.addWidget(icon_label);
-    line_one_layout.addWidget(text_label);
+    this.icon = new IconLabel(14);
+    this.text = new QLabel();
+    this.sub_icon = new IconLabel(14);
+    this.sub_text = new QLabel();
 
-    widget_layout.addWidget(line_one);
+    this.setLayout(this.layout);
+    this.setContextMenuPolicy(ContextMenuPolicy.CustomContextMenu);
+    this.addEventListener('customContextMenuRequested', exe);
 
+    this.layout.setContentsMargins(0,0,0,1);
+    this.layout.setSpacing(0);
+
+    this.list_item.setSizeHint(new QSize(1200, 16));
+
+    this.line_one.setLayout(this.line_one_layout);
+
+    this.line_two.setLayout(this.line_two_layout);
+
+    this.line_one_layout.setContentsMargins(0,0,0,0);
+    this.line_one_layout.setSpacing(6);
+
+    this.line_two_layout.setContentsMargins(20,0,0,0);
+    this.line_two_layout.setSpacing(6);
+
+    this.text.setAlignment(AlignmentFlag.AlignLeft);
+    this.text.setFont(this.font);
+
+    this.sub_text.setAlignment(AlignmentFlag.AlignLeft);
+    this.sub_text.setFont(this.font);
+
+    this.line_one_layout.addWidget(this.icon);
+    this.line_one_layout.addWidget(this.text, 1);
+
+    this.line_two_layout.addWidget(this.sub_icon);
+    this.line_two_layout.addWidget(this.sub_text, 1);
+
+    this.layout.addWidget(this.line_one);
+    this.layout.addWidget(this.line_two);
+
+    this.setNote(note);
+  }
+
+  setNote(note){
     var note_color = '#000';
 
-    var m_text = '';
-    var sub_text = '';
+    var text = '';
 
     if(note.renote){
-      const line_two = new QWidget();
-      const line_two_layout = new FlexLayout();
-      line_two.setLayout(line_two_layout);
+      var sub_text = '';
 
-      line_two.setInlineStyle(`
-        height: ${item_height}px;
-        justify-content: flex-start;
-        flex-direction: row;
-        padding-left: 20px;
-        `);
-
-      this.line_two = line_two;
-      this.line_two_layout = line_two_layout;
-
-      const sub_icon_label = new QLabel();
-      const sub_text_label = new QLabel();
-      sub_icon_label.setInlineStyle(`
-        flex-grow: 1;
-        width: ${item_height - 1}px;
-      `);
-      sub_text_label.setInlineStyle(`
-        padding-left: 6px;
-        flex-grow: 3;
-      `)
-      sub_icon_label.setFixedSize(item_height -1, item_height -1);
-      sub_text_label.setFont(f);
-
-      sub_text_label.setAlignment(AlignmentFlag.AlignLeft);
-
-      line_two_layout.addWidget(sub_icon_label);
-      line_two_layout.addWidget(sub_text_label);
-
-      widget_layout.addWidget(line_two);
-
-      list_item.setSizeHint(new QSize(1200, 29 + 1));
-
-      this.sub_icon_label = sub_icon_label;
-      this.sub_text_label = sub_text_label;
+      this.layout.addWidget(this.line_two);
+      this.list_item.setSizeHint(new QSize(1200, 30));
 
       note_color = '#167018';
       sub_text = this._parse_renote(note);
-      m_text = this._parse_note_text(note.renote);
-    }else{
-      if(note.reply){
-        // color
-        note_color = '#0b0ba9';
-      }
+      text = this._parse_note_text(note.renote);
 
-      m_text = this._parse_note_text(note);
+      this.sub_icon.setPixmap(note.user.avater);
+      this.sub_text.setText(sub_text);
+
+      this.icon.setPixmap(note.renote.user.avater);
+    }else{
+      this.line_two.hide();
+      if(note.reply) note_color = '#0b0ba9';
+      text = this._parse_note_text(note);
+
+      this.icon.setPixmap(note.user.avater);
     }
 
-    text_label.setText(m_text);
+    this.text.setText(text);
 
-    if(this.line_two){
-      this.sub_text_label.setText(sub_text);
-
-      widget.setInlineStyle(`
-        height: ${(item_height *2) + 1}px;
-        align-items: flex-start;
-        justify-content: flex-start;
-        flex-direction: column;
-        border-bottom: 1px solid #d6d6d6;
-        `);
-
-      if(note.user.avater){
-        var sub_avater_size = this.sub_icon_label.size();
-        var sub_avater = note.user.avater.scaled(sub_avater_size.width(), sub_avater_size.height());
-
-        this.sub_icon_label.setPixmap(sub_avater);
-      }else{
-        this.icon_label.setText("  ");
-      }
-      if(note.renote.user.avater){
-        var avater_size = icon_label.size();
-        var avater = note.renote.user.avater.scaled(avater_size.width(), avater_size.height());
-        icon_label.setPixmap(avater);
-      }else{
-        icon_label.setText("  ");
-      }
-    }else{
-      widget.setInlineStyle(`
-        height: ${item_height + 1}px;
-        justify-content: flex-start;
-        align-items: stretch;
-        flex-direction: column;
-        border-bottom: 1px solid #d6d6d6;
-      `);
-      if(note.user.avater){
-        var avater_size = icon_label.size();
-        var avater = note.user.avater.scaled(avater_size.width(), avater_size.height());
-        icon_label.setPixmap(avater);
-      }else{
-        icon_label.setText("  ");
-      }
-    }
-
-    line_one.setInlineStyle(`
-      height: ${item_height}px;
-      justify-content: flex-start;
-      flex-direction: row;
-      `);
-
-    text_label.setInlineStyle(`
-      padding-left: 6px;
-      flex-grow: 3;
-      color: ${note_color};
-    `);
-
-    this.list_item = list_item;
-    this.widget = widget;
-    this.widget_layout = widget_layout;
-    this.line_one = line_one;
-    this.line_one_layout = line_one_layout;
-    this.icon_label = icon_label;
-    this.text_label = text_label;
+    this.setInlineStyle("border-bottom: 1px solid #d6d6d6;");
+    this.text.setInlineStyle(`color: ${note_color};`);
   }
 
   _parse_renote(note){
@@ -194,42 +130,44 @@ class SobachaSkin{
   }
 
   destroy(){
-    this.line_one_layout.removeWidget(this.text_label);
-    this.line_one_layout.removeWidget(this.icon_label);
+    this.line_one_layout.removeWidget(this.text);
+    this.line_one_layout.removeWidget(this.icon);
 
-    this.widget_layout.removeWidget(this.line_one);
+    this.line_two_layout.removeWidget(this.sub_icon);
+    this.line_two_layout.removeWidget(this.sub_text);
 
-    this.text_label.close();
-    this.icon_label.close();
+    this.layout.removeWidget(this.line_one);
+    this.layout.removeWidget(this.line_two);
+
+    this.text.close();
+    this.icon.close();
+
+    this.sub_icon.close();
+    this.sub_text.close();
 
     this.line_one.close();
+    this.line_two.close();
 
-    if(this.line_two){
-      this.line_two_layout.removeWidget(this.sub_icon_label);
-      this.line_two_layout.removeWidget(this.sub_text_label);
+    this.item_height = undefined;
+    this.widget = undefined;
 
-      this.widget_layout.removeWidget(this.line_two);
+    this.list_item = undefined;
+    this.font = undefined;
 
-      this.sub_icon_label.close();
-      this.sub_text_label.close();
-
-      this.line_two.close();
-
-      this.line_two = undefined;
-      this.line_two_layout = undefined;
-      this.sub_icon_label = undefined;
-      this.sub_text_label = undefined;
-    }
-
-    this.widget.close();
+    this.layout = undefined;
 
     this.line_one = undefined;
+    this.line_one = undefined;
+
     this.line_one_layout = undefined;
-    this.list_item = undefined;
-    this.widget = undefined;
-    this.widget_layout = undefined;
-    this.icon_label = undefined;
-    this.text_label = undefined;
+    this.line_two_layout = undefined;
+
+    this.icon = undefined;
+    this.text = undefined;
+    this.sub_icon = undefined;
+    this.sub_text = undefined;
+
+    this.close();
   }
 }
 
