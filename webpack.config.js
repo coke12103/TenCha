@@ -5,6 +5,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: process.NODE_ENV || "development",
   entry: "./src",
+  externals: [/node_modules/, 'bufferutil', 'utf-8-validate'],
   target: "node",
   output: {
     path: path.resolve(__dirname, "dist"),
