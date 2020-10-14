@@ -20,7 +20,7 @@ class NotificationCache{
 
     // notificationが自分のキャッシュにあるなら整形済みのそれを返す
     if(this.notifications[notification.id]){
-      this.notifications[notification.id].update(notification);
+      //this.notifications[notification.id].update(notification);
     }else{
       // なければ作る
       try{

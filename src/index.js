@@ -36,6 +36,7 @@ exports.data_directory = data_directory;
 var main_window = new MainWindow();
 var statusLabel = main_window.status_label;
 exports.status_label = statusLabel;
+exports.timeline = main_window.timeline;
 
 var random_emoji = new RandomEmoji();
 exports.random_emoji = random_emoji;
