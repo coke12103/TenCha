@@ -6,7 +6,7 @@ const {
 const App = require('../../index.js');
 const ReactionMenu = require('../../widgets/reaction_menu/index.js');
 
-class TimelineMenu extends QMenu{
+class OperationMenu extends QMenu{
   constructor(){
     super();
 
@@ -22,7 +22,7 @@ class TimelineMenu extends QMenu{
     this.note_remove_action = new QAction();
     this.repost_action = new QAction();
 
-    this.setTitle('タイムライン');
+    this.setTitle('操作');
 
     this.reaction_action.setText('リアクション');
     this.reaction_action.setMenu(this.reaction_menu);
@@ -100,4 +100,4 @@ class TimelineMenu extends QMenu{
   }
 }
 
-module.exports = TimelineMenu;
+module.exports = OperationMenu;

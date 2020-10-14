@@ -14,7 +14,7 @@ const NoteCounter = require('./note_counter.js');
 const TabLoader = require('./tab_loader.js');
 const Timeline = require('./timeline.js');
 const NotificationParser = require('../tools/notification_parser/index.js');
-const TimelineMenu = require('../widgets/timeline_menu/index.js');
+const OperationMenu = require('../widgets/operation_menu/index.js');
 const App = require('../index.js');
 const MessageBox = require('../message_box.js');
 const DesktopNotification = require('../tools/desktop_notification/index.js');
@@ -23,7 +23,7 @@ class Timelines extends QWidget{
   constructor(){
     super();
 
-    this.timeline_menu = new TimelineMenu();
+    this.operation_menu = new OperationMenu();
     this.desktop_notification = new DesktopNotification();
 
     this.tabs = [];
@@ -85,7 +85,7 @@ class Timelines extends QWidget{
     this.auto_select_check.setFont(new QFont(App.settings.get("font"), 9));
     this.note_counter.setFont(new QFont(App.settings.get("font"), 9));
 
-    this.timeline_menu.init();
+    this.operation_menu.init();
 
     this.start_load_tl();
     App.client.connect_ws(this);
@@ -475,7 +475,7 @@ class Timelines extends QWidget{
       return;
     }
 
-    this.timeline_menu.exec(selected_widget.mapToGlobal(new QPoint(pos.x, pos.y)));
+    this.operation_menu.exec(selected_widget.mapToGlobal(new QPoint(pos.x, pos.y)));
   }
 }
 
