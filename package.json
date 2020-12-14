@@ -1,6 +1,7 @@
 {
   "name": "TenCha",
   "version": "0.5.6",
+  "description": "2009年のMisskeyクライアント",
   "main": "index.js",
   "author": "coke12103",
   "license": "MIT",
