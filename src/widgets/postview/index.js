@@ -114,6 +114,7 @@ class PostView extends QWidget{
     if(user.isLocked) flag += '鍵';
     if(user.isBot) flag += '機';
     if(user.isCat) flag += '猫';
+    if(user.isLady) flag += '嬢';
 
     if(!flag || flag == "鍵") flag += '人';
 
