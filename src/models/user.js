@@ -29,6 +29,7 @@ class User{
       this.description = json.description;
       this.avatarUrl = json.avatarUrl;
       this.isCat = json.isCat;
+      this.isLady = json.isLady;
       this.isAdmin = json.isAdmin;
       this.isBot = json.isBot;
       this.updatedAt = json.updatedAt;
