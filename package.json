@@ -21,7 +21,7 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "twemoji-parser": "^13.0.0",
-    "ws": "^7.4.4"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "@nodegui/packer": "^1.4.1",
