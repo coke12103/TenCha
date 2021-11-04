@@ -8,7 +8,7 @@ const {
   TextInteractionFlag,
   Direction
 } = require('@nodegui/nodegui');
-const dateformat = require('dateformat');
+const dateFormat = require('dateformat');
 
 const PostParser = require('../../tools/post_parser/index.js');
 const NotificationParser = require('../../tools/notification_parser/index.js');
@@ -233,7 +233,7 @@ class PostView extends QWidget{
     this.name.setText(name);
 
     // date
-    var date = dateformat(note.createdAt, 'yyyy/mm/dd HH:MM:ss');
+    var date = dateFormat(note.createdAt, 'yyyy/mm/dd HH:MM:ss');
     var date_url = `https://${App.client.host}/notes/${note.id}`;
 
     this.date.setText(`<html><a style="text-decoration: none;" href="${date_url}">${date}</a>`);
@@ -261,7 +261,7 @@ class PostView extends QWidget{
     this.name.setText(name);
 
     // date
-    this.date.setText(dateformat(notification.createdAt, 'yyyy/mm/dd HH:MM:ss'));
+    this.date.setText(dateFormat(notification.createdAt, 'yyyy/mm/dd HH:MM:ss'));
 
     // content
     var text = NotificationParser.gen_desc_text(notification, 'postview');

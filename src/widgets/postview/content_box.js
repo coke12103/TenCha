@@ -16,6 +16,7 @@ class ContentBox extends QScrollArea{
     this.setHorizontalScrollBarPolicy(ScrollBarPolicy.ScrollBarAsNeeded);
     this.setVerticalScrollBarPolicy(ScrollBarPolicy.ScrollBarAsNeeded);
     this.setFrameShape(Shape.NoFrame);
+    this.setWidgetResizable(true);
 
     this.content = new QLabel();
     this.content.setObjectName('postViewBodyLabel');
